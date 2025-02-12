@@ -6,7 +6,7 @@ Your offline-first chat platform that puts privacy first. No servers required (u
 - **Optional Server Support**: Want to host a community? Connect to a [SparkleCord Server](https://github.com/SparkleCord/SparkleCord-Server).
 - **Customizable**: Open source and designed to be modified - make it yours.
 ## 🚀 Getting Started
-1. **Download**: Get the latest release from our [releases page](https://github.com/SparkleCord/SparkleCord/releases)
+1. **Download**: Get the latest release from our [releases page](https://github.com/SparkleCord/SparkleCord-Client/releases)
 2. **Extract**: Unzip the downloaded file
 3. **Run**: Open `index.html` in your browser
 ### 🔧 Development Setup
