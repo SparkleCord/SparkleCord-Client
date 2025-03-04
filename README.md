@@ -35,5 +35,3 @@ SparkleCord is designed with privacy as its core principle:
 We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
 ## 📝 License
 [MIT License](LICENSE)
-## 💫 Try It Online
-Visit our [demo](https://sparklecord.github.io/app) to try SparkleCord directly in your browser!
