@@ -1,37 +1,24 @@
-# SparkleCord Client ✨
-Your offline-first chat platform that puts privacy first. No servers required (unless you want them).
-## 🌟 Features
-- **Truly Offline First**: Your messages stay on your device. No servers, no cloud storage, just pure privacy.
-- **Lightning Fast**: Zero latency messaging because local is always faster than remote.
-- **Optional Server Support**: Want to host a community? Connect to a [SparkleCord Server](https://github.com/SparkleCord/SparkleCord-Server).
-- **Customizable**: Open source and designed to be modified - make it yours.
-## 🚀 Getting Started
-1. **Download**: Get the latest release from our [releases page](https://github.com/SparkleCord/SparkleCord-Client/releases)
-2. **Extract**: Unzip the downloaded file
-3. **Run**: Open `index.html` in your browser
-### 🔧 Development Setup
-```bash
-# Clone the repository
-git clone https://github.com/SparkleCord/SparkleCord-Client.git
-# Navigate to the directory
-cd SparkleCord
-
-# If you're using npm
-npm install
-
-# For development server
-npm run dev
-
-# For production build
-npm run build
+## Legal Warning ⚠  
+The code and logic in this project are completely custom-made, and any use of Discord's branding and styles is purely for demonstration purposes. This project is a proof of concept and is not intended to compete with or replace Discord's platform. It is your choice if you want to use it or not.  
+# SparkleCord Client ✨  
+Your offline-first chat app that prioritizes your privacy. No servers required (unless you want them).  
+## 🌟 Features  
+- **Offline-First**: Your messages stay private on your device. No servers, no cloud storage—just you and your chats.  
+- **Super Fast**: Instant messaging because local storage is always quicker than the cloud.  
+- **Optional Server Support**: Running a community? Spin up a [SparkleCord Server](https://github.com/SparkleCord/SparkleCord-Server) for extra control.  
+- **Fully Customizable**: Open-source and built to be tweaked—make it yours.
+## 🚀 Getting Started  
+1. **Download**: Grab the latest release from our [releases page](https://github.com/SparkleCord/SparkleCord-Client/releases).  
+2. **Extract**: Unzip the file.  
+3. **Run**: Open `index.html` in your browser.
+### 🔧 Development Setup  
+```py
+# Download the zip, the code is clean and easy to follow.
 ```
-## 🔒 Privacy First
-SparkleCord is designed with privacy as its core principle:
-- All messages are stored locally
-- No tracking or analytics
-- Optional end-to-end encryption for server connections
-- Your data stays yours
-## 🤝 Contributing
-We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
-## 📝 License
+## Privacy First  
+SparkleCord puts your privacy first:  
+- All your messages are stored locally.  
+- No tracking, no analytics.  
+- Your data is yours, always.
+## 📝 License  
 [MIT License](LICENSE)
