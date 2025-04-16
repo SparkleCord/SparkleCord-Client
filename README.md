@@ -6,7 +6,7 @@ Your offline-first chat app that prioritizes your privacy. No servers required (
 - **Offline-First**: Your messages stay private on your device. No servers, no cloud storage—just you and your chats.  
 - **Super Fast**: Instant messaging because local storage is always quicker than the cloud.  
 - ~~**Optional Server Support**: Running a community? Spin up a [SparkleCord Server](https://github.com/SparkleCord/SparkleCord-Server) for extra control.~~  
-  - SparkleCord Server is currently not released and there is no plans to officially release it *yet*.  
+  - The SparkleCord server isn’t released yet, with no official release plans ***for now***.  
 - **Fully Customizable**: Open-source and built to be tweaked—make it yours.
 ## 🚀 Getting Started  
 1. **Download**: Grab the latest release from our [releases page](https://github.com/SparkleCord/SparkleCord-Client/releases).  
