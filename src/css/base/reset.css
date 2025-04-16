@@ -1,0 +1,92 @@
+/* Normal Page Styles */
+body {
+    margin: 0;
+    font-family: var(--font-primary);
+    display: flex;
+    height: 100vh;
+    background-color: var(--background-secondary);
+    color: var(--text-normal);
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+}
+.hidden { display: none; }
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--text-link); border-radius: 4px; }
+input:focus-visible, textarea:focus-visible { outline: none; }
+
+button { cursor: pointer; }
+
+/* Typography Styles  */
+.eyebrow {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: bold;
+    font-variant: small-caps;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    height: 15.9943px;
+    letter-spacing: 0.24px;
+    line-height: 16px;
+}
+.small-normal {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: normal;
+    font-weight: 500;
+}
+.small-danger {
+    font-size: 12px;
+    color: var(--text-danger);
+    font-style: normal;
+    font-weight: 400;
+}
+.link {
+    color: var(--text-link);
+    cursor: pointer;
+    display: inline;
+    line-height: 22px;
+    overflow-wrap: break-word;
+    text-align: left;
+    text-wrap: wrap;
+    user-select: text;
+    vertical-align: baseline;
+    white-space-collapse: break-spaces;
+    word-break: break-word;
+    text-decoration: none; 
+}
+.link:hover { text-decoration: underline; }
+.link:visited { color: var(--link); }
+.badge {
+    background-color: rgb(218, 55, 60);
+    color: var(--white);
+    padding: 4px 8px;
+    text-align: center;
+    border-radius: 45px;
+    font-size: 12px;
+    font-weight: 700;
+    height: 16px;
+    line-height: 12px;
+    letter-spacing: 0.24px;
+    min-height: 16px;
+    min-width: 16px;
+    position: relative;
+    text-transform: uppercase;
+}
+.keybind {
+    background-color: var(--bg-mod-faint);
+    border: 1px solid var(--border-subtle);
+    box-shadow: inset 0 -4px 0 var(--bg-mod-faint);
+    color: var(--interactive-active);
+    padding: 3px 6px 4px;
+    border-radius: 4px;
+    cursor: default;
+    text-align: center;
+    padding: 3px 6px 4px;
+    min-width: 14px;
+    min-height: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}

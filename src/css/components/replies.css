@@ -1,0 +1,186 @@
+.reply-container { /* Container of the below elements */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-bottom: -5px;
+}
+.reply-container img { /* Reply PFP when not empty */
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+}
+.replyPFP {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--header-secondary);
+    background: var(--background-tertiary);
+}
+.replyPFP svg {
+    user-select: none;
+    color: var(--header-secondary);
+    width: 10.8px;
+    height: 7.2px;
+}
+.reply-author { /* Reply username */
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--header-primary);
+    cursor: pointer;
+    filter: brightness(0.73);
+}
+.reply-content { /* Reply message content */
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    flex-grow: 1;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--header-secondary);
+    user-select: none;
+}
+.reply-content svg { /* Icons next to the content (e.g. attachment, poll, etc.) */
+    list-style: none;
+    word-wrap: break-word;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    color: var(--header-secondary);
+    font-size: 0.875rem;
+    white-space: pre;
+    user-select: none;
+    width: 20px;
+    height: 20px;
+    fill: none;
+    flex: 0 0 auto;
+    margin-left: 4px;
+    margin-bottom: -5px;
+}
+.reply-content:has(svg) {
+    margin-top: -1px;
+}
+.reply-thread {
+    position: relative;
+}
+.reply-preview {
+    display: flex;
+    align-items: center;
+    margin-left: 40px;
+    font-size: 0.9em;
+    padding-bottom: 2px;
+    cursor: pointer;
+    user-select: none;
+}
+.reply-spine {
+    position: absolute;
+    color: var(--spine-default);
+    left: 20px;
+    top: 5px;
+    font-family: monospace;
+}
+.reply-preview:hover .reply-spine {
+    color: var(--interactive-normal);
+}
+.reply-preview:hover .reply-content:not(.deleted) {
+    color: var(--header-primary);
+}
+
+/* reply indicator */
+#reply-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--background-secondary);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 2px 12px;
+    text-indent: 0;
+    font-style: inherit;
+    vertical-align: baseline;
+    font-family: var(--font-primary);
+    font-size: 14px;
+    line-height: 1.2857142857142858;
+    font-weight: 400;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    animation: none !important;
+    transition: none !important;
+    color: var(--header-secondary);
+    margin-left: 240px;
+    cursor: pointer;
+}
+.reply-actions {
+    display: flex;
+    gap: 6px;
+}
+#close-reply {
+    background: none;
+    color: var(--interactive-normal);
+    border: none;
+    text-indent: 0;
+    margin: 0;
+    border: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    font-size: 100%;
+    vertical-align: baseline;
+    outline: 0;
+    flex: 0 0 auto;
+    cursor: pointer;
+    line-height: 0;
+    padding: 8px 0px 8px 16px;
+    animation: none !important;
+    transition: none !important;
+}
+#close-reply svg {
+    text-indent: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 0;
+    fill: none;
+    width: 16px;
+    height: 16px;
+    animation: none !important;
+    transition: none !important;
+}
+#close-reply:hover {
+    color: var(--interactive-hover);
+}
+#ping-toggle {
+    text-indent: 0;
+    margin: 0;
+    border: 0;
+    font-style: inherit;
+    vertical-align: baseline;
+    outline: 0;
+    font-family: var(--font-primary);
+    font-size: 14px;
+    line-height: 1.2857142857142858;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    animation: none !important;
+    transition: none !important;
+    color: var(--text-link);
+    background: none;
+}
+
+@media (max-width: 768px) {
+    #reply-indicator {
+        margin-left: 0;
+    }
+}

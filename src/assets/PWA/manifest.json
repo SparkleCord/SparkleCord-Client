@@ -1,0 +1,16 @@
+{
+    "name": "SparkleCord",
+    "short_name": "SparkleCord",
+    "start_url": "../",  
+    "scope": "../",  
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#5865F2",
+    "icons": [
+        {
+            "src": "../icons/icon.png",  
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

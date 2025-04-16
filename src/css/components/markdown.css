@@ -1,0 +1,203 @@
+blockquote {
+    border-left: 4px solid var(--interactive-muted);
+    padding: 0 8px 0 12px;
+    margin: 0;
+    padding-left: 10px;
+    color: var(--text-normal);
+}
+.link {
+    color: var(--text-link);
+    text-decoration: none;
+}
+.link:hover {
+    text-decoration: underline;
+}
+h1 {
+    color: var(--header-primary);
+    user-select: text;
+    font-style: inherit;
+    font-weight: 700;
+    line-height: 1.375em;
+    font-size: 1.5rem;
+    margin: 16px 0 8px;
+    margin-top: 8px;
+}
+h2 {
+    user-select: text;
+    font-style: inherit;
+    font-weight: 700;
+    color: var(--header-primary);
+    line-height: 1.375em;
+    font-size: 1.25rem;
+    margin: 16px 0 8px;
+}
+h3 {
+    user-select: text;
+    font-style: inherit;
+    font-weight: 700;
+    color: var(--header-primary);
+    line-height: 1.375em;
+    font-size: 1rem;
+    margin: 16px 0 8px;
+}
+h1 .emoji-wrapper img {
+    width: 32px;
+    height: auto;
+}
+h2 .emoji-wrapper img {
+    width: 27.5px;
+    height: auto;
+}
+h3 .emoji-wrapper img {
+    width: 22px;
+    height: auto;
+}
+h1, h2, h3 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-weight: 700;
+}
+subtext {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    line-height: 1.11719rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+}
+subtext blockquote {
+    border-left: 2px solid var(--interactive-muted);
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    line-height: 1.11719rem;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    padding: 0 8px 0 12px;
+    margin: 0;
+    padding-left: 10px;
+}
+/* code */
+code, pre {
+    display: inline-block;
+    background: var(--background-secondary);
+    border: 1px solid var(--background-tertiary);
+    font-family: var(--font-code) !important;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    line-height: 1.125rem;
+    text-indent: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+pre {
+    overflow-x: auto;
+}
+pre code {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+}
+.code-wrapper {
+    position: relative;
+}
+.code-wrapper pre {
+    background: var(--background-secondary);
+    border: 1px solid var(--background-tertiary);
+    border-radius: 4px;
+    margin: 0;
+    overflow-x: auto;
+}
+.copy-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 4px;
+    margin-right: 0%;
+    background: transparent;
+    opacity: 0;
+    transition: opacity 0.2s;
+    cursor: pointer;
+}
+.code-wrapper:hover .copy-button {
+    opacity: 1;
+}
+.copy-button svg {
+    width: 16px;
+    height: 16px;
+}
+.copy-button svg,
+.copy-button path {
+    fill: var(--text-normal);
+}
+.copy-button .check-icon {
+    display: none;
+}
+.copy-button.copied .copy-icon {
+    display: none;
+}
+.copy-button.copied .check-icon {
+    display: block;
+}
+/* spoilers */
+.spoiler {
+    background-color: var(--__spoiler-background-color--hidden);
+    border-radius: 2px;
+    color: transparent;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: background-color 0.05s ease;
+}
+.spoiler::before {
+    content: "";
+    position: absolute;
+    transition: opacity 0.05s ease;
+}
+.spoiler.revealed {
+    background-color: var(--__spoiler-background-color--revealed);
+    color: inherit;
+}
+.spoiler.revealed::before {
+    opacity: 0;
+    pointer-events: none;
+}
+/* user pings */
+.ping { /* Ping Content */
+    background-color: var(--mention-background);
+    color: var(--mention-foreground);
+    border-radius: 3px;
+    font-style: medium;
+    padding: 0 2px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.15s ease;
+}
+.ping:hover { /* Ping Content Hover */
+    background-color: var(--brand-500);
+    color: var(--white-2);
+}
+/* lists */
+ol, ul {
+    margin: 0em 0;
+    padding-left: 16px;
+}
+ol li, ul li {
+    margin: 2px 0;
+}
+li {
+    margin: 0.25em 0;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

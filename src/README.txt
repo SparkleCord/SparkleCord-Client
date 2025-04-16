@@ -1,0 +1,1 @@
+To start SparkleCord, Open `index.html`.

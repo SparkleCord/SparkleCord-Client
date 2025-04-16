@@ -1,0 +1,30 @@
+/* editing */
+.editOperations {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+}
+#edit-box {
+    width: 85vw;
+    height: 50% !important;
+    resize: none;
+    font: inherit;
+    background: var(--bg-overlay-3, var(--channeltextarea-background));
+    color: var(--text-normal);
+    border: none;
+    border-radius: 8px;
+    text-align: left;
+    padding-top: 12px;
+    padding-left: 12px;
+}
+span.edited-tag {
+    margin-left: 4px;
+    cursor: default;
+    color: var(--text-muted);
+    display: inline-block;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 500;
+    height: 20px;
+    line-height: 22px;
+}

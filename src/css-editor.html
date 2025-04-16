@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SparkleCord UserCSS Editor</title>
+    <link rel="icon" href="./assets/icons/icon.png">
+    <link rel="stylesheet" href="./js/codemirror/codemirror.min.css">
+    <style> html, body, #editor { margin: 0; padding: 0; height: 100%; width: 100% } </style>
+</head>
+<body>
+    <div id="editor"></div>
+    <script>
+        let isOnline = true;
+        async () => {
+            try { await fetch("https://example.com", { mode: "no-cors" }); isOnline = true; }
+            catch { isOnline = false; }
+        }
+        (async () => {
+            const cssBackup = localStorage.getItem('UserCSS_Backup') || '';
+            if (isOnline) {
+                const script = document.createElement("script");
+                script.src = "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js";
+                script.onload = () => {
+                    require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs" } });
+                    require(["vs/editor/editor.main"], () => {
+                        const e = monaco.editor.create(document.getElementById('editor'), { 
+                            value: cssBackup, language: "css", theme: "vs-dark", automaticLayout: true 
+                        });
+                        const sync = () => {
+                            const css = e.getValue();
+                            localStorage.setItem("UserCSS_Backup", css);
+                            window.opener?.postMessage({ type: "cssUpdate", css }, "*");
+                        };
+                        sync();
+                        e.onDidChangeModelContent(sync);
+                    });
+                };
+                document.body.appendChild(script);
+            } else {
+                for (const src of ["./js/codemirror/codemirror.js","./js/codemirror/css.js","./js/codemirror/matchbrackets.js"]) {
+                    const script = document.createElement("script"); script.src = src; document.body.appendChild(script);
+                    await new Promise(resolve => script.onload = resolve);
+                }
+                const cssBackup = localStorage.getItem('UserCSS_CodeMirror-Backup') || '', { EditorState, EditorView, basicSetup } = cm, { css } = cmLangCss, view = new EditorView({
+                    state: EditorState.create({
+                        doc: cssBackup,
+                        extensions: [basicSetup, css(), EditorView.updateListener.of(u => {
+                            if (u.docChanged) {
+                                const v = u.state.doc.toString();
+                                localStorage.setItem("UserCSS_CodeMirror-Backup", v);
+                                window.opener?.postMessage({ type: "cssUpdate", css: v }, "*");
+                            }
+                        })]
+                    }),
+                    parent: document.getElementById('editor')
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

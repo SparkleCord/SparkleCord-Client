@@ -1,0 +1,68 @@
+.autocomplete {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--autocomplete-bg);
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    max-height: 300px;
+    padding: 5px;
+    z-index: 1000;
+    width: 100%;
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.075s ease-out, transform 0.075s ease-out;
+    visibility: hidden;
+    pointer-events: none;
+}
+.autocomplete.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+}
+.autocomplete.hiding {
+    opacity: 0;
+    transform: translateY(10px);
+}
+.autocomplete * {
+    user-select: none;
+}
+.autocomplete .header {
+    background: var(--autocomplete-bg);
+    position: sticky;
+    top: 0;
+    font-size: 12px;
+    color: var(--header-secondary);
+    font-weight: bold;
+    font-variant: small-caps;
+    text-transform: uppercase;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.24px;
+    padding: 5px;
+    z-index: 10;
+    padding-top: 5px;
+}
+.suggestion-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--interactive-active);
+}
+.suggestion-item:hover { background: var(--background-modifier-hover); }
+.suggestion-item.selected { background: var(--background-modifier-active); }
+.suggestion-item .description {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-left: 10px;
+    white-space: nowrap;
+}
+.separator {
+    height: 8px;
+    margin: 4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}

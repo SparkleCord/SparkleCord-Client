@@ -1,0 +1,51 @@
+.hover-buttons {
+    position: absolute;
+    right: 1%;
+    display: flex;
+    gap: 4px;
+    border-radius: 4px;
+    opacity: 0;
+    padding: 2px;
+    visibility: hidden;
+    pointer-events: none;
+    scale: 1.13;
+}
+.message:hover .hover-buttons {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    background-color: var(--background-tertiary);
+    box-shadow: var(--shadow-low);
+}
+
+.hover-btn {
+    border: none;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    background-color: var(--background-tertiary);
+    color: var(--interactive-normal);
+}
+.hover-btn svg {
+    width: 20px;
+    height: 20px;
+    scale: 1.5;
+}
+.hover-btn:hover {
+    color: var(--interactive-hover);
+    background: var(--background-modifier-hover);
+}
+.hover-btn.danger {
+    color: var(--status-danger);
+}
+.hover-btn.danger:hover {
+    color: var(--red-400);
+    background: var(--background-modifier-hover);
+}
+.hover-btn:hover svg {
+    transform: scale(1.13);
+}

@@ -1,0 +1,248 @@
+/* Messages */
+#messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#messages .message { /* All Messages */
+    margin-bottom: 16px;
+    padding-left: 10px;
+    display: flex;
+    align-items: flex-start;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    color: var(--text-normal);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    position: relative;
+    transition: background var(--reply-highlight-fade-time) ease-out, border-left var(--reply-highlight-fade-time) ease-out;
+}
+#messages .message .profile-pic { /* Author's Profile Picture */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+    cursor: default;
+    user-select: none;
+}
+#messages .message .author { /* Author Name */
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.375rem;
+    color: var(--header-primary);
+    display: inline;
+    vertical-align: baseline;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+#messages .timestamp { /* Timestamp */
+    display: inline-block;
+    margin-left: 4px;
+    cursor: default;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    height: 16px; line-height: 16px;
+}
+#messages .message-group .grouped .message-background {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+#messages .message-group .grouped .timestamp { /* Grouped Message Timestamp */
+    margin-left: -6.95px;
+    height: auto;
+    line-height: normal;
+    display: none;
+}
+#messages .message-group .grouped:hover .timestamp { /* Grouped Message Timestamp on hover */
+    display: flex;
+    align-self: center;
+}
+#messages .message .message-content { /* Message Content */
+    display: flex;
+    flex-direction: column;
+}
+#messages .message-group .grouped .message-content { /* Grouped Message Content */
+    padding-left: 48px;
+    position: relative;
+}
+#messages .message-group .grouped:hover .message-content { /* Grouped Message Content on hover */
+    padding-left: 0px;
+}
+#messages .message.replying, #messages .message.eph, 
+#messages .reply-thread.replying, #messages .reply-thread.eph, #messages .reply-thread.replying.mention { /* Replying To / Ephemeral */
+    background: var(--background-message-highlight);
+    border-left: 2px solid var(--brand-500);
+}
+#messages .reply-thread.mention .message.mention {
+    background: transparent;
+    border-left: transparent;
+}
+.message.highlight { /* Temporary Jump Highlight */
+    transition: background var(--reply-highlight-fade-time) linear, border-left var(--reply-highlight-fade-time) linear;
+    background: var(--background-message-highlight) !important;
+    border-left: 2px solid var(--brand-500) !important;
+}
+#messages .message.mention, #messages .reply-thread.mention { /* Non-Grouped Mention Message */
+    background-color: var(--background-mentioned);
+    border-left: 2px solid var(--info-warning-foreground);
+}
+#messages .message-group .grouped { /* Grouped Message */
+    margin-top: -16px;
+}
+#messages .message .content { /* Ensuring long words wrap */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+/* Special message stuff */
+#messages .message .shieldTextAutomod { /* main automod message container, contains all of the below elements up until .ephemeral */
+    line-height: var(--chat-markup-line-height);
+    white-space: break-spaces;
+    word-wrap: break-word;
+    color: var(--text-normal);
+    user-select: text;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    font-size: 100%;
+    vertical-align: baseline;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 8px;
+    gap: 4px;
+}
+#messages .message .shieldContainer { /* shield container */
+    line-height: var(--chat-markup-line-height);
+    white-space: break-spaces;
+    word-wrap: break-word;
+    color: var(--text-normal);
+    user-select: text;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    font-size: 100%;
+    vertical-align: baseline;
+    flex: 0;
+}
+#messages .message .shield { /* The actual shield icon */
+    line-height: var(--chat-markup-line-height);
+    white-space: break-spaces;
+    word-wrap: break-word;
+    user-select: text;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    font-size: 100%;
+    width: 16;
+    height: 16;
+    fill: none;
+    color: var(--text-danger);
+}
+#messages .message .automodTextContainer { /* container that contains and aligns the block message correctly*/
+    line-height: var(--chat-markup-line-height);
+    white-space: break-spaces;
+    word-wrap: break-word;
+    color: var(--text-normal);
+    user-select: text;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    font-size: 100%;
+    vertical-align: baseline;
+    flex: 1;
+}
+#messages .message .automodText { /* block message */
+    white-space: break-spaces;
+    word-wrap: break-word;
+    user-select: text;
+    font-style: inherit;
+    vertical-align: baseline;
+    font-family: var(--font-primary);
+    font-size: 14px;
+    line-height: 1.2857142857142858;
+    font-weight: 400;
+    color: var(--interactive-normal);
+}
+#messages .message.error { /* Error / Caught by Automod */
+    background: var(--background-message-automod);
+    border-left: 2px solid var(--text-danger);
+}
+.ephemeral {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    align-items: center;
+}
+.message.grouped.eph .ephemeral {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    align-items: center;
+    position: relative;
+}
+.eyecon {
+    margin-right: 4px;
+    vertical-align: text-bottom;
+}
+.error .icon {
+    color: var(--status-danger);
+    display: block;
+    margin-right: 8px;
+}
+.error {
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+}
+.message.grouped .error .icon {
+    color: var(--status-danger);
+    display: block;
+    margin-right: 8px;
+}
+.message.grouped .error {
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 50px;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    #messages .message { /* All Messages */
+        font-size: 12px;
+    }
+    #messages .message .profile-pic { /* Author's Profile Picture */
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 8px;
+        flex-shrink: 0;
+        cursor: default;
+        user-select: none;
+    }
+    #messages .message .author { /* Author Name */
+        font-size: 12px;
+    }
+    #messages .timestamp { /* Timestamp */
+        font-size: 10px;
+        margin-left: 2px;
+    }
+    #messages .message-group .grouped .message-content { /* Grouped Message Content */
+        padding-left: 38px;
+    }
+}

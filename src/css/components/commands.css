@@ -1,0 +1,44 @@
+.namebadge {
+    white-space: nowrap;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    font-size: .625rem;
+    text-transform: uppercase;
+    vertical-align: top;
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-brand);
+    color: var(--white-2);
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 3.5px;
+    flex: 0 0 auto;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 4px;
+    user-select: none;
+}
+.namebadge .verified {
+    white-space: nowrap;
+    color: var(--white-2);
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: -2px;
+}
+.namebadge .text {
+    text-transform: uppercase;
+    color: var(--white-2);
+    font-style: inherit;
+    font-family: inherit;
+    position: relative;
+    font-weight: 600;
+    vertical-align: top;
+    font-size: 12px;
+    line-height: 16px;
+}
+.reply-container .namebadge {
+    height: 13px;
+    margin: 0px -2px;
+}

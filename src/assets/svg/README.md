@@ -1,0 +1,2 @@
+# These SVG files are purely for archival purposes and will not ever be officially used again due to the switch to inline SVG.
+## One notable exception is the "File" folder, where the SVGs there are still used for files.
