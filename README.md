@@ -1,7 +1,7 @@
 ## Legal Warning ⚠  
 The code and logic in this project are completely custom-made, and any use of Discord's branding and styles is purely for demonstration purposes. This project is a proof of concept and is not intended to compete with or replace Discord's platform. It is your choice if you want to use it or not.  
 # SparkleCord Client ✨  
-Your offline-first chat app that prioritizes your privacy. ~~No servers required (unless you want them).~~  
+Your offline-first chat app that prioritizes your privacy. No servers required. (unless you want them).
 ## 🤝 We Welcome Contributors!
 Got ideas, found a bug, or just wanna help out? We’d love to have you!  
 Check out [CONTRIBUTING.md](./CONTRIBUTING.md) to get started and help shape SparkleCord ✨
