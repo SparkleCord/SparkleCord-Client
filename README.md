@@ -1,5 +1,24 @@
-# Legal Warning ⚠  
-The code and logic in this project are completely custom-made, and any use of Discord's branding and styles is purely for demonstration purposes. This project is a proof of concept and is not intended to compete with or replace Discord's platform. It is your choice if you want to use it or not.  
+# ⚠ LEGAL WARNING ⚠  
+SparkleCord's code and logic are completely custom-made (*unless explicitly stated otherwise*). Any use of Discord’s branding or styles is purely for **demonstration**. This project is **not** meant to compete with or replace Discord. Whether you use it or not is entirely your choice — we will *never* force it on anyone.
+### ⚖ SparkleCord Acceptable Use Terms (SAUT) | By using SparkleCord, you agree to these terms:
+1. **Not Discord.** - SparkleCord is fan-made. It’s not official, affiliated, or endorsed by Discord. And it never will be.
+2. **No Staff Impersonation.** - Pretending to be Discord or server staff using SparkleCord is **not allowed**.
+3. **No Misleading Tricks.** - Fake messages, features, or screenshots meant to deceive = not cool.
+4. **API Use Is on You.** - SparkleCord doesn’t use Discord’s API. If you make a plugin/client mod that does, it’s unofficial and risky. Know what you’re doing. If you abuse it, **Discord will handle you**, not us.
+5. **No Selling SparkleCord.** - You can’t sell it, reskin it for profit, or monetize it in any way.
+6. **Still Under Discord’s ToS.** - Using SparkleCord to interact with Discord? You’re still bound by **Discord’s ToS**. Break them, face their consequences.
+7. **Use Common Sense.** - If you're asking “can I do this?” the answer’s probably “no.” Just don’t be sketchy.
+### ❗ Breaking rules may lead to the following consequences:
+- **Discord punishments** if you misuse their API through plugins, client mods, etc. That’s on you.
+- **Bans from SparkleCord support spaces** if you break serious rules (e.g. impersonation or harassment).
+- **Trust revoked** — your instance/name may be flagged as untrustworthy.
+- **Other necessary actions** to protect SparkleCord and its users.
+  
+Use SparkleCord responsibly and just have fun :D
+
+---
+> Can't download or use SparkleCord offline, or just don't want to? No worries! We have a [web demo](https://sparklecord.github.io/app).
+---
 ## SparkleCord Client ✨
 Your offline-first chat app that prioritizes your privacy. No servers required. (unless you want them).
 ## We Welcome Contributors!
