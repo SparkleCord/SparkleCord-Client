@@ -27,7 +27,7 @@ function createAttachmentPreview(file) {
     });
     nameInput.addEventListener('change', () => { const attachment = currentAttachments.find(a =>a.id === attachmentId); if (attachment) attachment.name = nameInput.value; });
     attachmentDiv.appendChild(nameInput);
-    document.getElementById('message-input').appendChild(attachmentDiv);
+    $('message-input').appendChild(attachmentDiv);
     updateSendButtonColor({ attachments: currentAttachments });
 }
 function handleFileAttachment() {

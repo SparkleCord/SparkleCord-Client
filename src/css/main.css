@@ -1,5 +1,9 @@
 @import 'base/variables-dark.css'; @import 'base/variables-light.css'; @import 'base/variables-darker.css'; @import 'base/variables-midnight.css'; 
+
 @import 'base/variables-dark-refresh.css'; @import 'base/variables-light-refresh.css'; @import 'base/variables-darker-refresh.css'; @import 'base/variables-midnight-refresh.css'; 
+
+@import 'base/variables-gradients.css';
+
 
 @import 'base/fonts.css';
 @import 'base/reset.css';
@@ -21,3 +25,5 @@
 @import 'components/emoji.css';
 @import 'components/settings.css';
 @import 'components/input.css';
+
+@import '12633.4b47d0f658ccba94.css'; /* DISCORD'S ACTUAL STYLES FOR MAXIMUM COMPATIBILITY */

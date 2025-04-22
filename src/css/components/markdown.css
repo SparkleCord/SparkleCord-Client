@@ -87,7 +87,7 @@ code, pre {
     display: inline-block;
     background: var(--background-secondary);
     border: 1px solid var(--background-tertiary);
-    font-family: var(--font-code) !important;
+    font-family: var(--font-code);
     border-radius: 4px;
     font-size: 0.875rem;
     line-height: 1.125rem;
@@ -185,7 +185,7 @@ pre code {
 }
 .ping:hover { /* Ping Content Hover */
     background-color: var(--brand-500);
-    color: var(--white-2);
+    color: var(--white-500);
 }
 /* lists */
 ol, ul {
@@ -201,3 +201,37 @@ li {
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+
+/* DISCORD'S LIST STYLES
+li {
+    white-space: break-spaces;
+}
+
+ol,
+ul {
+    margin: 4px 0 0 -16px;
+    list-style-position: outside;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style-type: decimal;
+    margin-left: -24px;
+}
+
+ol ul,
+ul ul {
+    list-style-type: circle;
+    margin-bottom: 0;
+}
+
+ol ol,
+ul ol {
+    margin-bottom: 0;
+} 
+*/

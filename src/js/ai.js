@@ -22,7 +22,7 @@ SparkleCord supports only Discord emojis.`;
 async function getResponse(input) {
     if (JSON.parse(localStorage.getItem('sparkly-huggingface-enabled'))) { 
         try {
-            let updatedSystemMessage = systemMessage + `\nProfile Info of message sender:\nUser ID: ${profile.id}\nNickname: ${profile.name}\nUsername: ${profile.username}\nStatus: ${profile.status}`;
+            let updatedSystemMessage = systemMessage + `\nProfile Info of message sender:\nUser ID: ${humans.self.id}\nNickname: ${humans.self.name}\nUsername: ${humans.self.username}\nStatus: ${humans.self.status}`;
             let apiKey = localStorage.getItem("hf_apikey");
             if (!apiKey) return "No API Key Provided, Please go to AI Settings and provide one.";
             let model = localStorage.getItem("hf_model");

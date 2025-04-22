@@ -49,7 +49,7 @@ function generateSnowflake(date) {
     return (timestamp << 22n) | random;
 }
 // Scroll to Bottom
-function scrollToBottom() { const messagesContainer = document.getElementById("messages"); messagesContainer.scrollTop = messagesContainer.scrollHeight; }
+function scrollToBottom() { const messagesContainer = $("messages"); messagesContainer.scrollTop = messagesContainer.scrollHeight; }
 // highlight syntax
 function applyHighlighting(messageElement) {
     const codeBlocks = messageElement.querySelectorAll('pre code');
