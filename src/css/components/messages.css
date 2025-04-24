@@ -44,6 +44,10 @@
     flex-shrink: 0;
     cursor: pointer;
 }
+.desaturate-user-colors .message .author {
+    filter: saturate(var(--saturation-factor, 1)) contrast(var(--contrast, 1)) brightness(var(--brightness, 1));
+}
+
 #messages .timestamp { /* Timestamp */
     display: inline-block;
     margin-left: 4px;
@@ -59,8 +63,23 @@
     align-items: center;
     gap: 4px;
 }
+
 #messages .message-group .grouped .timestamp { /* Grouped Message Timestamp */
-    margin-left: -6.95px;
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: .6875rem;
+    line-height: 1.375rem;
+    margin-left: -6px;
+    margin-right: -6px;
+    
+    height: 1.375rem;
+    line-height: 1.375rem;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    width: 56px;
+    z-index: 1;
+
     height: auto;
     line-height: normal;
     display: none;
@@ -69,6 +88,7 @@
     display: flex;
     align-self: center;
 }
+
 #messages .message .message-content { /* Message Content */
     display: flex;
     flex-direction: column;
@@ -89,22 +109,23 @@
     background: transparent;
     border-left: transparent;
 }
-.message.highlight { /* Temporary Jump Highlight */
+.message.highlight.highlight { /* Temporary Jump Highlight */
     transition: background var(--reply-highlight-fade-time) linear, border-left var(--reply-highlight-fade-time) linear;
-    background: var(--background-message-highlight) !important;
-    border-left: 2px solid var(--brand-500) !important;
+    background: var(--background-message-highlight);
+    border-left: 2px solid var(--brand-500);
 }
 #messages .message.mention, #messages .reply-thread.mention { /* Non-Grouped Mention Message */
     background-color: var(--background-mentioned);
     border-left: 2px solid var(--info-warning-foreground);
 }
 #messages .message-group .grouped { /* Grouped Message */
-    margin-top: -16px;
+    margin-top: -10.5px;
 }
 #messages .message .content { /* Ensuring long words wrap */
     word-wrap: break-word;
     overflow-wrap: break-word;
     word-break: break-word;
+    margin-top: 2.3px;
 }
 /* Special message stuff */
 #messages .message .shieldTextAutomod { /* main automod message container, contains all of the below elements up until .ephemeral */
@@ -244,5 +265,9 @@
     }
     #messages .message-group .grouped .message-content { /* Grouped Message Content */
         padding-left: 38px;
+    }
+    #messages .message-group .grouped .timestamp {
+        margin-left: -10px;
+        margin-right: -10px;
     }
 }

@@ -30,14 +30,14 @@ class MessageHoverButtons {
                             let container = msg.querySelector(`#hover-${msg.getAttribute("data-id")}`), items = container.querySelectorAll(".hover-btn");
                             items.forEach(item => {
                                 if (item.getAttribute("data-self") === "true") {
-                                    if (profile.id.toString() !== msg.getAttribute("data-userid")) item.style.display = "none"; else item.removeAttribute("style");
+                                    if (humans.self.id.toString() !== msg.getAttribute("data-userid")) item.style.display = "none"; else item.removeAttribute("style");
                                 }
                             });
                         }
                     });
                 });                
             });
-        }).observe(document.getElementById("messages"), { childList: true, subtree: true });
+        }).observe($("messages"), { childList: true, subtree: true });
 
         document.addEventListener("keydown", e => { if (e.key === "Shift" && !this.shiftPressed) this.toggleShift(true); });
         document.addEventListener("keyup", e => { if (e.key === "Shift") this.toggleShift(false); });
@@ -52,7 +52,7 @@ class MessageHoverButtons {
             container.innerHTML = "";
             (state ? this.hoverButtonsShift : this.hoverButtons).forEach((item) => {
                 const btn = this.createHoverButton(item.id, item.icon, (e) => item.action(msg, e), item.destructive, item.selfOnly);
-                if (item.selfOnly && profile.id.toString() !== msg.getAttribute("data-userid")) btn.style.display = "none";
+                if (item.selfOnly && humans.self.id.toString() !== msg.getAttribute("data-userid")) btn.style.display = "none";
                 container.appendChild(btn);
             });
         });

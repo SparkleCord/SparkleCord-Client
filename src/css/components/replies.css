@@ -111,8 +111,6 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    animation: none !important;
-    transition: none !important;
     color: var(--header-secondary);
     margin-left: 240px;
     cursor: pointer;
@@ -138,8 +136,6 @@
     cursor: pointer;
     line-height: 0;
     padding: 8px 0px 8px 16px;
-    animation: none !important;
-    transition: none !important;
 }
 #close-reply svg {
     text-indent: 0;
@@ -151,8 +147,6 @@
     fill: none;
     width: 16px;
     height: 16px;
-    animation: none !important;
-    transition: none !important;
 }
 #close-reply:hover {
     color: var(--interactive-hover);
@@ -173,8 +167,6 @@
     cursor: pointer;
     text-transform: uppercase;
     padding: 8px 12px;
-    animation: none !important;
-    transition: none !important;
     color: var(--text-link);
     background: none;
 }

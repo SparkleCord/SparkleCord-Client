@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="./css/main.css">  <!-- Main CSS file to import the rest -->
     <link rel="icon" type="image/png" href="./assets/icons/icon.png">  <!-- 512x512 Icon -->
               <!-- Scripts that DO include light mode support -->
+    <script src="./js/engine.js"></script>                      <!-- IMPORTANT LOGIC FOR OTHER STUFF, PLEASE DO NOT REMOVE. -->
+
+                                    <!-- Plugin Imports -->
+                           <script src="./js/plugins/SparkleHook.js"></script>
+                                    <!-- End of Plugins -->
+
+    <script src="./js/plugins/plugins.js"></script>                     <!-- Main Plugin Handling -->
+
     <script src="./js/compatibility/css-vars-ponyfill.min.js"></script> <!-- Add support for css variables on older devices -->
     <script src="./js/variables.js"></script>                   <!-- Global variables -->
     <script src="./js/keybinds.js"></script>                    <!-- Keybinds -->
@@ -22,18 +30,13 @@
     <script src="./js/ai.js"></script>                          <!-- Sparkly AI -->
     <script src="./js/autocomplete.js"></script>                <!-- Autocomplete suggestions, experimental -->
     <script src="./js/attachments.js"></script>                 <!-- Attachment handling -->
-    <script src="./js/messages.js"></script>                    <!-- Message handling -->
     <script src="./js/context-menu.js"></script>                <!-- Context menu -->
+    <script src="./js/messages.js"></script>                    <!-- Message handling -->
     <script src="./js/hover-menu.js"></script>                  <!-- Hover menu -->
     <script src="./js/settings.js"></script>                    <!-- Settings -->
     <script src="./js/script.js"></script>                      <!-- Main script -->
+
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            if (document.documentElement.classList.contains("theme-light")) {
-                const spinner = document.getElementById("spinner");
-                spinner.src = `./assets/loading/Discord-Light.gif`;
-            }
-        })
         function rand2(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }
         const PROBLEMS_TIME = rand2(1000, 2000);
         function showProblems() { 
@@ -42,19 +45,26 @@
         }
         setTimeout(showProblems, PROBLEMS_TIME);
    </script>
-   <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self' data: blob:;
-        connect-src 'self' https://api-inference.huggingface.co/ data: blob:;
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;
-        style-src 'self' 'unsafe-inline' https: data: blob:;
-        img-src 'self' data: blob:;
-        font-src 'self' data: blob:;
-        object-src 'none';
-        base-uri 'none';
-    ">
-
-    <style id="clientThemeVars"></style>
     <style id="clientThemeOffsets">
+        .theme-light.customColors {
+            --primary-100-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 30.20%);
+            --primary-130-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 28.04%);
+            --primary-160-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 25.49%);
+            --primary-200-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 22.55%);
+            --primary-230-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 19.61%);
+            --primary-260-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 16.27%);
+            --primary-300-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 11.37%);
+            --primary-330-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 5.88%);
+            --primary-345-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 0.00%);
+            --primary-360-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 6.27%);
+            --primary-400-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 14.51%);
+            --primary-430-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 22.55%);
+            --primary-460-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 29.41%);
+            --primary-500-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 34.90%);
+            --primary-530-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 40.20%);
+            --primary-560-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 43.92%);
+        }
+
         .theme-dark.customColors {
             --primary-500-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 11.96%);
             --primary-530-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 6.67%);
@@ -71,6 +81,7 @@
             --primary-860-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 18.04%);
             --primary-900-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 19.80%);
         }
+
         .visual-refresh.theme-light.customColors {
             --neutral-1-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 1.57%);
             --neutral-2-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 0.00%);
@@ -82,89 +93,89 @@
             --neutral-8-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 8.82%);
             --neutral-9-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 10.39%);
             --neutral-10-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 11.76%);
-            --neutral-11-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 13.33%);
-            --neutral-12-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 14.90%);
+            --neutral-11-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 13.14%);
+            --neutral-12-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 14.71%);
             --neutral-13-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 16.08%);
             --neutral-14-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 17.65%);
             --neutral-15-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 19.02%);
-            --neutral-16-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 20.59%);
-            --neutral-17-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 21.96%);
-            --neutral-18-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 23.53%);
+            --neutral-16-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 20.39%);
+            --neutral-17-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 21.76%);
+            --neutral-18-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 23.33%);
             --neutral-19-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 24.71%);
             --neutral-20-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 26.27%);
-            --neutral-21-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 27.65%);
-            --neutral-22-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 29.22%);
+            --neutral-21-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 27.45%);
+            --neutral-22-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 29.02%);
             --neutral-23-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 30.39%);
-            --neutral-24-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 31.96%);
-            --neutral-25-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 33.33%);
+            --neutral-24-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 31.76%);
+            --neutral-25-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 33.14%);
             --neutral-26-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 34.71%);
-            --neutral-27-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 36.08%);
-            --neutral-28-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 37.65%);
+            --neutral-27-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 35.88%);
+            --neutral-28-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 37.45%);
             --neutral-29-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 38.82%);
-            --neutral-30-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 40.20%);
-            --neutral-31-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 41.76%);
-            --neutral-32-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 42.94%);
-            --neutral-33-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 44.51%);
-            --neutral-34-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 45.69%);
-            --neutral-35-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 47.06%);
-            --neutral-36-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 48.43%);
-            --neutral-37-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 49.80%);
-            --neutral-38-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 50.98%);
-            --neutral-39-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 52.55%);
-            --neutral-40-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 53.72%);
+            --neutral-30-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 40.00%);
+            --neutral-31-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 41.57%);
+            --neutral-32-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 42.74%);
+            --neutral-33-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 44.31%);
+            --neutral-34-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 45.49%);
+            --neutral-35-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 46.86%);
+            --neutral-36-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 48.23%);
+            --neutral-37-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 49.61%);
+            --neutral-38-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 50.78%);
+            --neutral-39-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 52.35%);
+            --neutral-40-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 53.53%);
             --neutral-41-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 54.90%);
-            --neutral-42-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 56.27%);
-            --neutral-43-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 57.65%);
-            --neutral-44-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 59.02%);
-            --neutral-45-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 60.20%);
-            --neutral-46-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 61.37%);
-            --neutral-47-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 62.94%);
-            --neutral-48-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 64.12%);
-            --neutral-49-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 65.29%);
-            --neutral-50-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 65.29%);
-            --neutral-51-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 66.08%);
-            --neutral-52-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 66.67%);
-            --neutral-53-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 67.25%);
-            --neutral-54-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 67.84%);
-            --neutral-55-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 68.63%);
+            --neutral-42-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 56.08%);
+            --neutral-43-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 57.45%);
+            --neutral-44-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 58.82%);
+            --neutral-45-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 60.00%);
+            --neutral-46-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 61.18%);
+            --neutral-47-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 62.74%);
+            --neutral-48-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 63.92%);
+            --neutral-49-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 65.10%);
+            --neutral-50-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 65.10%);
+            --neutral-51-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 65.88%);
+            --neutral-52-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 66.47%);
+            --neutral-53-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 67.06%);
+            --neutral-54-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 67.65%);
+            --neutral-55-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 68.43%);
             --neutral-56-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 69.22%);
-            --neutral-57-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 70.00%);
+            --neutral-57-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 69.80%);
             --neutral-58-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 70.39%);
-            --neutral-59-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 71.18%);
-            --neutral-60-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 71.96%);
-            --neutral-61-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 72.55%);
-            --neutral-62-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 73.14%);
-            --neutral-63-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 73.72%);
-            --neutral-64-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 74.51%);
-            --neutral-65-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 74.90%);
-            --neutral-66-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 75.69%);
-            --neutral-67-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 76.27%);
+            --neutral-59-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 70.98%);
+            --neutral-60-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 71.76%);
+            --neutral-61-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 72.35%);
+            --neutral-62-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 72.94%);
+            --neutral-63-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 73.53%);
+            --neutral-64-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 74.31%);
+            --neutral-65-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 74.71%);
+            --neutral-66-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 75.49%);
+            --neutral-67-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 76.08%);
             --neutral-68-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 76.86%);
-            --neutral-69-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 77.45%);
+            --neutral-69-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 77.25%);
             --neutral-70-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 78.04%);
-            --neutral-71-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 78.82%);
+            --neutral-71-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 78.63%);
             --neutral-72-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 79.22%);
-            --neutral-73-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 80.00%);
+            --neutral-73-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 79.80%);
             --neutral-74-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 80.39%);
-            --neutral-75-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 81.18%);
+            --neutral-75-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 80.98%);
             --neutral-76-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 81.76%);
             --neutral-77-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 82.16%);
-            --neutral-78-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 82.94%);
+            --neutral-78-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 82.75%);
             --neutral-79-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 83.33%);
-            --neutral-80-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 84.12%);
+            --neutral-80-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 83.92%);
             --neutral-81-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 84.71%);
             --neutral-82-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 85.10%);
-            --neutral-83-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 85.88%);
+            --neutral-83-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 85.69%);
             --neutral-84-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 86.27%);
-            --neutral-85-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 87.06%);
+            --neutral-85-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 86.86%);
             --neutral-86-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 87.45%);
             --neutral-87-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 88.04%);
-            --neutral-88-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 88.63%);
+            --neutral-88-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 88.43%);
             --neutral-89-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 89.22%);
             --neutral-90-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 89.61%);
             --neutral-91-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 90.39%);
             --neutral-92-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 90.98%);
-            --neutral-93-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 91.57%);
+            --neutral-93-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 91.76%);
             --neutral-94-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 92.55%);
             --neutral-95-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 93.33%);
             --neutral-96-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 94.12%);
@@ -173,48 +184,49 @@
             --neutral-99-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 97.45%);
             --neutral-100-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 98.43%);
         }
+
         .visual-refresh.theme-dark.customColors {
-            --neutral-1-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 79.02%);
-            --neutral-2-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 77.45%);
-            --neutral-3-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 76.08%);
-            --neutral-4-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 74.51%);
-            --neutral-5-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 72.94%);
-            --neutral-6-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 71.57%);
-            --neutral-7-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 70.00%);
-            --neutral-8-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 68.63%);
-            --neutral-9-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 67.06%);
-            --neutral-10-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 65.69%);
+            --neutral-1-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 78.82%);
+            --neutral-2-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 77.25%);
+            --neutral-3-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 75.88%);
+            --neutral-4-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 74.31%);
+            --neutral-5-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 72.75%);
+            --neutral-6-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 71.37%);
+            --neutral-7-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 69.80%);
+            --neutral-8-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 68.43%);
+            --neutral-9-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 66.86%);
+            --neutral-10-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 65.49%);
             --neutral-11-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 64.12%);
             --neutral-12-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 62.55%);
-            --neutral-13-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 61.37%);
-            --neutral-14-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 59.80%);
-            --neutral-15-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 58.43%);
+            --neutral-13-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 61.18%);
+            --neutral-14-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 59.61%);
+            --neutral-15-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 58.24%);
             --neutral-16-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 56.86%);
             --neutral-17-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 55.49%);
             --neutral-18-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 53.92%);
-            --neutral-19-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 52.74%);
-            --neutral-20-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 51.18%);
+            --neutral-19-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 52.55%);
+            --neutral-20-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 50.98%);
             --neutral-21-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 49.80%);
             --neutral-22-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 48.24%);
-            --neutral-23-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 47.06%);
+            --neutral-23-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 46.86%);
             --neutral-24-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 45.49%);
             --neutral-25-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 44.12%);
-            --neutral-26-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 42.75%);
+            --neutral-26-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 42.55%);
             --neutral-27-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 41.37%);
             --neutral-28-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 39.80%);
-            --neutral-29-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 38.63%);
+            --neutral-29-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 38.43%);
             --neutral-30-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 37.25%);
             --neutral-31-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 35.69%);
             --neutral-32-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 34.51%);
             --neutral-33-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 32.94%);
-            --neutral-34-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 31.76%);
+            --neutral-34-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 31.77%);
             --neutral-35-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 30.39%);
             --neutral-36-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 29.02%);
             --neutral-37-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 27.65%);
             --neutral-38-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 26.47%);
             --neutral-39-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 24.90%);
             --neutral-40-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 23.73%);
-            --neutral-41-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 22.55%);
+            --neutral-41-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 22.35%);
             --neutral-42-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 21.18%);
             --neutral-43-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 19.80%);
             --neutral-44-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 18.43%);
@@ -229,10 +241,10 @@
             --neutral-53-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 10.20%);
             --neutral-54-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 9.61%);
             --neutral-55-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 8.82%);
-            --neutral-56-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 8.24%);
+            --neutral-56-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 8.04%);
             --neutral-57-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 7.45%);
-            --neutral-58-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 7.06%);
-            --neutral-59-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 6.27%);
+            --neutral-58-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 6.86%);
+            --neutral-59-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 6.28%);
             --neutral-60-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 5.49%);
             --neutral-61-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 4.90%);
             --neutral-62-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 4.31%);
@@ -241,41 +253,253 @@
             --neutral-65-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 2.55%);
             --neutral-66-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 1.77%);
             --neutral-67-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 1.18%);
-            --neutral-68-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 0.59%);
+            --neutral-68-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 0.39%);
             --neutral-69-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) + 0.00%);
-            --neutral-70-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 0.59%);
+            --neutral-70-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 0.78%);
             --neutral-71-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 1.37%);
-            --neutral-72-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 1.76%);
+            --neutral-72-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 1.96%);
             --neutral-73-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 2.55%);
-            --neutral-74-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 2.94%);
-            --neutral-75-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 3.73%);
-            --neutral-76-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 4.31%);
-            --neutral-77-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 4.71%);
+            --neutral-74-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 3.14%);
+            --neutral-75-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 3.72%);
+            --neutral-76-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 4.51%);
+            --neutral-77-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 4.90%);
             --neutral-78-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 5.49%);
-            --neutral-79-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 5.88%);
+            --neutral-79-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 6.08%);
             --neutral-80-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 6.67%);
-            --neutral-81-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 7.26%);
-            --neutral-82-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 7.65%);
+            --neutral-81-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 7.45%);
+            --neutral-82-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 7.84%);
             --neutral-83-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 8.43%);
-            --neutral-84-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 8.82%);
+            --neutral-84-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 9.02%);
             --neutral-85-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 9.61%);
-            --neutral-86-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 10.00%);
-            --neutral-87-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 10.59%);
+            --neutral-86-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 10.20%);
+            --neutral-87-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 10.78%);
             --neutral-88-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 11.18%);
-            --neutral-89-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 11.76%);
-            --neutral-90-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 12.16%);
-            --neutral-91-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 12.94%);
-            --neutral-92-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 13.53%);
-            --neutral-93-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 14.12%);
-            --neutral-94-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 15.10%);
-            --neutral-95-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 15.88%);
-            --neutral-96-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 16.67%);
-            --neutral-97-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 17.84%);
-            --neutral-98-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 18.82%);
-            --neutral-99-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 20.00%);
-            --neutral-100-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 20.98%);
+            --neutral-89-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 11.96%);
+            --neutral-90-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 12.35%);
+            --neutral-91-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 13.14%);
+            --neutral-92-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 13.72%);
+            --neutral-93-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 14.51%);
+            --neutral-94-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 15.29%);
+            --neutral-95-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 16.08%);
+            --neutral-96-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 16.86%);
+            --neutral-97-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 18.04%);
+            --neutral-98-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 19.02%);
+            --neutral-99-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 20.20%);
+            --neutral-100-hsl: var(--theme-h) var(--theme-s) calc(var(--theme-l) - 21.18%);
         }
     </style>
+
+    <style id="vencord-css-core">
+     .vc-plugins-grid {
+        margin-top: 16px;
+        display: grid;
+        grid-gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+     }
+     
+     .vc-plugins-grid button[role="switch"] {
+        height: 24px;
+        width: 24px;
+        padding: 0;
+        background: transparent;
+        margin-right: 8px;
+        border: none;
+     }
+     
+     .plugins-info-icon:hover {
+        color: var(--interactive-hover)
+     }
+     
+     .plugins-info-icon:not(:hover, :focus) {
+        color: var(--text-muted)
+     }
+     
+     .vc-addon-card {
+        background-color: var(--background-secondary-alt);
+        color: var(--interactive-active);
+        border-radius: 8px;
+        display: block;
+        height: 100%;
+        padding: 12px;
+        width: 100%;
+        transition: 0.1s ease-out;
+        transition-property: box-shadow, transform, background, opacity;
+        box-sizing: border-box;
+     }
+     
+     .visual-refresh .vc-addon-card {
+        background-color: var(--card-primary-bg);
+        border: 1px solid var(--border-subtle);
+     }
+     
+     .vc-addon-card.disabled {
+        opacity: 0.6;
+     }
+     
+     .vc-addon-card:hover {
+        background-color: var(--background-tertiary);
+        transform: translateY(-1px);
+        box-shadow: var(--elevation-high);
+     }
+     
+     .visual-refresh .vc-addon-card:hover {
+        background-color: var(--card-primary-bg);
+     }
+     
+     .vc-addon-header {
+        margin-top: auto;
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: .5em;
+
+        user-select: none;
+        border: 0;
+        font-style: inherit;
+        margin: 0;
+        padding: 0;
+        vertical-align: baseline;
+        outline: 0;
+        color: var(--text-normal);
+        font-family: var(--font-primary);
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.25;
+        box-sizing: border-box;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        flex-grow: 1;
+        gap: 8px;
+     }
+     
+     .vc-addon-note {
+        height: 46px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        box-orient: vertical;
+        user-select: none;
+        border: 0;
+        font-style: inherit;
+        margin: 8px 0 0 0;
+        padding: 0;
+        vertical-align: baseline;
+        outline: 0;
+        color: var(--text-normal);
+        font-family: var(--font-primary);
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.2857142857142858;
+        box-sizing: border-box;
+        height: 36px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+     }
+     
+     .vc-addon-name-author {
+        width: 100%
+     }
+     
+     .vc-addon-name {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        flex-grow: 1;
+        gap: 8px
+     }
+     
+     .vc-plugins-grid label.switch.switch {
+        margin-top: -30px;
+     }
+
+     .visual-refresh-ui .vc-plugins-grid label.switch.switch {
+        margin-top: -8px;
+     }
+
+     .vc-addon-title-container {
+        width: 100%;
+        overflow: hidden;
+        height: 1.25em;
+        position: relative
+     }
+     
+     .vc-addon-title {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        text-overflow: ellipsis
+     }
+     .vc-addon-title:hover {
+        overflow: visible;
+     }
+
+     /* MODALS */
+     .opt-description {
+        user-select: none;
+        pointer-events: all;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-style: inherit;
+        font-family: inherit;
+        vertical-align: baseline;
+        outline: 0;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 400;
+        cursor: default;
+        color: var(--header-secondary);
+     }
+     div.vc-plugin-modal-info > div {
+        pointer-events: all;
+        border: 0;
+        font-family: inherit;
+        font-style: inherit;
+        font-weight: inherit;
+        margin: 0;
+        padding: 0;
+        vertical-align: baseline;
+        outline: 0;
+        color: var(--text-normal);
+        font-size: 14px;
+        line-height: 18px;
+        flex-grow: 1;
+        user-select: text;
+        cursor: initial;
+     }
+
+     .plugin-footer {
+        color: var(--text-normal);
+        line-height: 1;
+        font-family: var(--font-primary);
+        text-rendering: optimizeLegibility;
+        user-select: none;
+        pointer-events: all;
+        outline: 0;
+        flex-direction: row-reverse;
+        display: flex;
+        align-items: stretch;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        position: relative;
+        padding: var(--modal-vertical-padding) var(--modal-horizontal-padding);
+        z-index: 1;
+        overflow-x: hidden;
+        border-radius: 0 0 5px 5px;
+        background-color: var(--modal-footer-background);
+        box-shadow: inset 0 1px 0 hsl(var(--primary-100-hsl)/.6);
+        flex: 0 0 auto;
+     }
+     </style>
 </head>
 <body>
    <div id="loading-screen">
@@ -297,7 +521,7 @@
                 <img id="profile-picture">
                 <div id="user-details">
                     <span draggable="false" id="global-name"></span>
-                    <span draggable="false" id="username" onmouseout="this.textContent = profile.status" onmouseover="this.textContent = profile.username"></span>
+                    <span draggable="false" id="username" onmouseout="this.textContent = humans.self.status" onmouseover="this.textContent = humans.self.username"></span>
                 </div>
                 <button class="interactiveIcon" draggable="false" id="settings-btn"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="24" height="24" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%; transform: translate3d(0px, 0px, 0px); content-visibility: visible;"><defs><clipPath id="__lottie_element_104"><rect width="24" height="24" x="0" y="0"></rect></clipPath><clipPath id="__lottie_element_106"><path d="M0,0 L600,0 L600,600 L0,600z"></path></clipPath></defs><g clip-path="url(#__lottie_element_104)"><g clip-path="url(#__lottie_element_106)" transform="matrix(0.03999999910593033,0,0,0.03999999910593033,0,0)" opacity="1" style="display: block;"><g transform="matrix(-25,0,0,-25,300,300)" opacity="1" style="display: block;"><g opacity="1" transform="matrix(1,0,0,1,0,0)"><path fill="var(--interactive-normal)"fill-opacity="1" d=" M-1.4420000314712524,-10.906000137329102 C-1.8949999809265137,-10.847000122070312 -2.1470000743865967,-10.375 -2.078000068664551,-9.92300033569336 C-1.899999976158142,-8.756999969482422 -2.265000104904175,-7.7210001945495605 -3.061000108718872,-7.390999794006348 C-3.8570001125335693,-7.060999870300293 -4.8480000495910645,-7.534999847412109 -5.546000003814697,-8.484999656677246 C-5.816999912261963,-8.852999687194824 -6.329999923706055,-9.008999824523926 -6.691999912261963,-8.730999946594238 C-7.458000183105469,-8.142999649047852 -8.142999649047852,-7.458000183105469 -8.730999946594238,-6.691999912261963 C-9.008999824523926,-6.329999923706055 -8.852999687194824,-5.816999912261963 -8.484999656677246,-5.546000003814697 C-7.534999847412109,-4.8480000495910645 -7.060999870300293,-3.8570001125335693 -7.390999794006348,-3.061000108718872 C-7.7210001945495605,-2.265000104904175 -8.756999969482422,-1.899999976158142 -9.92300033569336,-2.078000068664551 C-10.375,-2.1470000743865967 -10.847000122070312,-1.8949999809265137 -10.906000137329102,-1.4420000314712524 C-10.968000411987305,-0.9700000286102295 -11,-0.48899999260902405 -11,0 C-11,0.48899999260902405 -10.968000411987305,0.9700000286102295 -10.906000137329102,1.4420000314712524 C-10.847000122070312,1.8949999809265137 -10.375,2.1470000743865967 -9.92300033569336,2.078000068664551 C-8.756999969482422,1.899999976158142 -7.7210001945495605,2.265000104904175 -7.390999794006348,3.061000108718872 C-7.060999870300293,3.8570001125335693 -7.534999847412109,4.8470001220703125 -8.484999656677246,5.546000003814697 C-8.852999687194824,5.816999912261963 -9.008999824523926,6.328999996185303 -8.730999946594238,6.691999912261963 C-8.142999649047852,7.458000183105469 -7.458000183105469,8.142999649047852 -6.691999912261963,8.730999946594238 C-6.329999923706055,9.008999824523926 -5.816999912261963,8.852999687194824 -5.546000003814697,8.484999656677246 C-4.8480000495910645,7.534999847412109 -3.8570001125335693,7.060999870300293 -3.061000108718872,7.390999794006348 C-2.265000104904175,7.7210001945495605 -1.899999976158142,8.756999969482422 -2.078000068664551,9.92300033569336 C-2.1470000743865967,10.375 -1.8949999809265137,10.847000122070312 -1.4420000314712524,10.906000137329102 C-0.9700000286102295,10.968000411987305 -0.48899999260902405,11 0,11 C0.48899999260902405,11 0.9700000286102295,10.968000411987305 1.4420000314712524,10.906000137329102 C1.8949999809265137,10.847000122070312 2.1470000743865967,10.375 2.078000068664551,9.92300033569336 C1.899999976158142,8.756999969482422 2.2660000324249268,7.7210001945495605 3.062000036239624,7.390999794006348 C3.8580000400543213,7.060999870300293 4.8480000495910645,7.534999847412109 5.546000003814697,8.484999656677246 C5.816999912261963,8.852999687194824 6.328999996185303,9.008999824523926 6.691999912261963,8.730999946594238 C7.458000183105469,8.142999649047852 8.142999649047852,7.458000183105469 8.730999946594238,6.691999912261963 C9.008999824523926,6.328999996185303 8.852999687194824,5.816999912261963 8.484999656677246,5.546000003814697 C7.534999847412109,4.8480000495910645 7.060999870300293,3.8570001125335693 7.390999794006348,3.061000108718872 C7.7210001945495605,2.265000104904175 8.756999969482422,1.899999976158142 9.92300033569336,2.078000068664551 C10.375,2.1470000743865967 10.847000122070312,1.8949999809265137 10.906000137329102,1.4420000314712524 C10.968000411987305,0.9700000286102295 11,0.48899999260902405 11,0 C11,-0.48899999260902405 10.968000411987305,-0.9700000286102295 10.906000137329102,-1.4420000314712524 C10.847000122070312,-1.8949999809265137 10.375,-2.1470000743865967 9.92300033569336,-2.078000068664551 C8.756999969482422,-1.899999976158142 7.7210001945495605,-2.265000104904175 7.390999794006348,-3.061000108718872 C7.060999870300293,-3.8570001125335693 7.534999847412109,-4.8480000495910645 8.484999656677246,-5.546000003814697 C8.852999687194824,-5.816999912261963 9.008999824523926,-6.329999923706055 8.730999946594238,-6.691999912261963 C8.142999649047852,-7.458000183105469 7.458000183105469,-8.142999649047852 6.691999912261963,-8.730999946594238 C6.328999996185303,-9.008999824523926 5.817999839782715,-8.852999687194824 5.546999931335449,-8.484999656677246 C4.848999977111816,-7.534999847412109 3.8580000400543213,-7.060999870300293 3.062000036239624,-7.390999794006348 C2.2660000324249268,-7.7210001945495605 1.9010000228881836,-8.756999969482422 2.0789999961853027,-9.92300033569336 C2.1480000019073486,-10.375 1.8949999809265137,-10.847000122070312 1.4420000314712524,-10.906000137329102 C0.9700000286102295,-10.968000411987305 0.48899999260902405,-11 0,-11 C-0.48899999260902405,-11 -0.9700000286102295,-10.968000411987305 -1.4420000314712524,-10.906000137329102z M4,0 C4,2.2090001106262207 2.2090001106262207,4 0,4 C-2.2090001106262207,4 -4,2.2090001106262207 -4,0 C-4,-2.2090001106262207 -2.2090001106262207,-4 0,-4 C2.2090001106262207,-4 4,-2.2090001106262207 4,0z"></path></g></g></g></g></svg></button>
             </div>
