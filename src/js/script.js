@@ -1,75 +1,44 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // __________ Dynamic UI function calls / initializations ___________ \\
+    // Normal function calls + class declarations
+    const autoComplete = new AutoComplete($("input-box"), mentions, emojiUtils, commands), sendBtn = $("send-btn");
+    initConsoleMessages(); loadProfile(); createSettingsPanel(); closeSettingsPanel(); applySettings(); showLoadingScreen(LOADING_TIME); new MessageHoverButtons();
 
-    debugLog("Attempting to run loadProfile()");
-    loadProfile();
-    debugLog("The function ran successfully! Attempting to run showNotice()");
-    showNotice({ type: "warning", id: `unofficial_warning`,
+    // Dynamic UI function calls
+    showNotice({
+        type: "warning",
         text: "Hey! What you're using right now is a fan-made client and not affiliated with Discord.",
+        id: `unofficial_warning`
     });
-    debugLog("The function ran successfully! Attempting to run setTheme()");
+    /* Some examples
+    showNotice({
+        type: "alert",
+        text: "gfdgfdgfdgfdhfdhs",
+        id: `alerttest`
+    });
+    showNotice({
+        type: "lurking",
+        text: "You are currently in preview mode. Join this server to start chatting!",
+        id: `lurkTest`,
+        buttonText: "Join TEST_SERVER"
+    });
+    showNotice({
+        type: "warning",
+        text: "Your Nitro sub is about to run out, add payment info to keep using Nitro.",
+        id: `nitro_expiration`,
+        buttonText: "Go to settings"
+    });
+    */
+
     setTheme(localStorage.getItem("user-theme") || "dark");
 
-    // __________ Settings Initialization ___________ \\
-    
-    debugLog("The function ran successfully! Attempting to run createSettingsPanel()");
-    createSettingsPanel();
-    settingsPanel = $("settings-panel");
-    debugLog("The function ran successfully! Attempting to run closeSettingsPanel()");
-    closeSettingsPanel();
-    debugLog("The function ran successfully! Attempting to run applySettings()");
-    applySettings();
-
-    debugLog("The function ran successfully! Attempting to initialize MessageHoverButtons...");
-    new MessageHoverButtons();
-    debugLog("Sucess! Attempting to initialize AutoComplete...");
-    const autoComplete = new AutoComplete($("input-box"), emojiUtils, commands);
-    debugLog("Success! Attempting to initialize console messages...");
-
-    // __________ Other Initializations ___________ \\
-
-    initConsoleMessages();
-    debugLog("The function ran successfully! Attempting to show the loading screen...");
-    showLoadingScreen(LOADING_TIME);
-    debugLog("Success! No more pre-load debugging needed.")
-
-    console.log("%c_ And now, here comes the logs coming from everything else! _", 
-        "font-size: 12px; font-family: 'Consolas';");
-
-    // __________ Event Listeners  ___________ \\
+    // Event Listneres
     sendBtn.addEventListener("click", () => { sendMessage(); autoComplete.hide(); updateSendButtonColor(); });
     $("settings-btn").addEventListener("click", openSettingsPanel);
     $("attach-btn").addEventListener("click", handleFileAttachment);
-
-    let typingTimeout;
-    let isCurrentlyTyping = false;
-    
     messageInput.addEventListener("input", () => {
-        if (messageInput.value !== history[historyIndex]) {
-            history = history.slice(0, historyIndex + 1);
-            history.push(messageInput.value);
-            historyIndex++;
-            let f = false, nh = [];
-            for (const i of history) {
-                if (i !== "") { nh.push(i); f = true; } else if (!f) nh.push(i); 
-            }
-            history = nh;
-            historyIndex = Math.min(historyIndex, history.length - 1);
-        }
-    
+        if (messageInput.value !== history[historyIndex]) { history = history.slice(0, historyIndex + 1); history.push(messageInput.value); historyIndex++; let f = false, nh = []; for (const i of history) { if (i !== "") { nh.push(i); f = true; } else if (!f) nh.push(i); } history = nh; historyIndex = Math.min(historyIndex, history.length - 1) };
         updateSendButtonColor({ attachments: currentAttachments });
-    
-        if (!isCurrentlyTyping) {
-            isCurrentlyTyping = true;
-            eventBus.emit("isTyping", { text: messageInput.value, startTimestamp: Date.now() });
-        }
-        clearTimeout(typingTimeout);
-        typingTimeout = setTimeout(() => {
-            isCurrentlyTyping = false;
-            eventBus.emit("isTypingStop", { text: messageInput.value, timestamp: Date.now() });
-        }, 3000);
-    });    
-
+    });
     messageInput.addEventListener("keydown", (e) => {
         if (e.ctrlKey && e.key === "z" && historyIndex > 0) { historyIndex--; messageInput.value = history[historyIndex]; e.preventDefault(); }
         if ((e.ctrlKey && e.key === "y") || (e.ctrlKey && e.shiftKey && e.key === "z") && historyIndex < history.length - 1) { historyIndex++; messageInput.value = history[historyIndex]; e.preventDefault(); }
@@ -107,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {messageInput.focus();}
     });
     document.addEventListener("paste", async (e) => {
+        const settingsPanel = $("settings-panel");
         if (settingsPanel && settingsPanel.style.display === "flex") return;
         messageInput.focus();
     });
@@ -136,6 +106,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-window.handleEmojiError = function(img, original, code) {
-    emojiUtils.handleEmojiError(img, original, code);
-};
+if (location.protocol.startsWith("http")) {
+    let link = document.createElement("link"); link.rel = "manifest"; link.href = "./assets/PWA/manifest.json"; document.head.appendChild(link);
+    window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); setTimeout(() => e.prompt(), 3000); });
+} else {
+    console.log("%cImportant:", "color: orange; font-weight: bold;", "To use the PWA (Progressive Web App) version of SparkleCord, You need to open the server shortcut.");
+}

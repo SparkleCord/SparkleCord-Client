@@ -4,38 +4,25 @@ body {
     font-family: var(--font-primary);
     display: flex;
     height: 100vh;
-    font-size: 16px;
     background-color: var(--background-secondary);
     color: var(--text-normal);
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
 }
-.visual-refresh body {
-    background: var(--background-base-lowest);
-}
-
-.visual-refresh-ui button, .visual-refresh-ui .settings-tab, .visual-refresh-ui .radio-btn, .visual-refresh-ui textarea, .visual-refresh-ui input[type="color"], .visual-refresh-ui input[type="text"] {
-    border-radius: 8px;
-}
-button, .radio-btn, textarea, input[type="text"] { 
-    border-radius: 3px;
-}
-.settings-tab, input[type="color"] { 
-    border-radius: 4px;
-}
-
-button { cursor: pointer; }
-
 .hidden { display: none; }
 :focus { outline: none; }
 :focus-visible { outline: 3px solid var(--text-link); border-radius: 4px; }
 input:focus-visible, textarea:focus-visible { outline: none; }
+
+button { cursor: pointer; }
 
 /* Typography Styles  */
 .eyebrow {
     font-size: 12px;
     color: var(--text-muted);
     font-weight: bold;
+    font-variant: small-caps;
+    text-transform: uppercase;
     font-size: 12px;
     font-style: normal;
     font-weight: 700;
@@ -43,12 +30,6 @@ input:focus-visible, textarea:focus-visible { outline: none; }
     letter-spacing: 0.24px;
     line-height: 16px;
 }
-
-html:not(.visual-refresh-ui) .eyebrow, #loading-text {
-    font-variant: small-caps;
-    text-transform: uppercase;
-}
-
 .small-normal {
     font-size: 12px;
     color: var(--text-muted);
@@ -61,7 +42,6 @@ html:not(.visual-refresh-ui) .eyebrow, #loading-text {
     font-style: normal;
     font-weight: 400;
 }
-
 .link {
     color: var(--text-link);
     cursor: pointer;
@@ -76,8 +56,8 @@ html:not(.visual-refresh-ui) .eyebrow, #loading-text {
     word-break: break-word;
     text-decoration: none; 
 }
-.link:hover, .always-underline-links .link { text-decoration: underline; }
-
+.link:hover { text-decoration: underline; }
+.link:visited { color: var(--link); }
 .badge {
     background-color: rgb(218, 55, 60);
     color: var(--white);

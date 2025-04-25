@@ -19,7 +19,3 @@ const systemExceptions = [
 let userBlockedStrings = [ ];
 let userBlockedMatches = [ ];
 let userExceptions = [];
-
-userBlockedStrings = JSON.parse(localStorage.getItem("userBlockedStrings")) || []; 
-userBlockedMatches = JSON.parse(localStorage.getItem("userBlockedMatches")) || [];
-userExceptions = JSON.parse(localStorage.getItem("userExceptions")) || []; 

@@ -1,20 +1,16 @@
 class AutoComplete {
-    constructor(input, emojiUtils, commands) {
+    constructor(input, mentions, emojiUtils, commands) {
         this.input = input;
+        this.mentions = mentions;
         this.emojiUtils = emojiUtils;
         this.commands = commands;
-        this.specialMentions = {
-            "@everyone": "Notify everyone who has permission to view this channel.",
-            "@here": "Notify everyone online who has permission to view this channel.",
-        };
-        this.mentions = this.buildMentionsList();
         this.types = { 
             mentions: query => this.filterMentions(query), 
             emoji: query => this.filterEmojis(query), 
             commands: query => this.filterCommands(query) 
         };
         this.suggestionsDiv = Object.assign(document.createElement("div"), { className: "autocomplete" });
-        $("message-input").insertBefore(this.suggestionsDiv, this.suggestionsDiv.firstChild);
+        document.getElementById("message-input").insertBefore(this.suggestionsDiv, this.suggestionsDiv.firstChild);
         input.addEventListener("input", event => this.onInput(event));
         input.addEventListener("keydown", event => this.onKeyDown(event));
         input.addEventListener("blur", event => { 
@@ -23,18 +19,7 @@ class AutoComplete {
         this.suggestionsDiv.addEventListener("mousedown", event => event.preventDefault());
         input.addEventListener("focus", () => this.onInput({ target: input }));
         this.selectedIndex = this.shouldAutoselect() ? 0 : -1;
-    }
-    buildMentionsList() {
-        const mentions = {};
-        if (typeof profiles !== 'undefined') {
-            Object.values(profiles).forEach(user => {
-                if (user.name && user.name !== user.username) {
-                    mentions[`@${user.name}`] = user.username ? `${user.username}` : '';
-                }
-            });
-        }
-        return mentions;
-    }
+    }    
     onInput(event) {
         const inputValue = event.target.value, 
               mentionMatch = inputValue.match(/@(\w*)$/), 
@@ -56,44 +41,13 @@ class AutoComplete {
             .filter(entry => entry.score > 0).sort((a, b) => b.score - a.score).map(entry => entry.item).slice(0, 10);
     }
     filterMentions(query) {
-        const normalize = str => str ? str.toLowerCase().replace(/[^a-z0-9]/g, "") : "";
-        const normalizedQuery = normalize(query);
-        // Combine both profiles and systemUsers
-        const allUsers = [...Object.values(humans || {}),...Object.values(systemUsers || {})];
-        // Track users already included (by normalized name to prevent duplicates)
-        const includedUsers = new Set();
-        const results = [];
-        allUsers.forEach(user => {
-            const normalizedName = normalize(user.name);
-            const normalizedUsername = normalize(user.username);
-            const nameMatches = normalizedName.includes(normalizedQuery);
-            const usernameMatches = user.username && normalizedUsername.includes(normalizedQuery);
-            if (nameMatches || usernameMatches) {
-                // Prefer showing name if available, otherwise username
-                const displayName = user.name || user.username;
-                const normalizedDisplay = normalize(displayName);
-                if (!includedUsers.has(normalizedDisplay)) {
-                    includedUsers.add(normalizedDisplay);
-                    // Store both display name and alternate identifier
-                    results.push({
-                        display: `@${displayName}`,
-                        altName: (usernameMatches && nameMatches && normalizedName !== normalizedUsername) ? `${user.username}` : ''
-                    });
-                }
-            }
-        });
-        // Store descriptions for the appendSuggestion method
-        results.forEach(item => { this.mentions[item.display] = item.altName; });
-        // Extract just the display strings for fuzzy matching
-        const displayStrings = results.map(item => item.display);
-        // Find special mentions that match the query
-        const matchedSpecials = Object.keys(this.specialMentions).filter(m =>
-            normalize(m).includes(normalizedQuery)
-        );
-        // Fuzzy matching for normal user mentions
-        const fuzzyMatched = this.fuzzyMatch(displayStrings.filter(r => !matchedSpecials.includes(r)), query);
-        // Combine and slice results (max 10)
-        return [...fuzzyMatched, ...matchedSpecials].slice(0, 10);
+        const normalize = str => str.toLowerCase().replace(/[^a-z0-9]/g, ""),
+              results = Object.keys(this.mentions).filter(name => normalize(name).includes(normalize(query)));
+        if (normalize(profile.username).includes(normalize(query)) && !results.includes(`@${profile.name}`)) results.unshift(`@${profile.name}`);
+        const specialMentions = ["@everyone", "@here"],
+              normalItems = results.filter(item => !specialMentions.includes(item)),
+              specialItems = results.filter(item => specialMentions.includes(item));
+        return [...this.fuzzyMatch(normalItems, query), ...specialItems].slice(0, 10);
     }
     filterEmojis(query) {
         if (!query) return [];
@@ -122,19 +76,13 @@ class AutoComplete {
         this.input.focus(); 
     }
     appendSuggestion(item, type, isSelected) {
-        const isSpecial = ['@everyone', '@here'].includes(item);
-        const description = isSpecial 
-            ? this.specialMentions[item] 
-            : (type === "commands" 
-                ? this.commands.find(c => `/${c.name}` === item)?.description 
-                : this.mentions[item]);
-        
         const div = Object.assign(document.createElement("div"), { 
-            className: `suggestion-item${isSelected ? " selected" : ""}`,
+            className: `suggestion-item${isSelected ? " selected" : ""}`, 
             innerHTML: `
                 <span>${type === "emoji" ? `:${item}:` : item}</span>
-                ${description ? `<span class="description">${description}</span>` : ''}
-            `
+                ${type === "commands" ? `<span class="description">${this.commands.find(command => `/${command.name}` === item)?.description || ""}</span>` 
+                : this.mentions[item] ? `<span class="description">${this.mentions[item]}</span>` 
+                : ""}` 
         });
         div.addEventListener("click", () => this.insertSuggestion(type, item.replace("/", "")));
         this.suggestionsDiv.appendChild(div);
@@ -161,23 +109,17 @@ class AutoComplete {
     }
     show(type, items) {
         if (!items.length) return this.hide();
-        
         this.suggestionsDiv.innerHTML = 
-            `<div class="header">${type === "emoji" ? `Emojis matching :${this.input.value.match(/:(\w+)$/)[1]}` 
-            : type === "mentions" ? `Mentions matching @${this.input.value.match(/@(\w*)$/)[1]}` 
-            : `Commands matching /${this.input.value.match(/\/(\w*)$/)[1]}`}</div>`;
-        
-        this.suggestionsDiv.style.visibility = "visible"; 
-        this.suggestionsDiv.style.pointerEvents = "auto"; 
-        this.suggestionsDiv.classList.add("show");
-        
-        const specialItems = items.filter(item => ['@everyone', '@here'].includes(item));
-        const regularItems = items.filter(item => !specialItems.includes(item));
-        
-        regularItems.forEach((item, index) => this.appendSuggestion(item, type, this.shouldAutoselect() && specialItems.length === 0 && index === 0));
-        if (specialItems.length && regularItems.length) {this.suggestionsDiv.appendChild( Object.assign(document.createElement("div"), { className: "separator" }));}
-        specialItems.forEach((item, index) =>  this.appendSuggestion(item, type, this.shouldAutoselect() && index === 0) );
-
+        `<div class="header">${type === "emoji" ? `Emojis matching :${this.input.value.match(/:(\w+)$/)[1]}` 
+        : type === "mentions" ? `Mentions matching @${this.input.value.match(/@(\w*)$/)[1]}` 
+        : `Commands matching /${this.input.value.match(/\/(\w*)$/)[1]}`}</div>`;
+        this.suggestionsDiv.style.visibility = "visible"; this.suggestionsDiv.style.pointerEvents = "auto"; this.suggestionsDiv.classList.add("show");
+        const specialMentions = ["@everyone", "@here"], 
+              normalItems = items.filter(item => !specialMentions.includes(item)), 
+              specialItems = items.filter(item => specialMentions.includes(item));
+        normalItems.forEach((item, index) => this.appendSuggestion(item, type, this.shouldAutoselect() && index === 0));
+        if (normalItems.length && specialItems.length) this.suggestionsDiv.appendChild(Object.assign(document.createElement("div"), { className: "separator" }));
+        specialItems.forEach((item, index) => this.appendSuggestion(item, type, this.shouldAutoselect() && !normalItems.length && index === 0));
         this.selectedIndex = this.shouldAutoselect() ? 0 : -1;
         this.updateSelection();
     }
@@ -189,3 +131,8 @@ class AutoComplete {
         }, 75);
     }
 }
+const mentions = { 
+    "@everyone": "Notify everyone who has permission to view this channel.", 
+    "@here": "Notify everyone online who has permission to view this channel.", 
+    [`@${profile.name}`]: profile.username 
+};

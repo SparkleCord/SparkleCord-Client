@@ -9,14 +9,13 @@
     visibility: hidden;
     pointer-events: none;
     scale: 1.13;
-    background-color: var(--background-tertiary);
-    box-shadow: var(--shadow-low);
-    transform: translateY(-2.5px);
 }
 .message:hover .hover-buttons {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    background-color: var(--background-tertiary);
+    box-shadow: var(--shadow-low);
 }
 
 .hover-btn {
@@ -49,10 +48,4 @@
 }
 .hover-btn:hover svg {
     transform: scale(1.13);
-}
-
-@media (max-width: 768px) {
-    .hover-buttons {
-        transform: scale(0.8) translateY(-10px);
-    }
 }

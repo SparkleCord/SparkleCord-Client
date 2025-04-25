@@ -5,30 +5,45 @@ function parseMarkdown(text) {
         codeBlocks.push({ lang: lang.toLowerCase() || 'plaintext', code: code.trim() });
         return `\u0000\u0001C${codeBlocks.length - 1}\u0001\u0000`;
     });
-
     // Inline code
     const inlineCode = [];
     text = text.replace(/`([^`]+)`/g, (match, code) => {
         inlineCode.push(code);
         return `\u0000\u0001I${inlineCode.length - 1}\u0001\u0000`;
     });
-
     // Headers
     text = text.replace(/(?:^|\n)# (.+?)(?=\n|$)/g, '<h1>$1</h1>') // h1 header (# text)
         .replace(/(?:^|\n)## (.+?)(?=\n|$)/g, '<h2>$1</h2>') // h2 header (## text)
         .replace(/(?:^|\n)### (.+?)(?=\n|$)/g, '<h3>$1</h3>'); // h3 header (### text)
-
+    // Indented lists (nested unordered and ordered lists)
+    text = text.replace(/(?:^|\n)(\s*)([-*]) (.+)/g, (match, indent, bullet, item) => {
+        const depth = indent.length / 2;
+        return `\u0000ULI${depth} ${item}\u0000`;
+    });
+    text = text.replace(/(\u0000ULI\d+ .+?\u0000)+/g, match => {
+        const items = match.match(/\u0000ULI(\d+) (.+?)\u0000/g).map(m => {
+            const [, depth, content] = m.match(/ULI(\d+) (.+?)\u0000/);
+            return `<li style="margin-left: ${depth * 20}px">${content}</li>`;
+        }).join('');
+        return `<ul>${items}</ul>\u0000NL`;
+    });
+    // Ordered lists
+    text = text.replace(/(?:^|\n)(\s*)(\d+)\. (.+)/g, (match, indent, number, item) => {
+        const depth = indent ? Math.floor(indent.length / 2) : 0;
+        return `<li style="margin-left: ${depth * 20}px">${item}</li>`;
+    });
+    text = text.replace(/(<li style="margin-left: \d+px">[^<]+<\/li>(?:\n|<\/li>)*)+/g, match => {
+        return `<ol>${match}</ol>`;
+    });
     // Escaped blocks
     const escapedBlocks = [];
     text = text.replace(/\\(.*?)\\/g, (match, content) => {
         escapedBlocks.push(content);
         return `\u0000\u0001E${escapedBlocks.length - 1}\u0001\u0000`;
     });
-
     // Emoji replacement
     text = replaceEmojiNames(text, false);
     text = replaceEmojis(text, false);
-
     // Masked Links
     const safeHtml = [];
     text = text.replace(/\[([^\[\]]+)\]\(((https?|ftp|file):\/\/[^\s<>"]+)\)/gi, (match, t, url, protocol) => {
@@ -38,13 +53,11 @@ function parseMarkdown(text) {
         safeHtml.push(anchor);
         return `\u0000\u0001H${safeHtml.length - 1}\u0000`;
     });
-
     // Custom markdown
-    text = text.replace(/\[\[(.*?)\]\]/g, '<span class="keybind">$1</span>') // Press [[ALT]] + [[F4]] To Unlock Free Robux! (Discord-style Keys)
+    text = text.replace(/\[\[(.*?)\]\]/g, '<span class="keybind">$1</span>') // Press [[ALT]] + [[F4]] To Unlock Free Robux! (Discord-Style Keys)
         .replace(/{{(.*?)}}/g, '<span class="badge">$1</span>') // Check the {{31}} Notifications you got! (Red badge with white text)
         .replace(/\[([^\]]+)\]{([^}]+)}/g, '<span style="color: $2">$1</span>') // Colored Text
         .replace(/#([^#]+)#/g, '<span style="font-family: var(--font-headline);">$1</span>') // #Text# (Headline)
-
     // Official Discord Markdown
     text = text.replace(/(?:^|\n)-# > (.+?)(?=\n|$)/g, '<subtext><blockquote>$1</blockquote></subtext>') // -# > Text (Subtext + Blockquote)
         .replace(/(?:^|\n)-# (.+?)(?=\n|$)/g, '<subtext>$1</subtext>') // -# Text (Subtext)
@@ -56,8 +69,7 @@ function parseMarkdown(text) {
         .replace(/~~(.*?)~~/g, '<s>$1</s>') // ~~Text~~ (Strikethrough)
         .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>\u0000\u0003'); // > Text (Blockquote)
     text = text.replace(/\n/g, "<br>").replace(/(<\/h[1-3]>|<\/blockquote>|<br>)\s*<br>/g, '$1');  // Line breaks
-
-    // Normal Links
+    // Normal Links (fixed to handle Markdown formatting)
     text = text.replace(/\b((https?|ftp|file):\/\/[^\s<>"'\]\)]+)/gi, (match) => {
         if (text.includes(`[${match}](`) || text.includes(`](${match})`)) return match;
         let url = match;

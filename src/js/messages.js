@@ -1,8 +1,9 @@
 function flagAsEdited(msg, newText) {
     const contentElement = msg.querySelector(".content"), contentAttr = msg.getAttribute("data-content"), text = sanitizeInput(newText);
+    let hasMentions = mentionPattern.test(text);
     const wasEdited = contentElement.querySelector(".edited-tag");
-    const formattedText = getMentions(text);
-    let hasMentions = checkMentions(formattedText)
+    const formattedText = newText.replace(mentionPattern, (_, mention) =>
+        `<span class="ping">@${mention.toLowerCase() === profile.name.toLowerCase() ? profile.name : mention.toLowerCase()}</span>`);
     contentElement.innerHTML = parseMarkdown(convertEmoticons(formattedText));
     msg.setAttribute("data-content", newText);
     applyHighlighting(msg);
@@ -12,9 +13,8 @@ function flagAsEdited(msg, newText) {
     }
 };
 
-const messageActivities = new MessageActivities();
 async function sendMessage() {
-    const messageInput = $("input-box"), content = messageInput.value.trim(), hasAttachments = currentAttachments.length > 0;
+    const messageInput = document.getElementById("input-box"), content = messageInput.value.trim(), hasAttachments = currentAttachments.length > 0;
     if (!content && !hasAttachments) return;
     let convertedContent = convertEmoticons(sanitizeInput(content));
     if (content.startsWith("/")) {
@@ -38,7 +38,7 @@ async function sendMessage() {
 
     if (content.match(/s\/([^\/]+)\/([^\/]+)/)) {
         let match = content.match(/s\/([^\/]+)\/([^\/]+)/), textToReplace = match[1], replacement = match[2];
-        const lastMsg = [...document.querySelectorAll("#messages .message[data-userid='" + humans.self.id + "']")].at(-1);
+        const lastMsg = [...document.querySelectorAll("#messages .message[data-userid='" + profile.id + "']")].at(-1);
         if (lastMsg) {
             let text = lastMsg.querySelector(".content").innerHTML;
             text = text.replace(new RegExp(textToReplace, "i"), replacement);
@@ -49,8 +49,9 @@ async function sendMessage() {
     const timestamp = new Date().toISOString();
 
     const data = {
-        username: humans.self.username, name: humans.self.name, content: convertedContent, avatar: humans.self.avatar, attachments: [], userid: humans.self.id, color: "var(--header-primary)", id: generateSnowflake(Date.now()).toString(), timestamp
+        username: profile.username, name: profile.name, content: convertedContent, avatar: profile.avatar, attachments: [], userid: profile.id, color: "var(--header-primary)"
     };
+    data.id = generateSnowflake(Date.now()).toString();
 
     if (hasAttachments) {
         for (const attachment of currentAttachments) {
@@ -61,8 +62,8 @@ async function sendMessage() {
 
     let formattedContent = "", hasMentions = false, hasReplyMentions = false;
     if (content) {
-        formattedContent = getMentions(convertedContent);
-        hasMentions = checkMentions(formattedContent);
+        hasMentions = mentionPattern.test(content); mentionPattern.lastIndex = 0;
+        formattedContent = convertedContent.replace(mentionPattern, (_, mention) => `<span class="ping">@${mention.toLowerCase() === profile.name.toLowerCase() ? profile.name : mention.toLowerCase()}</span>`);
         formattedContent = parseMarkdown(formattedContent);
     }
     let messageHTML = formattedContent ? `<div class="content">${formattedContent}</div>` : "";
@@ -78,10 +79,10 @@ async function sendMessage() {
     }
 
     // REPLIES
-    const replyToID = $("input-box").getAttribute("data-replying-to");
+    const replyToID = document.getElementById("input-box").getAttribute("data-replying-to");
     let replyHTML = ``;
     if (replyToID) {
-        const repliedMsg = $(replyToID);
+        const repliedMsg = document.getElementById(replyToID);
 
         repliedMsg.classList.remove("replying");
         if (repliedMsg.parentElement?.matches(".reply-thread")) repliedMsg.parentElement.classList.remove("replying");
@@ -89,7 +90,7 @@ async function sendMessage() {
         if (repliedMsg) {
             const replyAuthor = repliedMsg.getAttribute("data-author") || "";
             let replyContent = repliedMsg.getAttribute("data-content");
-            let replyPFP = repliedMsg.getAttribute("data-avatar") || humans.self.defaultAvatar;
+            let replyPFP = repliedMsg.getAttribute("data-avatar") || profile.defaultAvatar;
             const replyColor = repliedMsg.getAttribute("data-color");
             const mention = $("input-box").getAttribute("data-pstate") === "true" ? `@` : ``;
             const hasAttachments = repliedMsg.getAttribute("data-hasAttachments") || false;
@@ -102,35 +103,36 @@ async function sendMessage() {
                 replyContent = "*Message could not be loaded*";
             } else {
                 useEmptyPFPAndNoName = false;
-            }
+            }      
 
-            debugLog("replyContent:", replyContent);
-            debugLog("hasAttachments:", hasAttachments);
-            debugLog("replyAuthor:", replyAuthor);
-            debugLog("Use empty profile picture and no name:", useEmptyPFPAndNoName);
-            replyHTML = `<div class="reply-container">
-                ${!useEmptyPFPAndNoName
-                    ? `<img src="${replyPFP}">\n ${nametag ? nametag : ''}<span class="reply-author" style="color: ${replyColor};">${mention}${replyAuthor}</span>`
+            console.log("replyContent:", replyContent);
+            console.log("hasAttachments:", hasAttachments);
+            console.log("replyAuthor:", replyAuthor);
+            console.log("Use empty profile picture and no name:", useEmptyPFPAndNoName);
+            replyHTML = `
+            <div class="reply-container">
+                ${ !useEmptyPFPAndNoName
+                    ? `<img src="${replyPFP}">\n ${nametag ? nametag : ''}<span class="reply-author" style="color: ${replyColor};">${mention}${replyAuthor}</span>` 
                     : replySVG
                 }
                 <span class="reply-content">
                     ${hasAttachments ? parseReplyMarkdown(replyContent || "*Click to see attachment*") + attachmentSVG : parseReplyMarkdown(replyContent)}
                 </span>
             </div>`;
-            debugLog("replyHTML:", replyHTML);
-            if (replyAuthor === humans.self.name && mention === `@`) { hasReplyMentions = true; };
+            console.log("replyHTML:", replyHTML);
+            if (replyAuthor === profile.name && mention === `@`) { hasReplyMentions = true; };
         }
     }
-    $("input-box").removeAttribute("data-replying-to");
-    $("reply-indicator").style.display = "none";
+    document.getElementById("input-box").removeAttribute("data-replying-to");
+    document.getElementById("reply-indicator").style.display = "none";
     // REPLIES - END
 
     let groupMessage = null, isGrouped = false;
     if (lastMessageTimestamp && lastMessageAuthor === data.name && lastMessageAvatar === data.avatar && !replyToID && !FLAG_startNewGroup) {
         const timeDiff = (new Date(timestamp) - new Date(lastMessageTimestamp)) / (1000 * 60); if (timeDiff < 10) { groupMessage = currentMessageGroup; isGrouped = true; }
     }
-    if (!groupMessage || $("messages").children.length === 0) {
-        groupMessage = document.createElement("div"); groupMessage.classList.add("message-group"); $("messages").appendChild(groupMessage);
+    if (!groupMessage || document.getElementById("messages").children.length === 0) {
+        groupMessage = document.createElement("div"); groupMessage.classList.add("message-group"); document.getElementById("messages").appendChild(groupMessage);
         isGrouped = false;
     }
     const messageElement = document.createElement("div"); messageElement.classList.add("message");
@@ -207,25 +209,16 @@ async function sendMessage() {
         replyWrapper.appendChild(messageElement);
         groupMessage.appendChild(replyWrapper);
         if (hasReplyMentions) replyWrapper.classList.add("mention");
-        eventBus.emit("msgReply", {
-            originalMsg: $(replyToID),  // Message being replied to
-            replyMsg: messageElement,   // The message replying to the originalMsg
-            timestamp: Date.now()
-        });
     } else {
         groupMessage.appendChild(messageElement);
     }
 
     applyHighlighting(messageElement);
     lastMessageTimestamp = timestamp; lastMessageAuthor = data.name; lastMessageAvatar = data.avatar;
-    currentMessageGroup = groupMessage; lastMessage = messageElement;
-    if (containsBlockedContent) { messageElement.querySelector(".dismiss").addEventListener("click", () => messageActivities.deleteMessage(messageElement)); }
-    messageInput.value = ""; history.push(""); historyIndex = history.length - 1;
+    currentMessageGroup = groupMessage; lastMessage = messageElement; messageInput.value = ""; history.push(""); historyIndex = history.length - 1;
     currentAttachments = []; document.querySelectorAll(".attachment-wrapper").forEach(wrapper => wrapper.remove());
     scrollToBottom();
     updateSendButtonColor();
-
-    eventBus.emit("msgSend", { message: messageElement, messageData: data });
 }
 // Helper function to process file for message
 async function processFileForMessage(attachment) {

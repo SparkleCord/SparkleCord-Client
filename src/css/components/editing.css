@@ -6,7 +6,7 @@
 }
 #edit-box {
     width: 85vw;
-    height: 50%;
+    height: 50% !important;
     resize: none;
     font: inherit;
     background: var(--bg-overlay-3, var(--channeltextarea-background));

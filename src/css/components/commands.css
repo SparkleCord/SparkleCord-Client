@@ -9,7 +9,7 @@
     display: inline-flex;
     align-items: center;
     background: var(--bg-brand);
-    color: var(--white-500);
+    color: var(--white-2);
     margin-left: 4px;
     margin-right: 4px;
     margin-top: 3.5px;
@@ -21,7 +21,7 @@
 }
 .namebadge .verified {
     white-space: nowrap;
-    color: var(--white-500);
+    color: var(--white-2);
     display: inline-block;
     width: 16px;
     height: 16px;
@@ -29,7 +29,7 @@
 }
 .namebadge .text {
     text-transform: uppercase;
-    color: var(--white-500);
+    color: var(--white-2);
     font-style: inherit;
     font-family: inherit;
     position: relative;

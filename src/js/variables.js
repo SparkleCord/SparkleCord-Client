@@ -1,5 +1,8 @@
 // Utility Functions
+const rand = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+const snflk = d => ((BigInt(d) - 1420070400000n) << 22n) | BigInt(rand(0, 0xFFFFFFFF));
 const speak = t => speechSynthesis.speaking || speechSynthesis.speak(new SpeechSynthesisUtterance(t));
+const $ = id => document.getElementById(id);
 
 function generateUsername() {
     const adjectives = [
@@ -27,104 +30,45 @@ function generateUsername() {
     return `${word1}_${word2}_${(Math.random() * 100000 | 0).toString().padStart(5, '0')}`;
 }
 
-// System users list
+// Profile Setup
+let profile = JSON.parse(localStorage.getItem("profile")) || {};
+if (!profile.username) profile.username = generateUsername(true);
+if (!profile.name) profile.name = profile.username;
+if (!profile.avatar) profile.avatar = `./assets/avatars/${rand(0, 18)}.png`;
+if (!profile.defaultAvatar) profile.defaultAvatar = profile.avatar;
+if (!profile.status) profile.status = "Online";
+if (!profile.id) profile.id = snflk(Date.now()).toString();
+localStorage.setItem("profile", JSON.stringify(profile));
+profile.id = BigInt(profile.id);
 
+// System users list
 let systemUsers = {
     core: {
-        name: "Byte",
-        username: "byte",
-        avatar: "./assets/avatars/core/bye.png",
+        name: "Clyde",
+        username: "clyde",
+        avatar: "./assets/avatars/core/Clyde.gif",
         id: 1n,
-        tag: { name: "Bot", verified: true, bg: "var(--bg-brand)" },
+        tag: { name: "Bot", verified: false, bg: "var(--bg-brand)" },
+        groupID: `core`,
     },
     error: {
-        name: "Uh Oh!",
-        username: "clyde_err",
-        avatar: "./assets/avatars/core/Clyde-Old.jpg",
+        name: "Clyde",
+        username: "clyde",
+        avatar: "./assets/avatars/core/Clyde-Old.png",
         id: 2n,
         tag: { name: "Error", verified: false, bg: "var(--red-500)" },
-        color: 'var(--text-danger)',
+        groupID: `error`,
     },
     ai: {
         name: "Sparkly",
         username: `sparkly`,
         avatar: "./assets/avatars/core/sparkly.png",
-        id: 3n,
+        id: 2n,
         tag: { name: "AI", verified: false, bg: "var(--green-360)" },
-    },
-    byte: {
-        name: "Byte",
-        username: "byte",
-        avatar: "./assets/avatars/core/bye.png",
-        id: 4n,
-        tag: { name: "Bot", verified: false, bg: "var(--bg-brand)" },
-    },
-    clyde: {
-        name: "Clyde",
-        username: "clyde",
-        avatar: "./assets/avatars/core/Clyde.gif",
-        id: 5n,
-        tag: { name: "Bot", verified: false, bg: "var(--bg-brand)" },
+        groupID: `ai`,
     }
 };
-let sysGroups = { core: null, error: null, ai: null, byte: null };
-
-// Human users list
-let humans = {
-    self: JSON.parse(localStorage.getItem("profile")) || {},
-};
-// Combined
-let profiles = {
-    ...humans,
-    ...systemUsers
-};
-
-// Profile Setup
-if (!humans.self.username) humans.self.username = generateUsername(true);
-if (!humans.self.name) humans.self.name = humans.self.username;
-if (!humans.self.avatar) humans.self.avatar = `./assets/avatars/${rand(0, 18)}.png`;
-if (!humans.self.defaultAvatar) humans.self.defaultAvatar = humans.self.avatar;
-if (!humans.self.status) humans.self.status = "Online";
-if (!humans.self.id) humans.self.id = snflk(Date.now()).toString();
-localStorage.setItem("profile", JSON.stringify(humans.self));
-humans.self.id = BigInt(humans.self.id);
-
-// Mentions
-function getMentions(text) {
-    function getUserById(id) {
-        return Object.values(systemUsers).find(u => u.id === BigInt(id)) || 
-               Object.values(profiles).find(u => u.id === BigInt(id));
-    }
-    function getUserByUsername(username) {
-        username = username.toLowerCase();
-        return Object.values(profiles).find(u => 
-            (u.username && u.username.toLowerCase() === username) ||
-            (u.name && u.name.toLowerCase() === username)
-        );
-    }
-    const mentionRegex = /<@(\d+)>|@([a-zA-Z0-9_]+)/g;
-    return text.replace(mentionRegex, (fullMatch, mentionId, mentionUsername) => {
-        if (mentionUsername && ['everyone', 'here'].includes(mentionUsername.toLowerCase())) {
-            return `<span class="ping">@${mentionUsername}</span>`;
-        }
-        let user = null;
-        if (mentionId) {
-            user = getUserById(mentionId);
-        } else if (mentionUsername) {
-            user = getUserByUsername(mentionUsername);
-        }
-        
-        return user ? `<span class="ping">@${user.name}</span>` : fullMatch;
-    });
-}
-function checkMentions(text) {
-    if (!humans.self || !humans.self.id) return false;
-    if (text.includes(`<@${humans.self.id}>`)) return true;
-    if (text.includes(`@everyone`) || text.includes(`@here`) ) return true;
-    const usernameMention = humans.self.username && text.includes(`@${humans.self.username}`);
-    const nameMention = humans.self.name && text.includes(`@${humans.self.name}`);
-    return usernameMention || nameMention;
-}
+let sysGroups = { core: null, error: null, ai: null };
 
 // Global Variables
 let messageGroups = [], lastMessageTimestamp = null, currentMessageGroup = null, history = [""], historyIndex = 0;
@@ -135,14 +79,13 @@ const LOADING_TIME = rand(3000, 6500); // Milliseconds
 const SETTINGS_TIMEOUT = 10; // Since settings elements are dynamically injected, this is to wait until the elements are FULLY there to prevent errors.
 const arrowLeftHook = "←", arrowUpHook = "↑", arrowRightHook = "→", arrowDownHook = "↓";
 
-
 // Strings
 const defaultEmojiDesc = "A default emoji. You can use this emoji everywhere on SparkleCord.";
 const blockMessage = `This can't be posted because it contains content blocked by SparkleCord.`;
 const userBlockMessage = `This can't be posted because it contains content you chose to block.`;
 
 // UI Elements
-const verified = `<svg class="verified" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="var(--white-500)" fill-rule="evenodd" d="M19.06 6.94a1.5 1.5 0 0 1 0 2.12l-8 8a1.5 1.5 0 0 1-2.12 0l-4-4a1.5 1.5 0 0 1 2.12-2.12L10 13.88l6.94-6.94a1.5 1.5 0 0 1 2.12 0Z" clip-rule="evenodd"></path></svg>`
+const verified = `<svg class="verified" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="var(--white-2)" fill-rule="evenodd" d="M19.06 6.94a1.5 1.5 0 0 1 0 2.12l-8 8a1.5 1.5 0 0 1-2.12 0l-4-4a1.5 1.5 0 0 1 2.12-2.12L10 13.88l6.94-6.94a1.5 1.5 0 0 1 2.12 0Z" clip-rule="evenodd"></path></svg>`
 
 const eyecon = `<svg class="eyecon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M15.56 11.77c.2-.1.44.02.44.23a4 4 0 1 1-4-4c.21 0 .33.25.23.44a2.5 2.5 0 0 0 3.32 3.32Z"></path><path fill="currentColor" fill-rule="evenodd" d="M22.89 11.7c.07.2.07.4 0 .6C22.27 13.9 19.1 21 12 21c-7.11 0-10.27-7.11-10.89-8.7a.83.83 0 0 1 0-.6C1.73 10.1 4.9 3 12 3c7.11 0 10.27 7.11 10.89 8.7Zm-4.5-3.62A15.11 15.11 0 0 1 20.85 12c-.38.88-1.18 2.47-2.46 3.92C16.87 17.62 14.8 19 12 19c-2.8 0-4.87-1.38-6.39-3.08A15.11 15.11 0 0 1 3.15 12c.38-.88 1.18-2.47 2.46-3.92C7.13 6.38 9.2 5 12 5c2.8 0 4.87 1.38 6.39 3.08Z" clip-rule="evenodd"></path></svg>`;
 const eph = `<div class="ephemeral">${eyecon}Only you can see this • <a class="link dismiss" role="button" style="cursor: pointer;">Dismiss message</a></div>`;
@@ -157,9 +100,12 @@ const selfAutomodFooter = `<div class="shieldTextAutomod"><div class="shieldCont
 const attachmentSVG = `<svg aria-hidden="true" role="img" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M2 5a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5Zm13.35 8.13 3.5 4.67c.37.5.02 1.2-.6 1.2H5.81a.75.75 0 0 1-.59-1.22l1.86-2.32a1.5 1.5 0 0 1 2.34 0l.5.64 2.23-2.97a2 2 0 0 1 3.2 0ZM10.2 5.98c.23-.91-.88-1.55-1.55-.9a.93.93 0 0 1-1.3 0c-.67-.65-1.78-.01-1.55.9a.93.93 0 0 1-.65 1.12c-.9.26-.9 1.54 0 1.8.48.14.77.63.65 1.12-.23.91.88 1.55 1.55.9a.93.93 0 0 1 1.3 0c.67.65 1.78.01 1.55-.9a.93.93 0 0 1 .65-1.12c.9-.26.9-1.54 0-1.8a.93.93 0 0 1-.65-1.12Z" clip-rule="evenodd" class=""></path></svg>`;
 const replySVG = `<div class="replyPFP"><svg width="12" height="8" viewBox="0 0 12 8"><path d="M0.809739 3.59646L5.12565 0.468433C5.17446 0.431163 5.23323 0.408043 5.2951 0.401763C5.35698 0.395482 5.41943 0.406298 5.4752 0.432954C5.53096 0.45961 5.57776 0.50101 5.61013 0.552343C5.64251 0.603676 5.65914 0.662833 5.6581 0.722939V2.3707C10.3624 2.3707 11.2539 5.52482 11.3991 7.21174C11.4028 7.27916 11.3848 7.34603 11.3474 7.40312C11.3101 7.46021 11.2554 7.50471 11.1908 7.53049C11.1262 7.55626 11.0549 7.56204 10.9868 7.54703C10.9187 7.53201 10.857 7.49695 10.8104 7.44666C8.72224 5.08977 5.6581 5.63359 5.6581 5.63359V7.28135C5.65831 7.34051 5.64141 7.39856 5.60931 7.44894C5.5772 7.49932 5.53117 7.54004 5.4764 7.5665C5.42163 7.59296 5.3603 7.60411 5.29932 7.59869C5.23834 7.59328 5.18014 7.57151 5.13128 7.53585L0.809739 4.40892C0.744492 4.3616 0.691538 4.30026 0.655067 4.22975C0.618596 4.15925 0.599609 4.08151 0.599609 4.00269C0.599609 3.92386 0.618596 3.84612 0.655067 3.77562C0.691538 3.70511 0.744492 3.64377 0.809739 3.59646Z" fill="currentColor"></path></svg></div>`;
 
+// Mentions
+const mentionNames = ["everyone", "here", profile.username, profile.name, profile.id];
+const mentionPattern = new RegExp(`@(${mentionNames.join("|")})\\b`, "gi");
 
 // Replies
-let R_TOGGLE, R_INDICATOR, messageInput, sendBtn;
+let R_TOGGLE, R_INDICATOR, messageInput;
 function toggleReplyPing(forcedState = "") {
     let toggleText = R_TOGGLE.textContent;
     if (toggleText === "@ON" || forcedState === "off") {
@@ -173,7 +119,8 @@ function toggleReplyPing(forcedState = "") {
     }
 }
 document.addEventListener("DOMContentLoaded", () => {
-    sendBtn = $("send-btn"); R_TOGGLE = $("ping-toggle"); R_INDICATOR = $("reply-indicator"); messageInput = $("input-box");
+
+    R_TOGGLE = $("ping-toggle"); R_INDICATOR = $("reply-indicator"); messageInput = $("input-box");
 
     R_TOGGLE.addEventListener("click", function() {
         toggleReplyPing();
@@ -181,8 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 // Version Info
-const versionCode = "1.3.0", versionState = "development", versionType = "Client", versionName = "";
-const versionHTML = `SparkleCord ${versionType} Version ${versionCode} <br>(${versionState}) ${versionName ? `- ${versionName}` : ``}`;
+const versionCode = "1.2.0", versionState = "stable", versionType = "Client", versionName = "Customizalot";
+const versionHTML = `SparkleCord ${versionType} Version ${versionCode} <br>(${versionState}) - ${versionName}`;
 
 // Loading and Initialization
 const rootPath = (() => {
@@ -190,7 +137,7 @@ const rootPath = (() => {
     if (window.location.protocol === 'file:') { return path.substring(0, path.lastIndexOf('/') + 1); }
     return window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
 })();
-
+console.log('SparkleCord is currently running on', rootPath)
 const LOADING_LINES = [
     /* All lines were written by doctoon unless stated otherwise */
     // SparkleCord OLD lines
@@ -219,21 +166,22 @@ const LOADING_LINES = [
     { text: "hello bob...", weight: 1 },
     { text: "99% of people are chronically on Discord. Be happy you're the 1% using SparkleCord.", weight: 1, author: "gdtapioka" },
     { text: "too lazy to add a loading screen message, check back later.", weight: 1, author: "gdtapioka" },
-    { text: "There was a time where SparkleCord would've still been JSONCord...", weight: 1 },
     { text: "doctoon was here", weight: 1 },
     { text: "Big Berry saved our logo from being just a white sparkle emoji.", weight: 1 },
     { text: "SparkleCord was created on a Thursday at 11:43:41 PM GMT+2.", weight: 1 },
-    { text: "SparkleCord will always be a web-based app. (maybe)", weight: 1 },
+    { text: "I'm NEVER adding official light mode support, sorry bub.", weight: 1 },
+    { text: "SparkleCord will always be a web-based app.", weight: 1 },
     // Time-specific lines
     { text: "I used SparkleCord at 3 AM (Gone Wrong) (Police Called) 😱😱😱", condition: () => getUTCDate().getHours() === 3, weight: 10 },
     // Holiday-specific lines
     { text: "Merry Halloween! I hope you got your easter eggs... wait... did I say that right?", holiday: "HALLOWEEN", weight: 3 },
     { text: "All I want for christmas... is meeeeeeee.....", holiday: "CHRISTMAS", weight: 3 },
      // Condition-specific lines
-    { text: "SparkleCord: Night Shift Edition", condition: () => { let h = getUTCDate().getHours(); return h >= 20 || h < 6; }, weight: 10 },
+    { text: "SparkleCord: Best experienced under the moonlight. 🌙", condition: () => { let h = getUTCDate().getHours(); return h >= 20 || h < 6; }, weight: 10 },
     { text: localStorage.getItem("custom-loading-line") || "", condition: () => JSON.parse(localStorage.getItem("custom-line-enabled") || "false"), weight: 50000 },
-    { text: "You're not supposed to see this... OH SH-", condition: () => JSON.parse(localStorage.getItem("secret-setting") || "false"), weight: 10 },
+    { text: "You're not supposed to see this. 👀", condition: () => JSON.parse(localStorage.getItem("secret-setting") || "false"), weight: 10 },
     { text: `Welcome back, ${JSON.parse(localStorage.getItem("profile") || "{}").name || "User"}!`, condition: () => true, weight: 1 },
+    { text: `Loading... Status: ${JSON.parse(localStorage.getItem("profile") || "{}").status || "Online"}`, condition: () => true, weight: 1 }
 ];
 const getUTCDate = (dateString = null) => {
     if (dateString) return new Date(dateString);
@@ -259,50 +207,39 @@ const getSpinnerPath = (holiday) => {
         DEFAULT: './assets/loading/Default.gif'
     };
     if (document.documentElement.classList.contains("theme-light")) {
-        if (holiday === "BIRTHDAY_DISCORD") spinners.BIRTHDAY_DISCORD = './assets/loading/Discord-Light.gif';
-        if (holiday === "CHRISTMAS") spinners.CHRISTMAS = './assets/loading/Christmas-Light.gif';
+        spinners.BIRTHDAY_DISCORD = './assets/loading/Discord-Light.gif';
+        spinners.BIRTHDAY = './assets/loading/Birthday-Light.gif';
     }
     return spinners[holiday] || spinners.DEFAULT;
 };
 const updateSpinner = () => { 
-    const spinner = $('spinner'), currentHoliday = isHoliday(getUTCDate()); spinner.src = getSpinnerPath(currentHoliday); 
+    const spinner = document.getElementById('spinner'), currentHoliday = isHoliday(getUTCDate()); spinner.src = getSpinnerPath(currentHoliday); 
 };
 function showLoadingScreen(loadingTime) {
     function getRandomLine() {
         const currentDate = getUTCDate(), currentHoliday = isHoliday(currentDate);
         const validLines = LOADING_LINES.filter(line => {
-            if (!line.text) return false;
             if (line.holiday && line.holiday !== currentHoliday) return false;
             if (line.condition && !line.condition()) return false;
             return true;
         });
-        if (!validLines.length) {
-            console.warn("No valid lines found");
-            return "Loading...";
-        }
         const totalWeight = validLines.reduce((sum, line) => sum + (line.weight || 1), 0);
         let random = Math.random() * totalWeight;
-        for (const line of validLines) {
-            random -= (line.weight || 1);
-            if (random <= 0) {
-                return line.text;
-            }
-        }        
+        for (const line of validLines) { random -= (line.weight || 1); if (random <= 0) return line.text; }
         return validLines[0].text;
     }
     function showLoadingLine() {
-        const line = $('loading-line'), header = $('loading-text'), randomLine = getRandomLine();
-        // const randomLine = LOADING_LINES[0]; // Force one of the existing lines based on array index.
+        const line = document.getElementById('loading-line'), header = document.getElementById('loading-text'), randomLine = getRandomLine();
+        // const randomLine = LOADING_LINES[0];
         header.innerHTML = 'Did You Know';
+        header.classList.remove("loadError")
         line.innerHTML = parseMarkdown(randomLine);
-        line.classList.remove("loadError"); header.classList.remove("loadError"); // Remove any classes related to loading errors if showLoadingScreen successfully runs without errors beforehand.
+        line.classList.remove("loadError")
         updateSpinner();
     }
     function hideLoadingScreen() {
-        const loadingScreen = $('loading-screen');
+        const loadingScreen = document.getElementById('loading-screen');
         loadingScreen.classList.add('hide');
-
-        eventBus.emit("loaded", { timestamp: Date.now() });
     }
     showLoadingLine();
     setTimeout(hideLoadingScreen, loadingTime);
@@ -311,39 +248,19 @@ function showLoadingScreen(loadingTime) {
 new MutationObserver(m=>m.some(x=>x.attributeName=='class'&&updateSpinner())).observe(document.documentElement,{attributes:1,attributeFilter:['class']});
 
 // Functoins
-const debugLogsEnabled = false;
-function debugLog(content) {
-    if (debugLogsEnabled) console.log("%c[DEBUG]", "color:rgb(175, 64, 202);", content);
-    else return;
-}
-
-if (location.protocol.startsWith("http")) {
-    let link = document.createElement("link"); link.rel = "manifest"; link.href = "./assets/PWA/manifest.json"; document.head.appendChild(link);
-    window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); setTimeout(() => e.prompt(), 3000); });
-} else {
-   // console.log("%c[WARNING]", "color: orange; font-weight: bold;", "To use the PWA (Progressive Web App) version of SparkleCord, You need to host it on a http/https server. Then click the install button.");
-}
-// console.log('SparkleCord\'s Root/index.html Path: ', rootPath + 'index.html')
-
 function initConsoleMessages() {
-    // Custom Line 1
     console.log("%cHold Up!", 
         "color: #5865f2; -webkit-text-stroke: 2px black; font-size: 72px; font-weight: bold; font-family: 'Consolas';");
-    // Custom Line 2
-    console.log("%cThere is no hidden online mode, SparkleCord Server is currently not planned for release, but this could change soon.", 
+    console.log("%cThere is no hidden developer or online mode, the only developer options are there for testing and debugging and are already available.", 
         "font-size: 16px; font-family: 'Consolas';");
-    // Custom Line 3
-    console.log("%cPro Tip: You can change to most (non-gradient) themes by doing 'setTheme()'. For example: setTheme('light'), You currently cannot force on/off of visual refresh or client theme.",
+    console.log("%cWith this update, light mode is officially supported, just run the following snippet: 'document.documentElement.classList.add(\"theme-light\")' ",
         "color: red; font-size: 18px; font-weight: bold; font-family: 'Consolas';");
-    // Custom Line 4
     console.log("%cMake sure to never run scripts from untrusted sources! If where you got the script looks sketchy, don't run it.", 
-        "font-size: 16px; font-family: 'Consolas';");
-    // Custom Line 5
-    console.log("%cIf you have any internal questions about SparkleCord, just DM me on Discord (username is doctoon).", 
-        "font-size: 16px; font-family: 'Consolas';");
-    // Other insta-logs go here.
+        "color: font-size: 16px; font-family: 'Consolas';");
+    console.log("%cIf you have any internal questions about SparkleCord, just DM me on Discord (doctoon).", 
+        "color: font-size: 16px; font-family: 'Consolas';");
 }
-// Update Send Button Color
+// amazing function i love
 function updateSendButtonColor({ attachments = [] } = {}) {
     const sendButton = $("send-btn")
     if (sendButton.querySelector("path")) {
@@ -364,31 +281,22 @@ function updateSendButtonColor({ attachments = [] } = {}) {
 }
 // UI Notice System
 const NOTICE_TYPES = ['positive', 'warning', 'alert', 'info', 'streamer_mode', 'spotify', 'playstation', 'neutral', 'brand', 'danger', 'lurking', 'nitro1', 'nitro2', 'nitro3'];
-function hideNotice(persist, id) { document.querySelector(".notice").style.display = 'none'; localStorage.setItem(`notice-${id}-dismissed`, `${persist}`); }
+function hideNotice(persist, id) {
+    console.log("hideNotice id: " + id);
+    document.querySelector(".notice").style.display = 'none';
+    localStorage.setItem(`notice-${id}-dismissed`, `${persist}`);
+}
 function showNotice(data = {type: "positive", text: "", buttonText: "", buttonOnClick: "", id: `default`, persist: "true"}) {
-    const getIndefiniteArticle = (word) => { 
-        word = word.toLowerCase(); if (['honest','honor','hour','heir'].includes(word)) return 'an'; if (/^u(?![aeiou])|^uni|^use|^user|^ut/.test(word)) return 'a'; if (/^[aeiouh]/.test(word)) return 'an'; return 'a'; 
-    }
-
     const noticeCloseSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M17.3 18.7a1 1 0 0 0 1.4-1.4L13.42 12l5.3-5.3a1 1 0 0 0-1.42-1.4L12 10.58l-5.3-5.3a1 1 0 0 0-1.4 1.42L10.58 12l-5.3 5.3a1 1 0 1 0 1.42 1.4L12 13.42l5.3 5.3Z"></path></svg>`;
     const noticeCloseButton = `<div class="notice-close">${noticeCloseSVG}</div>`;
-    if (!NOTICE_TYPES.includes(data.type)) data.type = "positive";
 
+    console.log("showNotice data.id: " + data.id);
+    if (!NOTICE_TYPES.includes(data.type)) return;
     const notice = document.querySelector(".notice")
-    if (localStorage.getItem(`notice-${data.id}-dismissed`) === "true") {
-        console.log(`Unable to show notice with ID as ${data.id} due to the 'notice-${data.id}-dismissed' localStorage key's value being 'true'.`);
-        return notice.style.display = "none";
-    } else {
-        console.log(`Showed ${getIndefiniteArticle(data.type)} ${data.type} notice with ID as ${data.id}, and ${data.persist && data.persist === "true"  ? `when closing, a notice with the ID as '${data.id}' is unable to be` : `when closing, a notice with the ID as '${data.id}' is able to be`} shown again.`);
-    }
+    if (localStorage.getItem(`notice-${data.id}-dismissed`) === "true") return notice.style.display = "none"; 
     notice.className = `notice ${data.type}`
     notice.innerHTML = `${noticeCloseButton} ${data.text} ${data.buttonText ? `<button ${data.buttonOnClick ? `onclick="${data.buttonOnClick}"` : ``} >${data.buttonText}</button>` : ''}`;
 
     document.querySelector(".notice-close").setAttribute("onclick", `hideNotice('${data.persist || "true"}', '${data.id}')`)
     notice.style.display = "block";
 }
-/* Some examples
-    showNotice({ type: "alert", text: "gfdgfdgfdgfdhfdhs", id: `alerttest` });
-    showNotice({ type: "lurking", text: "You are currently in preview mode. Join this server to start chatting!", id: `lurkTest`, buttonText: "Join TEST_SERVER" });
-    showNotice({ type: "warning", text: "Your Nitro sub is about to run out, add payment info to keep using Nitro.", id: `nitro_expiration`, buttonText: "Go to settings" });
-*/
