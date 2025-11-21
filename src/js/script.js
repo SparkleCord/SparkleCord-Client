@@ -1,52 +1,93 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Normal function calls + class declarations
-    const autoComplete = new AutoComplete($("input-box"), mentions, emojiUtils, commands), sendBtn = $("send-btn");
-    initConsoleMessages(); loadProfile(); createSettingsPanel(); closeSettingsPanel(); applySettings(); showLoadingScreen(LOADING_TIME); new MessageHoverButtons();
+    // __________ Dynamic UI function calls / initializations ___________ \\
 
-    // Dynamic UI function calls
-    showNotice({
-        type: "warning",
+    debugLog("Attempting to run loadProfile()");
+    loadProfile();
+
+    debugLog("The function ran successfully! Attempting to run showNotice()");
+    showNotice({ type: "warning", id: `unofficial_warning`,
         text: "Hey! What you're using right now is a fan-made client and not affiliated with Discord.",
-        id: `unofficial_warning`
     });
-    /* Some examples
-    showNotice({
-        type: "alert",
-        text: "gfdgfdgfdgfdhfdhs",
-        id: `alerttest`
-    });
-    showNotice({
-        type: "lurking",
-        text: "You are currently in preview mode. Join this server to start chatting!",
-        id: `lurkTest`,
-        buttonText: "Join TEST_SERVER"
-    });
-    showNotice({
-        type: "warning",
-        text: "Your Nitro sub is about to run out, add payment info to keep using Nitro.",
-        id: `nitro_expiration`,
-        buttonText: "Go to settings"
-    });
-    */
 
+    debugLog("The function ran successfully! Attempting to run setTheme()");
     setTheme(localStorage.getItem("user-theme") || "dark");
 
-    // Event Listneres
+    // __________ Settings Initialization ___________ \\
+    
+    debugLog("The function ran successfully! Attempting to run createSettingsPanel()");
+    createSettingsPanel();
+    settingsPanel = $("settings-panel");
+
+    debugLog("The function ran successfully! Attempting to run closeSettingsPanel()");
+    closeSettingsPanel();
+
+    debugLog("The function ran successfully! Attempting to run applySettings()");
+    applySettings();
+
+    debugLog("The function ran successfully! Attempting to run changeSaturation()");
+    if (!localStorage.getItem("accessibility-saturation")) changeSaturation(100); // workaround
+
+    debugLog("The function ran successfully! Attempting to initialize MessageHoverButtons...");
+    window.hoverButtons = new MessageHoverButtons(new MessageActivities());
+
+    debugLog("Sucess! Attempting to initialize AutoComplete...");
+    const autoComplete = new AutoComplete($("input-box"), emojiUtils, commands);
+
+    debugLog("Success! Attempting to initialize console messages...");
+
+    // __________ Other Initializations ___________ \\
+
+    initConsoleMessages();
+    debugLog("The function ran successfully! Attempting to show the loading screen...");
+
+    showLoadingScreen(LOADING_TIME);
+    // showLoadingScreen(100);
+    debugLog("Success! No more pre-load debugging needed.");
+
+    console.log("%c_ And now, here comes the logs coming from everything else! _", "font-size: 12px; font-family: 'Consolas';");
+
+    // __________ Event Listeners  ___________ \\
     sendBtn.addEventListener("click", () => { sendMessage(); autoComplete.hide(); updateSendButtonColor(); });
     $("settings-btn").addEventListener("click", openSettingsPanel);
     $("attach-btn").addEventListener("click", handleFileAttachment);
+
+    let typingTimeout;
+    let isCurrentlyTyping = false;
+    
     messageInput.addEventListener("input", () => {
-        if (messageInput.value !== history[historyIndex]) { history = history.slice(0, historyIndex + 1); history.push(messageInput.value); historyIndex++; let f = false, nh = []; for (const i of history) { if (i !== "") { nh.push(i); f = true; } else if (!f) nh.push(i); } history = nh; historyIndex = Math.min(historyIndex, history.length - 1) };
+        if (messageInput.value !== history[historyIndex]) {
+            history = history.slice(0, historyIndex + 1);
+            history.push(messageInput.value);
+            historyIndex++;
+            let f = false, nh = [];
+            for (const i of history) {
+                if (i !== "") { nh.push(i); f = true; } else if (!f) nh.push(i); 
+            }
+            history = nh;
+            historyIndex = Math.min(historyIndex, history.length - 1);
+        }
+    
         updateSendButtonColor({ attachments: currentAttachments });
-    });
+    
+        if (!isCurrentlyTyping) {
+            isCurrentlyTyping = true;
+            eventBus.emit("isTyping", { text: messageInput.value, startTimestamp: Date.now() });
+        }
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+            isCurrentlyTyping = false;
+            eventBus.emit("isTypingStop", { text: messageInput.value, timestamp: Date.now() });
+        }, 13000);
+    });    
+
     messageInput.addEventListener("keydown", (e) => {
         if (e.ctrlKey && e.key === "z" && historyIndex > 0) { historyIndex--; messageInput.value = history[historyIndex]; e.preventDefault(); }
         if ((e.ctrlKey && e.key === "y") || (e.ctrlKey && e.shiftKey && e.key === "z") && historyIndex < history.length - 1) { historyIndex++; messageInput.value = history[historyIndex]; e.preventDefault(); }
         updateSendButtonColor({ attachments: currentAttachments });
     });
     messageInput.addEventListener("keydown", async (e) => {
-        if (e.ctrlKey && e.key === 'c' && messageInput.selectionStart === messageInput.selectionEnd) {
-            e.preventDefault(); try { await navigator.clipboard.writeText(''); } catch (err) { console.error(`[ERROR] ${err}`); }
+        if (e.ctrlKey && e.key === "c" && messageInput.selectionStart === messageInput.selectionEnd) {
+            e.preventDefault(); try { await navigator.clipboard.writeText(""); } catch (err) { console.error(`[ERROR] ${err}`); }
             updateSendButtonColor({ attachments: currentAttachments });
         }
     });
@@ -60,7 +101,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } else {
             if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault(); sendMessage(); autoComplete.hide(); updateSendButtonColor({ attachments: currentAttachments });
+                if (!document.querySelector("div.autocomplete").classList.contains("show")){
+                    e.preventDefault(); sendMessage(); autoComplete.hide(); updateSendButtonColor({ attachments: currentAttachments });
+                }
             }
         }
     });
@@ -76,13 +119,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {messageInput.focus();}
     });
     document.addEventListener("paste", async (e) => {
-        const settingsPanel = $("settings-panel");
         if (settingsPanel && settingsPanel.style.display === "flex") return;
         messageInput.focus();
     });
     const dropOverlay = document.createElement("div"); dropOverlay.className = "drop-overlay"; dropOverlay.innerHTML = `<div class="drop-content"><img src="./assets/svg/file/Upload a File.svg"><span>Drag files here to upload them into SparkleCord</span></div>`;
     $("app").appendChild(dropOverlay);
-    $("app").addEventListener("dragenter", (e) => { if (e.dataTransfer.types.includes('Files')) dropOverlay.classList.add("active"); });
+    $("app").addEventListener("dragenter", (e) => { if (e.dataTransfer.types.includes("Files")) dropOverlay.classList.add("active"); });
     $("app").addEventListener("dragleave", (e) => { if (!e.relatedTarget || !$("app").contains(e.relatedTarget)) dropOverlay.classList.remove("active"); });
     $("app").addEventListener("dragover", (e) => { e.preventDefault(); e.stopPropagation(); });
     $("app").addEventListener("drop", (e) => { e.preventDefault(); e.stopPropagation(); dropOverlay.classList.remove("active");
@@ -105,10 +147,3 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.key === KEYBIND_CLOSE && R_INDICATOR.style.display === "flex") { closeReply(); }
     });
 });
-
-if (location.protocol.startsWith("http")) {
-    let link = document.createElement("link"); link.rel = "manifest"; link.href = "./assets/PWA/manifest.json"; document.head.appendChild(link);
-    window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); setTimeout(() => e.prompt(), 3000); });
-} else {
-    console.log("%cImportant:", "color: orange; font-weight: bold;", "To use the PWA (Progressive Web App) version of SparkleCord, You need to open the server shortcut.");
-}

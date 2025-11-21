@@ -1,130 +1,223 @@
 function showHoverTooltip(event, emojiName) {
-    let clickTooltip = document.getElementById("click-tooltip-emoji");
+    const clickTooltip = document.getElementById("click-tooltip-emoji");
     if (clickTooltip && clickTooltip.style.display === "flex") return;
+
     let tooltip = document.getElementById("hover-tooltip-emoji");
-    if (!tooltip) { tooltip = document.createElement("div"); tooltip.id = "hover-tooltip-emoji"; tooltip.className = "hover-tooltip-emoji"; document.body.appendChild(tooltip); }
-    tooltip.innerText = `:${emojiName}:`; 
-    tooltip.style.display = "block";
-    let rect = event.target.getBoundingClientRect();
-    tooltip.style.left = `${rect.left + rect.width / 2}px`;
-    tooltip.style.top = `${rect.top}px`;
-    tooltip.style.transform = "translate(-50%, -100%)";
+    if (!tooltip) {
+        tooltip = document.createElement("div");
+        tooltip.id = "hover-tooltip-emoji";
+        tooltip.className = "hover-tooltip-emoji";
+        document.body.appendChild(tooltip);
+    }
+
+    const rect = event.target.getBoundingClientRect();
+    tooltip.innerHTML = `<span>:${emojiName}:</span><br><subtext>Click to learn more</subtext>`;
+    tooltip.style = `display: block; left: ${rect.left + rect.width / 2}px; top: ${rect.top}px; transform: translate(-50%, -100%);`
 }
-function hideHoverTooltip() { const tooltip = document.getElementById("hover-tooltip-emoji"); if (tooltip) tooltip.style.display = "none"; }
-function showClickTooltip(event, emojiName, emojiCode) {
+
+function hideHoverTooltip() {
+    const tooltip = document.getElementById("hover-tooltip-emoji");
+    if (tooltip) tooltip.style.display = "none";
+}
+
+function showClickTooltip(event, emojiName, emojiCode, emojiURL) {
     let tooltip = document.getElementById("click-tooltip-emoji");
-    if (!tooltip) { tooltip = document.createElement("div"); tooltip.id = "click-tooltip-emoji"; tooltip.className = "click-tooltip-emoji"; document.body.appendChild(tooltip); }
-    tooltip.innerHTML=`<img src="./emoji/${emojiCode}.svg">
-        <div>
-            <span class="emojiName">:${emojiName}:</span>
-            <br>
-            <span class="emojiDesc">${defaultEmojiDesc}</span>
-        </div>`;
-    tooltip.style.display = "flex";
-    let rect = event.currentTarget.getBoundingClientRect();
-    tooltip.style.left = `${rect.right + 10}px`;
-    tooltip.style.top = `${rect.top}px`;
-    tooltip.style.position = "absolute";
-    tooltip.style.zIndex = "9999";
+    if (!tooltip) {
+        tooltip = document.createElement("div");
+        tooltip.id = "click-tooltip-emoji";
+        tooltip.className = "click-tooltip-emoji"; document.body.appendChild(tooltip);
+    }
+
+    const emoji = emojiUtils.getEmoji(emojiCode.split("-"));
+    const src = emojiURL ?? `./emoji/${emoji.path ?? `${emojiCode}.svg`}`;
+    tooltip.innerHTML = `<img src="${src}">
+      <div>
+          <span class="emojiName">:${emojiName}:</span>
+          <br>
+          <span class="emojiDesc">${
+              !emojiCode.replace(/\w{17,19}/, "")
+                ? "This emoji is from a Discord server."
+                : emoji.path && emoji.path.startsWith("custom/")
+                    ? "You've discovered a community emoji! <br><br><em><b>This is a development build-only feature.</b></em>"
+                    : defaultEmojiDesc
+          }</span>
+      </div>`;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    tooltip.style = `display: flex; left: ${rect.right + 10}px; top: ${rect.top}px; position: absolute; z-index: 9999;`;
     event.stopPropagation();
-    function hideTooltip(e) { if (!tooltip.contains(e.target)) { tooltip.style.display = "none"; document.removeEventListener("click", hideTooltip); } }
+
+    function hideTooltip(e) {
+        if (!tooltip.contains(e.target)) {
+            tooltip.style.display = "none"; document.removeEventListener("click", hideTooltip);
+        }
+    }
+
     setTimeout(() => document.addEventListener("click", hideTooltip), 50);
 }
+
 class EmojiUtils {
-  constructor(emojiData) {
-    this.emojiData = emojiData;
-    this.diversityMap = {
-      '1f3fb': 'skin-tone-1', '1f3fc': 'skin-tone-2', '1f3fd': 'skin-tone-3',
-      '1f3fe': 'skin-tone-4', '1f3ff': 'skin-tone-5'
-    };
-    this.knownEmojis = {
-      '2122': 'tm', '00ae': 'registered', '00a9': 'copyright',
-      '26a7': 'transgender_symbol', '1f3cc': 'person_golfing',
-      '2640': 'female_sign', '2642': 'male_sign',
-      '1f46f': 'people_with_bunny_ears_partying',
-      '2620': 'skull_and_crossbones', '1f3f3': 'white_flag',
-      '1f308': 'rainbow', '270b': 'raised_hand', '261d': 'point_up',
-      '270a': 'fist', '1f473': 'person_wearing_turban',
-      '1f46e': 'police_officer', '2328': 'keyboard',
-      '23f1': 'stopwatch', '23f2': 'timer_clock',
-      '23f0': 'alarm_clock', '1f570': 'mantelpiece_clock',
-      '231b': 'hourglass', '23f3': 'hourglass_flowing_sand',
-      '1fa85': 'piñata'
-    };
-    this.ZWJ = '\u200D';
-    this.VS16 = '\uFE0F';
-    this.textChars = new Set(['™', '®', '©', '™️', '®️', '©️']);
-    this.emojiMap = this.buildEmojiMap();
-  }
-  buildEmojiMap() {
-    const map = new Map();
-    Object.values(this.emojiData).forEach(category => {
-      category.forEach(emoji => {
-        emoji.surrogates = this.sanitizeSurrogates(emoji.surrogates);
-        emoji.names.forEach(name => map.set(name, emoji));
-        if (emoji.diversityChildren) { emoji.diversityChildren.forEach(child => {
-            child.surrogates = this.sanitizeSurrogates(child.surrogates);
-            child.names.forEach(name => map.set(name, child));
-          });
+    constructor(emojiData) {
+        this.emojiData = emojiData;
+        this.diversityMap = {
+            "1f3fb": "skin-tone-1", "1f3fc": "skin-tone-2", "1f3fd": "skin-tone-3",
+            "1f3fe": "skin-tone-4", "1f3ff": "skin-tone-5"
+        };
+
+        this.textChars = new Set(["™", "®", "©", "™️", "®️", "©️", "🐻‍❄"]);
+        this.emojiMap = this.buildEmojiMap();
+
+        const EMOJI_RANGE = /(?:[\u{1F3FB}-\u{1F3FF}]\u{E621})|(?:[\u{1F3FB}-\u{1F3FF}])|(?:[\u{E100}-\u{E1FF}])(?:[\u{1F3FB}-\u{1F3FF}])?|(?:\p{Extended_Pictographic}(?:\uFE0F)?(?:[\u{1F3FB}-\u{1F3FF}])?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F)?(?:[\u{1F3FB}-\u{1F3FF}])?)*)|(?:[0-9#*]\uFE0F?\u20E3)|(?:[\u{1F1E6}-\u{1F1FF}]{1,2})|[\u2122\u00AE\u00A9]\uFE0F?/gu;
+        
+        const DISCORD_EMOJI_RANGE = /<(a)?:(\w+):(\d+)>/g;
+
+        this.EMOJI_REGEXP = new RegExp(EMOJI_RANGE.source, "gu");
+        this.SINGLE_EMOJI_REGEXP = new RegExp(`^(?:${EMOJI_RANGE.source})+$`, "u");
+
+        this.CEMOJI_REGEXP = new RegExp(DISCORD_EMOJI_RANGE.source, "gu");
+        this.SINGLE_CEMOJI_REGEXP = new RegExp(`^(?:${DISCORD_EMOJI_RANGE.source})+$`, "u");
+    }
+
+    buildEmojiMap() {
+        const map = new Map();
+        Object.values(this.emojiData).forEach(category => {
+            category.forEach(emoji => {
+                emoji.surrogates = emoji.surrogates;
+                emoji.names.forEach(name => map.set(name, emoji));
+                if (emoji.diversityChildren) {
+                    emoji.diversityChildren.forEach(child => {
+                        child.surrogates = child.surrogates;
+                        child.names.forEach(name => map.set(name, child));
+                    });
+                }
+            });
+        });
+
+        return map;
+    }
+
+    replaceEmojiNames(text, inCodeBlock = false) {
+        // return "🐱";
+        if (inCodeBlock) return text;
+        return text.replace(/:([^:\s]+)(?:::skin-tone-\d)?:/g, (match, name) => {
+            const emoji = this.emojiMap.get(name);
+            return emoji ? emoji.surrogates : match;
+        });
+    }
+
+    findChar(chars, code) {
+        return chars.some(c => c.codePointAt(0).toString(16) === code);
+    }
+
+    filterCodes(code, chars) {
+        switch (code) {
+            case "fe0f":
+                const isPolarBear = (this.findChar(chars, "1f43b") && this.findChar(chars, "2744"));
+                const isZWJSequence = this.findChar(chars, "200d");
+                const isGenderSequence = this.findChar(chars, "2640") || this.findChar(chars, "2642");
+                const isProfession = this.findChar(chars, "2695") || this.findChar(chars, "2696") || this.findChar(chars, "2708");
+
+                return isPolarBear || isZWJSequence || isGenderSequence || isProfession;
+            case "200d": return true;
+            default: return true;
         }
-      });
-    });
-    return map;
-  }
-  sanitizeSurrogates(surrogates) { 
-    return decodeURIComponent(encodeURIComponent(surrogates))
-      .replace(/â€/g, '\u200D').replace(/ï¸/g, '\uFE0F')
-      .replace(/â™€/g, '\u2640').replace(/â™‚/g, '\u2642')
-      .replace(/âš§/g, '\u26A7').replace(/â˜ /g, '\u2620')
-      .replace(/âŒ¨/g, '\u2328').replace(/â±/g, '\u23F1')
-      .replace(/â²/g, '\u23F2').replace(/â°/g, '\u23F0')
-      .replace(/âŒ›/g, '\u231B').replace(/â³/g, '\u23F3')
-      .replace(/âœ‹/g, '\u270B').replace(/â˜/g, '\u261D')
-      .replace(/âœŠ/g, '\u270A').replace(/â„¢/g, '\u2122')
-      .replace(/Â®/g, '\u00AE').replace(/Â©/g, '\u00A9')
-      .replace(/ðŸ³/g, '\u1F3F3').replace(/ðŸŒˆ/g, '\u1F308')
-      .replace(/ðŸ¤¼/g, '\u1F93C').replace(/ðŸ¯/g, '\u1F46F')
-      .replace(/ðŸ´/g, '\u1F3F4').replace(/ðŸ³/g, '\u1F3F3')
-      .replace(/âš /g, '\u2620').normalize('NFC');
-  }
-  replaceEmojiNames(text, inCodeBlock = false) { 
-    if (inCodeBlock) return text;
-    return text.replace(/:([^:\s]+)(?:::skin-tone-\d)?:/g, (match, name) => {
-      const emoji = this.emojiMap.get(name);
-      return emoji ? emoji.surrogates : match;
-    });
-  }
-  replaceEmojis(text, inCodeBlock = false) {
-    if (inCodeBlock) return text;
-    return text.replace(/(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:[\u200D\uFE0F\u{1F3FB}-\u{1F3FF}\u2640\u2642]|\u200D(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F))*|(?:[\u2122\u00AE\u00A9][\uFE0F]?)/gu,
-      (match) => {
-        if (this.textChars.has(match)) return match;
-        const chars = Array.from(match);
-        const codes = chars.map(char => char.codePointAt(0).toString(16).padStart(4, '0')).filter(code => code !== 'fe0f');
-        const emojiCode = codes.join('-');
-        const emojiName = this.getEmojiName(codes).replace(/_/g, '\\_\\_');
-        const isOnlyEmoji = text.trim().replace(/[\s<br>]+/gu, '').match(/^(?:[\p{Emoji}\uFE0F\u200D]+)$/u);
-        const sizeClass = isOnlyEmoji ? "emoji" : "emoji-tiny";
-        return `<span class="emoji-wrapper"><img src="./emoji/${emojiCode}.svg" alt="${match}" class="${sizeClass}" draggable="false" onclick="showClickTooltip(event,'${emojiName}','${emojiCode}')" onmouseenter="showHoverTooltip(event,'${emojiName}')" onmouseleave="hideHoverTooltip()" onerror="this.outerHTML=this.alt"/></span>`;
-      }
-    );
-  }
-  getEmojiName(codes) {
-    if (codes.length === 1 && this.knownEmojis[codes[0]]) { return this.knownEmojis[codes[0]]; }
-    if (codes.length === 2 && this.knownEmojis[codes[0]]) {
-      const baseName = this.knownEmojis[codes[0]];
-      const toneCode = codes[1];
-      if (this.diversityMap[toneCode]) { return `${baseName}_tone${parseInt(this.diversityMap[toneCode].slice(-1))}`; }
     }
-    const fullCode = codes.join('-');
-    for (const [name, emoji] of this.emojiMap) {
-      const emojiCodes = Array.from(emoji.surrogates).map(char => char.codePointAt(0).toString(16).padStart(4, '0')).filter(code => code !== 'fe0f');
-      if (emojiCodes.join('-') === fullCode) { return name; }
+
+    replaceEmojis(text, inCodeBlock = false, forceSmall = false) {
+        if (inCodeBlock) return text;
+
+        // emoji counter
+        let emojiCount = 0;
+        text.replace(this.EMOJI_REGEXP, (match) => { if (!this.textChars.has(match)) emojiCount++; return match; });
+        text.replace(this.CEMOJI_REGEXP, (match) => { emojiCount++; return match; });
+
+        // size does matter
+        const isOnlyEmoji = Parser.trim(text.trim().replace(this.CEMOJI_REGEXP, "").replace(this.EMOJI_REGEXP, "").replace(/[\s<br>]+/gu, "")).length === 0 && emojiCount > 0;
+        
+        let sizeClass;
+        if (forceSmall) {
+            sizeClass = "emoji-uninteractable";
+        } else {
+            sizeClass = (!isOnlyEmoji || emojiCount > 30) ? "emoji-tiny" : "emoji";
+        }
+
+
+        // discord html replacement
+        const withDiscordEmojis = text.replace(this.CEMOJI_REGEXP, (match, animated, name, id) => {
+            const isAnimated = animated === "a";
+            const extension = isAnimated ? "gif" : "png";
+            const SRC = `https://cdn.discordapp.com/emojis/${id}.${extension}`;
+
+            return `<span class="emoji-wrapper"><img src="${SRC}" alt="${match}" class="${sizeClass}" draggable="false" onclick="showClickTooltip(event,'${name}','${id}','${SRC}')" onmouseenter="showHoverTooltip(event,'${name}')" onmouseleave='hideHoverTooltip()' onerror="this.parentElement.parentElement.querySelectorAll('.emoji').forEach(e => e.classList.replace('emoji','emoji-tiny')); this.parentElement=this.alt;"/></span>`;
+        });
+
+        // html replacement
+        return withDiscordEmojis.replace(this.EMOJI_REGEXP, (match) => {
+            if (this.textChars.has(match)) return match;
+
+            const chars = Array.from(match);
+            const codes = chars.map(char => char.codePointAt(0).toString(16)).filter(code => this.filterCodes(code, chars));
+            let emojiCode = codes.join("-");
+
+            const glitchedCodes = ["2640", "2642", "2695", "2708", "2696"];
+            if (glitchedCodes.some(code => emojiCode === `${code}-fe0f`)) {
+                emojiCode = emojiCode.slice(0,-5);
+            }
+
+            if (emojiCode.includes("1faf1") && !emojiCode.startsWith("1faf1")) {
+                emojiCode = emojiCode.replace("1faf1", "1faef");
+            }
+
+            let SRC = `${emojiCode}.svg`;
+
+            const emojiName = this.getEmojiName(codes).replace(/_/g, "\\_\\_");
+            const emoji = this.getEmoji(codes);
+
+            // if they are in the custom block (U+E100-U+E1FF) or have a custom path
+            if (emoji.path) SRC = emoji.path;
+
+            return `<span class="emoji-wrapper"><img src="./emoji/${SRC}" alt="${match}" class="${sizeClass}" draggable="false" ${forceSmall ? "" : `onclick="showClickTooltip(event,'${emojiName}','${emojiCode}')" onmouseenter="showHoverTooltip(event,'${emojiName}')" onmouseleave="hideHoverTooltip()"`} onerror="this.parentElement.parentElement.querySelectorAll('.emoji').forEach(e => e.classList.replace('emoji','emoji-tiny')); this.parentElement=this.alt;"/></span>`;
+        });
     }
-    return 'unknown';
-  }
-  getEmojiNameFromIcon(icon) { const codes = icon.split('-'); return this.getEmojiName(codes); }
+
+    getEmoji(codes) {
+        const fullCode = codes.join("-");
+        for (const [name, emoji] of this.emojiMap) {
+            const chars = Array.from(emoji.surrogates);
+            const emojiCodes = chars.map(char => char.codePointAt(0).toString(16)).filter(code => this.filterCodes(code, chars));
+            if (emojiCodes.join("-") === fullCode) { return emoji; }
+        }
+        return "unknown";
+    }
+
+    getEmojiName(codes) {
+        const fullCode = codes.join("-");
+        for (const [name, emoji] of this.emojiMap) {
+            const chars = Array.from(emoji.surrogates);
+            const emojiCodes = chars.map(char => char.codePointAt(0).toString(16)).filter(code => this.filterCodes(code, chars));
+            if (emojiCodes.join("-") === fullCode) { return name; }
+        }
+        return "unknown";
+    }
+
+    getEmojiByName(n) {
+        for (const [name, emoji] of this.emojiMap) {
+            if (name === n) return this.replaceEmojis(emoji.surrogates, false, true);
+        }
+    }
+
+    getEmojiNameFromIcon(icon) {
+        const codes = icon.split("-");
+        return this.getEmojiName(codes);
+    }
 }
+
 const emojiUtils = new EmojiUtils(emojiData);
-function replaceEmojiNames(text, inCodeBlock = false) { return emojiUtils.replaceEmojiNames(text, inCodeBlock); }
-function replaceEmojis(text, inCodeBlock = false) { return emojiUtils.replaceEmojis(text, inCodeBlock); }
+function replaceEmojiNames(text, inCodeBlock = false) {
+    return emojiUtils.replaceEmojiNames(text, inCodeBlock);
+}
+
+function replaceEmojis(text, inCodeBlock = false) {
+    return emojiUtils.replaceEmojis(text, inCodeBlock);
+    // return twemoji.parse(text, { callback: (icon, options) => { return `./emoji/${icon}.svg` }, className: "emoji-tiny" });
+}

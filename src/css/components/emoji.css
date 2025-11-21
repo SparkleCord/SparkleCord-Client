@@ -1,6 +1,7 @@
 .emoji {
-    width: 48px;
-    height: 48px;
+    width: var(--custom-emoji-size-jumbo-emoji);
+    height: var(--custom-emoji-size-jumbo-emoji);
+    min-height: var(--custom-emoji-size-jumbo-emoji);
     vertical-align: middle;
     position: relative;
     cursor: pointer;
@@ -12,12 +13,25 @@
     -webkit-user-drag: none;
 }
 .emoji-tiny {
-    width: 24px;
-    height: 24px;
+    width: var(--custom-emoji-size-emoji);
+    height: var(--custom-emoji-size-emoji);
     vertical-align: middle;
     position: relative;
     cursor: pointer;
     -webkit-user-drag: none;
+    object-fit: contain;
+    vertical-align: bottom
+}
+.emoji-uninteractable {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-drag: none;
+    object-fit: contain;
+    vertical-align: bottom;
+    padding-right: 2px;
 }
 .hover-tooltip-emoji {
     position: absolute;
@@ -34,6 +48,7 @@
     left: 50%;
     transform: translate(-50%, -100%);
     display: none;
+    text-align: center;
 }
 .click-tooltip-emoji {
     position: absolute;

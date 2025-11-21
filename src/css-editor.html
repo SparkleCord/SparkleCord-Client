@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>SparkleCord UserCSS Editor</title>
     <link rel="icon" href="./assets/icons/icon.png">
-    <link rel="stylesheet" href="./js/codemirror/codemirror.min.css">
+    <link rel="stylesheet" href="./js/modules/codemirror/codemirror.min.css">
     <style> html, body, #editor { margin: 0; padding: 0; height: 100%; width: 100% } </style>
 </head>
 <body>
@@ -12,7 +12,7 @@
     <script>
         let isOnline = true;
         async () => {
-            try { await fetch("https://example.com", { mode: "no-cors" }); isOnline = true; }
+            try { await fetch("https://example.com", { mode: "no-cors" }); }
             catch { isOnline = false; }
         }
         (async () => {
@@ -37,7 +37,7 @@
                 };
                 document.body.appendChild(script);
             } else {
-                for (const src of ["./js/codemirror/codemirror.js","./js/codemirror/css.js","./js/codemirror/matchbrackets.js"]) {
+                for (const src of ["./js/modules/codemirror/codemirror.js","./js/modules/codemirror/css.js","./js/modules/codemirror/matchbrackets.js"]) {
                     const script = document.createElement("script"); script.src = src; document.body.appendChild(script);
                     await new Promise(resolve => script.onload = resolve);
                 }

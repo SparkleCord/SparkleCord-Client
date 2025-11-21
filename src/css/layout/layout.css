@@ -42,6 +42,9 @@
     left: 0;
     z-index: 10;
 }
+.visual-refresh-ui #profile-section {
+    width: 360px;
+}
 /* Settings Button */
 #settings-btn {
     background: none;
@@ -140,6 +143,17 @@
 }
 
 /* Notices */
+:root {
+    --notice-background-critical: var(--red-new-74);
+    --notice-background-info: var(--blue-new-76);
+    --notice-background-positive: var(--green-new-76);
+    --notice-background-warning: var(--yellow-new-75);
+
+    --notice-text-critical: var(--red-new-9);
+    --notice-text-info: var(--blue-new-12);
+    --notice-text-positive: var(--green-new-14);
+    --notice-text-warning: var(--yellow-new-12);
+}
 .notice.positive {
     background: var(--status-positive-background);
     color: var(--status-positive-text);
@@ -156,12 +170,34 @@
     color: var(--status-warning-text);
     border-color: var(--status-warning-text);
 }
+.notice.info {
+    background: #4a90e2;
+}
+
+.theme-light .notice.positive, .visual-refresh .notice.positive {
+    background: var(--notice-background-positive);
+    color: var(--notice-text-positive);
+}
+.theme-light .notice.danger, .visual-refresh .notice.danger {
+    background: var(--notice-background-critical);
+    color: var(--notice-text-critical);
+}
+.theme-light .notice.warning, .visual-refresh .notice.warning {
+    background: var(--notice-background-warning);
+    color: var(--notice-text-warning);
+}
+.theme-light .notice.warning button, .visual-refresh .notice.warning button {
+    color: var(--notice-text-warning);
+    border-color: var(--notice-text-warning);
+}
+.theme-light .notice.info, .visual-refresh .notice.info {
+    background: var(--notice-background-info);
+    color: var(--notice-text-info);
+}
+
 .notice.alert {
     background: #ff9900;
     color: var(--status-warning-text);
-}
-.notice.info {
-    background: #4a90e2;
 }
 .notice.streamer_mode {
     background: #9147ff;
@@ -189,11 +225,6 @@
 }
 .notice.nitro3 {
     background: var(--custom-premium-colors-premium-gradient-tier-2);
-}
-
-.theme-light .notice.warning, .theme-light .notice.alert, .theme-light .notice.warning button {
-    color: var(--white-500);
-    border-color: var(--white-500);
 }
 
 .notice {

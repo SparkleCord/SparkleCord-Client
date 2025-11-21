@@ -23,14 +23,14 @@
 }
 .menu-item:hover {
     background: var(--menu-item-default-hover-bg);
-    color: var(--white-2);
+    color: var(--white-500);
 }
 .menu-item.danger {
     color: var(--status-danger);
 }
 .menu-item.danger:hover {
     background: var(--menu-item-danger-hover-bg);
-    color: var(--white-2);
+    color: var(--white-500);
 }
 .menu-item-content {
     display: flex;
@@ -46,4 +46,11 @@
     width: 24px;
     height: 24px;
     flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    #context-menu {
+        scale: 0.75;
+        transform: translate(-42px, -42px);
+    }
 }

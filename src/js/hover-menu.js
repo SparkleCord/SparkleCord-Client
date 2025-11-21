@@ -1,6 +1,5 @@
 class MessageHoverButtons {
-    constructor() {
-        const mA = new MessageActivities();
+    constructor(mA) {
         this.hoverButtons = [
             {id:"hover-edit",action:msg=>mA.editMessage(msg),icon:`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="m13.96 5.46 4.58 4.58a1 1 0 0 0 1.42 0l1.38-1.38a2 2 0 0 0 0-2.82l-3.18-3.18a2 2 0 0 0-2.82 0l-1.38 1.38a1 1 0 0 0 0 1.42ZM2.11 20.16l.73-4.22a3 3 0 0 1 .83-1.61l7.87-7.87a1 1 0 0 1 1.42 0l4.58 4.58a1 1 0 0 1 0 1.42l-7.87 7.87a3 3 0 0 1-1.6.83l-4.23.73a1.5 1.5 0 0 1-1.73-1.73Z"/></svg>`, selfOnly: true },
 
@@ -30,14 +29,15 @@ class MessageHoverButtons {
                             let container = msg.querySelector(`#hover-${msg.getAttribute("data-id")}`), items = container.querySelectorAll(".hover-btn");
                             items.forEach(item => {
                                 if (item.getAttribute("data-self") === "true") {
-                                    if (profile.id.toString() !== msg.getAttribute("data-userid")) item.style.display = "none"; else item.removeAttribute("style");
+                                    if (humans.self.id.toString() !== msg.getAttribute("data-userid")) item.style.display = "none";
+                                    else item.removeAttribute("style");
                                 }
                             });
                         }
                     });
                 });                
             });
-        }).observe(document.getElementById("messages"), { childList: true, subtree: true });
+        }).observe($("messages"), { childList: true, subtree: true });
 
         document.addEventListener("keydown", e => { if (e.key === "Shift" && !this.shiftPressed) this.toggleShift(true); });
         document.addEventListener("keyup", e => { if (e.key === "Shift") this.toggleShift(false); });
@@ -52,7 +52,7 @@ class MessageHoverButtons {
             container.innerHTML = "";
             (state ? this.hoverButtonsShift : this.hoverButtons).forEach((item) => {
                 const btn = this.createHoverButton(item.id, item.icon, (e) => item.action(msg, e), item.destructive, item.selfOnly);
-                if (item.selfOnly && profile.id.toString() !== msg.getAttribute("data-userid")) btn.style.display = "none";
+                if (item.selfOnly && humans.self.id.toString() !== msg.getAttribute("data-userid")) btn.style.display = "none";
                 container.appendChild(btn);
             });
         });
@@ -76,7 +76,7 @@ class MessageHoverButtons {
         if (selfOnly === true) { btn.setAttribute("data-self", "true") }
 
         btn.className = `hover-btn ${destructive ? "danger" : ""}`; btn.id = id; btn.addEventListener("click", action);
-        if (icon.startsWith('<svg')) { btn.innerHTML = icon;} else if (icon.match(/\.(svg)$/i)) {
+        if (icon.startsWith("<svg")) { btn.innerHTML = icon;} else if (icon.match(/\.(svg)$/i)) {
             console.error("PLEASE use inline SVG! SVG files are no longer supported for context/hover menus.")
         }
         return btn;

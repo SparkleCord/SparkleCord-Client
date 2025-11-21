@@ -1,0 +1,28 @@
+:root.theme-light {
+    --contrast-color: black;
+}
+
+:root {
+    --contrast-color: white;
+}
+
+.high-contrast-mode div.separator {
+    background-color: var(--contrast-color);
+}
+
+.high-contrast-mode #settings-sidebar {
+    border-right: 1px solid var(--contrast-color);
+}
+
+.high-contrast-mode #settings-content .button, .high-contrast-mode #settings-content .normal,
+.high-contrast-mode #settings-content .remove, .high-contrast-mode #settings-content .inverted {
+    border: 1px solid var(--contrast-color) !important;
+}
+
+.high-contrast-mode #profile-section, .high-contrast-mode #reply-indicator, .high-contrast-mode #message-input {
+    border: 1px solid var(--contrast-color);
+}
+
+.high-contrast-mode .message .content {
+    color: var(--contrast-color);
+}
