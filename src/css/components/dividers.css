@@ -1,0 +1,47 @@
+.divider.unread {
+    align-items: center;
+    border-top: thin solid var(--divider-color);
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    position: relative;
+    margin-inline: 1rem .875rem;
+    margin-top: -8px;
+    margin-bottom: 16px;
+    --divider-color: hsl(357.692 calc(1*67.826%) 54.902% /1);
+}
+
+.divider-span.unread {
+    background-color: var(--divider-color);
+    align-items: center;
+    border-radius: 0 4px 4px 0;
+    box-sizing: border-box;
+    color: var(--white);
+    display: flex;
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    height: 13px;
+    inset-inline-end: 0;
+    justify-content: center;
+    line-height: 9px;
+    padding-block: 0;
+    padding-inline: 1px 4px;
+    position: absolute;
+    text-transform: uppercase;
+    top: -7px;
+    -webkit-border-start: none;
+    border-inline-start: none;
+}
+
+.divider-endCap.unread {
+    display: block;
+    height: 13px;
+    inset-inline-start: -8px;
+    position: absolute;
+    top: 0;
+}
+
+.divider-endCapStroke.unread {
+    color: var(--divider-color);
+    fill: var(--divider-color);
+}

@@ -64,15 +64,13 @@ class PluginManager {
     }
     static openModal(plugin) {
         const modalContainer = document.querySelector(".layerContainer_da8173");
+
         document.addEventListener("keydown", e => {
             if (e.key === KEYBIND_CLOSE) { modalContainer.style.display = "none"; }
         });
 
-        const nameElement = document.querySelector("#\\:r2tl\\: > div");
-        const descriptionElement = document.querySelector(".vc-plugin-modal-info > div");
-        const optionContainerElement = $("modal-settings-container");
-        nameElement.innerHTML = plugin.name;
-        descriptionElement.innerHTML = plugin.description;
+        document.querySelector("#\\:r2tl\\: > div").innerHTML = plugin.name;
+        document.querySelector(".vc-plugin-modal-info > div").innerHTML = plugin.description;
 
         let optionsHTML = "";
         if (plugin.settings && plugin.settings.length > 0) {
@@ -86,35 +84,33 @@ class PluginManager {
             });
         }
 
-        if (!optionsHTML) { optionContainerElement.innerHTML = ""; } else { optionContainerElement.innerHTML = optionsHTML; }
+        if (!optionsHTML) {
+            $("#modal-settings-container").innerHTML = "";
+        } else {
+            $("#modal-settings-container").innerHTML = optionsHTML;
+        }
 
         PluginManager.loadPluginSettings(plugin);
 
         modalContainer.style.display = "block";
-        const cancelButton = modalContainer.querySelector(".footer__49fc1 button.remove");
-        const closeButton = modalContainer.querySelector(".closeIcon__49fc1");
-        const saveButton = modalContainer.querySelector(".footer__49fc1 .button:not(.remove)");
-        
-        cancelButton.onclick = () => {
-            modalContainer.style.display = "none";
-        };
 
-        closeButton.onclick = () => {
-            modalContainer.style.display = "none";
-        };
-        
-        saveButton.onclick = () => {
+        $(".footer__49fc1 button.remove", false, modalContainer).onclick = () => modalContainer.style.display = "none";
+        $(".closeIcon__49fc1", false, modalContainer).onclick = () => modalContainer.style.display = "none";
+
+        $(".footer__49fc1 .button:not(.remove)", false, modalContainer).onclick = () => {
             PluginManager.savePluginSettings(plugin);
             modalContainer.style.display = "none";
         };
     }
+
     static savePluginSettings(plugin) {
         if (!plugin || !plugin.name) { console.error("Invalid plugin provided for saving settings"); return; }
+
         const settings = {};
         if (plugin.settings) {
             plugin.settings.forEach(setting => {
                 if (!setting.id) return;
-                const element = $(setting.id);
+                const element = $(`#${setting.id}`);
                 if (!element) return;
                 let value;
                 switch (setting.type) {
@@ -160,7 +156,7 @@ class PluginManager {
             if (plugin.settings) {
                 plugin.settings.forEach(setting => {
                     if (!setting.id || settings[setting.id] === undefined) return;
-                    const element = $(setting.id);
+                    const element = $(`#${setting.id}`);
                     if (!element) return;
                     const value = settings[setting.id];
                     switch (setting.type) {
@@ -226,10 +222,9 @@ class PluginManager {
         PluginManager.plugins.forEach(plugin => {
             PluginManager.create(plugin);
 
-            const toggleSwitch = $(`plugin_${plugin.name}-toggle`);
-            toggleSwitch.addEventListener("change", (e) => {
-                 const checked = e.target.checked;
-                 if (checked) {
+            const toggle = $(`#plugin_${plugin.name}-toggle`);
+            toggle.addEventListener("change", (e) => {
+                 if (e.target.checked) {
                      plugin.onEnable();
                      localStorage.setItem(`PLUGIN__${plugin.name}-enabled`, true);
                  } else {
@@ -237,12 +232,13 @@ class PluginManager {
                      localStorage.setItem(`PLUGIN__${plugin.name}-enabled`, false);
                  }
             });
+
             const enableState = localStorage.getItem(`PLUGIN__${plugin.name}-enabled`);
             if (enableState === "true") {
-                toggleSwitch.checked = true;
+                toggle.checked = true;
                 plugin.onEnable?.();
             } else {
-                toggleSwitch.checked = false;
+                toggle.checked = false;
                 plugin.onDisable?.();
             }
         });

@@ -14,7 +14,7 @@ class AutoComplete {
             commands: query => this.filterCommands(query) 
         };
         this.suggestionsDiv = Object.assign(document.createElement("div"), { className: "autocomplete" });
-        $("message-input").insertBefore(this.suggestionsDiv, this.suggestionsDiv.firstChild);
+        $("#message-input").insertBefore(this.suggestionsDiv, this.suggestionsDiv.firstChild);
         input.addEventListener("input", event => this.onInput(event));
         input.addEventListener("keydown", event => this.onKeyDown(event));
         input.addEventListener("blur", event => { 
@@ -98,13 +98,17 @@ class AutoComplete {
     filterEmojis(query) {
         if (!query) return [];
         const seen = new Set(), results = [];
+
         [...this.emojiUtils.emojiMap.values()].forEach(emoji => { 
-            if (!/🏻|🏼|🏽|🏾|🏿|_tone\d/.test(emoji.surrogates) && emoji.names.some(name => name.includes(query)) && !seen.has(emoji.names[0])) 
+            if (!emoji.hidden &&!/🏻|🏼|🏽|🏾|🏿|_tone\d/.test(emoji.surrogates) && emoji.names.some(name => name.includes(query)) && !seen.has(emoji.names[0])) {
                 seen.add(emoji.names[0]), results.push(emoji.names[0]); 
+            }
         });
+
         Object.entries(this.emojiUtils.AC_Emojis || {}).forEach(([alias, emoji]) => { 
             if (alias.includes(query) && !seen.has(emoji)) seen.add(emoji), results.push(emoji); 
         });
+
         return this.fuzzyMatch(results, query);
     }
     filterCommands(query) {

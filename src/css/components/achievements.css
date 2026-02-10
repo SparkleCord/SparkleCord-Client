@@ -1,0 +1,79 @@
+#settings-achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 10px;
+}
+
+.settings-achievement {
+    border: 1px solid #6e6e6e98;
+    background: #57575798;
+    border-radius: 20px;
+    display: flex;
+
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    width: 90%;
+    flex-shrink: 0;
+}
+
+.settings-achievement-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.settings-achievement-icon {
+    border-radius: 999px;
+    border: 1px solid var(--icon-unavailable);
+
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.settings-achievement-icon img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+}
+
+.settings-achievement-label {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.settings-achievement-description {
+    font-size: 12px;
+    color: var(--icon);
+}
+
+.settings-achievement-progress {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.settings-achievement-progressBar {
+    border-radius: 999px;
+    border: 3px solid var(--brand-500);
+    background: transparent;
+    height: 20px;
+
+    flex: 1;
+}
+
+.settings-achievement-progressText {
+    text-align: right;
+}
+
+.settings-achievement-progressFill {
+    border-radius: 999px;
+    background: var(--brand-600);
+    height: 20px;
+}

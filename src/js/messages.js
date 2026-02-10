@@ -1,3 +1,48 @@
+class SparkleCord {
+    static messages = {
+        "example": {
+            name: "User",
+            username: "firstuser",
+            
+            userid: "1470229359087321294",
+            avatar: null,
+
+            content: "none",
+            id: "1470231147788386726",
+            timestamp: "1770600821",
+            attachments: [],
+
+            automodStatus: {
+                isMessageBlockedByUser: null,
+                isMessageBlockedBySystem: null,
+                containsBlockedContent: null
+            },
+
+            reactions: [
+                { emoji: "🐱", type: "regular", count: 1 },
+                { emoji: "🎉", type: "super", count: 5 }
+            ],
+
+            tag: {
+                name: "Sparkler",
+                image: `${rootPath}/assets/icons/icon.png`
+            },
+
+            role: {
+                name: "Sparkler", 
+                color: DEFAULT_COLOR,
+                color1: "#fcdd2dff", color2: "#ffffffff", color3: HOLOGRAPHIC_COLOR3,
+                gradient: true, holographic: false,
+                icon: `${rootPath}/assets/icons/icon.png`
+            },
+        }
+    };
+
+    static Messages = class {
+        // tba
+    }
+}
+
 class Parser {
     static trim(text) {
         // start and end, but not middle
@@ -38,7 +83,7 @@ function flagAsEdited(msg, newText) {
 
 const messageActivities = new MessageActivities();
 async function sendMessage() {
-    const messageInput = $("input-box"), content = Parser.trim(messageInput.value), hasAttachments = currentAttachments.length > 0;
+    const messageInput = $("#input-box"), content = Parser.trim(messageInput.value), hasAttachments = currentAttachments.length > 0;
     if (!content && !hasAttachments) return;
     let convertedContent = convertEmoticons(sanitizeInput(content));
     if (content.startsWith("/")) {
@@ -73,20 +118,35 @@ async function sendMessage() {
 
     // MESSAGE DATA
     const data = {
-        username: humans.self.username, name: humans.self.name, content, avatar: humans.self.avatar, attachments: [], userid: humans.self.id,
-        id: generateSnowflake(Date.now()).toString(), timestamp,
+        name: humans.self.name, content,
+        username: humans.self.username,
+        userid: humans.self.id,
+        avatar: humans.self.avatar,
         tag: {
-            name: "goob", image: "https://cdn.discordapp.com/clan-badges/1224607670657486848/439c5b7117f3f3e8e574b4766d1b7e73.png"
+            name: "Sparkler",
+            image: `${rootPath}/assets/icons/icon.png`
         },
         role: {
-            color: DEFAULT_COLOR, color1: "#2d84fc", color2: "#9fc1ff", color3: HOLOGRAPHIC_COLOR3, gradient: true, holographic: true,
-            icon: "https://cdn.discordapp.com/role-icons/1239366126295584820/45ad6566304167dafb0ea306e6bd95ac.png"
+            name: "Sparkler", 
+            color: DEFAULT_COLOR,
+            color1: "#fcdd2dff", color2: "#ffffffff", color3: HOLOGRAPHIC_COLOR3,
+            gradient: true, holographic: false,
+            // icon: `${rootPath}/assets/icons/icon.png`
         },
+
+        id: generateSnowflake(Date.now()).toString(),
+        timestamp: timestamp,
+        attachments: [],
         automodStatus: {
             isMessageBlockedByUser: null,
             isMessageBlockedBySystem: null,
             containsBlockedContent: null
-        }
+        },
+
+        reactions: [
+            // { emoji: "🐱", type: "regular", count: 1, reacted: false },
+            // { emoji: "👍", type: "regular", count: 212444, reacted: true }
+        ]
     };
     if (localStorage.getItem("user-role-enabled" === "true")) { data.role.color = localStorage.getItem("user-role-color") || DEFAULT_COLOR; }
     // MESSAGE DATA END
@@ -94,7 +154,7 @@ async function sendMessage() {
     if (hasAttachments) {
         for (const attachment of currentAttachments) {
             const fileContent = await processFileForMessage(attachment);
-            data.attachments.push({ id: attachment.id, name: attachment.name, type: attachment.type, size: formatFileSize(attachment.size), content: fileContent });
+            data.attachments.push({ id: attachment.id, name: attachment.name, type: attachment.type, size:  (attachment.size), content: fileContent });
         }
     }
 
@@ -109,19 +169,40 @@ async function sendMessage() {
     if (hasAttachments) {
         messageHTML += `<div class="attachments">`;
         for (const attachment of data.attachments) {
-            if (attachment.type.startsWith("image/")) messageHTML += `<div class="attachment media"><img src="${attachment.content}" alt="Image"></div>`;
-            else if (attachment.type.startsWith("video/")) messageHTML += `<div class="attachment media-video"><video controls src="${attachment.content}"></video></div>`;
-            else if (attachment.type.startsWith("audio/")) messageHTML += `<div class="attachment media-audio"><img class="file-icon" src="${getFileIcon(attachment.type)}"><audio controls src="${attachment.content}"></audio><a href="${attachment.content}" class="link" target="_blank">${attachment.name}</a><span class="file-size">${attachment.size}</span></div>`;
-            else messageHTML += `<div class="attachment file-other"><img class="file-icon" src="${getFileIcon(attachment.type)}"><a href="${attachment.content}" class="link" target="_blank">${attachment.name}</a><span class="file-size">${attachment.size}</span></div>`;
+            if (attachment.type.startsWith("image/")) {
+                messageHTML += `<div class="attachment media">
+                                    <img src="${attachment.content}" alt="Image">
+                                </div>`;
+            } else if (attachment.type.startsWith("video/")) {
+                messageHTML += `<div class="attachment media-video">
+                                    <video controls src="${attachment.content}"></video>
+                                </div>`;
+            } else if (attachment.type.startsWith("audio/")) {
+                messageHTML += `<div class="attachment media-audio">
+                                    <img class="file-icon" src="${AttachmentHandler.getFileIcon(attachment.type, attachment.name)}">
+                                    <audio controls src="${attachment.content}"></audio>
+                                    <a href="${attachment.content}" class="link" target="_blank">${attachment.name}</a>
+                                    <span class="file-size">${attachment.size}</span>
+                                </div>`;
+            } else {
+                messageHTML += `<div class="attachment file-other">
+                                    <img class="file-icon" src="${AttachmentHandler.getFileIcon(attachment.type, attachment.name)}">
+                                    <div class="file-info">
+                                        <a href="${attachment.content}" class="link" target="_blank">${attachment.name}</a>
+                                        <span class="file-size">${attachment.size}</span>
+                                    </div>
+                                </div>`;
+            }
         }
         messageHTML += `</div>`;
     }
 
     // REPLIES
-    const replyToID = $("input-box").getAttribute("data-replying-to");
-    let replyHTML = ``;
+    let replyHTML = "";
+    const replyToID = $("#input-box").getAttribute("data-replying-to");
+
     if (replyToID) {
-        const repliedMsg = $(replyToID);
+        const repliedMsg = $(`#${replyToID}`);
 
         repliedMsg.classList.remove("replying");
         if (repliedMsg.parentElement?.matches(".reply-thread")) repliedMsg.parentElement.classList.remove("replying");
@@ -131,11 +212,10 @@ async function sendMessage() {
             let replyContent = repliedMsg.getAttribute("data-content");
             let replyPFP = repliedMsg.getAttribute("data-avatar") || humans.self.defaultAvatar;
             const replyColor = repliedMsg.getAttribute("data-color");
-            const mention = $("input-box").getAttribute("data-pstate") === "true" ? `@` : ``;
+            const mention = $("#input-box").getAttribute("data-pstate") === "true" ? `@` : "";
             const hasAttachments = repliedMsg.getAttribute("data-hasAttachments") || false;
             const botTag = repliedMsg.getAttribute("data-botTag");
             let useEmptyPFPAndNoName = false;
-            console.log("Use empty profile picture and no name:", useEmptyPFPAndNoName);
 
             if (!replyContent && !hasAttachments) {
                 useEmptyPFPAndNoName = true;
@@ -161,8 +241,8 @@ async function sendMessage() {
             if (replyAuthor === humans.self.name && mention === `@`) { hasReplyMentions = true; };
         }
     }
-    $("input-box").removeAttribute("data-replying-to");
-    $("reply-indicator").style.display = "none";
+    $("#input-box").removeAttribute("data-replying-to");
+    $("#reply-indicator").style.display = "none";
     // REPLIES - END
 
     // GROUPING
@@ -174,8 +254,8 @@ async function sendMessage() {
         }
     }
     
-    if (!groupMessage || $("messages").children.length === 0) {
-        groupMessage = document.createElement("div"); groupMessage.classList.add("message-group"); $("messages").appendChild(groupMessage);
+    if (!groupMessage || $("#messages").children.length === 0) {
+        groupMessage = document.createElement("div"); groupMessage.classList.add("message-group"); $("#messages").appendChild(groupMessage);
         isGrouped = false;
     }
     const messageElement = document.createElement("div"); messageElement.classList.add("message");
@@ -238,7 +318,7 @@ async function sendMessage() {
     messageElement.setAttribute("data-id", data.id);
     messageElement.setAttribute("data-userid", data.userid);
     messageElement.setAttribute("data-color", data.role.color);
-    if (hasAttachments) { messageElement.setAttribute("data-hasAttachments", "true"); }
+    messageElement.setAttribute("data-hasAttachments", hasAttachments ? "true" : "false");
     messageElement.id = data.id;
     messageElement.innerHTML = isGrouped ?
         `<div class="message-background">
@@ -264,10 +344,13 @@ async function sendMessage() {
                         <span style="user-select: none">${data.tag.name}</span>
                     </span>
                     </span>
-                    <img class="roleIcon" height="20" width="20" src="${data.role.icon}?size=20&quality=lossless"></span>
+                    ${data.role.icon ? `<img class="roleIcon" height="20" width="20" src="${data.role.icon}?size=20&quality=lossless" title="${data.role.name}"></span>` : ""}
                     <span class="timestamp" data-timestamp="${timestamp}">${formatTimestamp(timestamp)}</span>
                 </div>
                 ${messageHTML}
+                <div class="reaction-container">
+                    ${data.reactions.map((reaction) => getReactionHTML(reaction)).join("")}
+                </div>
             </div>
         </div>`;
 
@@ -283,7 +366,7 @@ async function sendMessage() {
         groupMessage.appendChild(replyWrapper);
         if (hasReplyMentions) replyWrapper.classList.add("mention");
         eventBus.emit("msgReply", {
-            originalMsg: $(replyToID),  // Message being replied to
+            originalMsg: $(`#${replyToID}`),  // Message being replied to
             replyMsg: messageElement,   // The message replying to the originalMsg
             timestamp: Date.now()
         });

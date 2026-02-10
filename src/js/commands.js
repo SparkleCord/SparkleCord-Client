@@ -55,7 +55,7 @@ const commands = [
 ];
 
 function purgeMessages() {
-    const messages = $("messages").querySelectorAll(".message"), a = messages.length;
+    const messages = $("#messages").querySelectorAll(".message"), a = messages.length;
     messages.forEach(msg => msg.remove());
     sendSystemMessage( { content: `Cleared **${a}** ${a === 1 ? "message" : "messages"}.`, ephemeral: true } );
 }
@@ -112,8 +112,8 @@ function sendSystemMessage({ content = "", embeds = [], type = "core", ephemeral
         if (lastMessageTimestamp && lastMessageAuthor === systemUsers[type].name) {
             const timeDiff = (new Date(timestamp) - new Date(lastMessageTimestamp)) / (1000 * 60); if (timeDiff < 10) {groupMessage = sysGroups[type]; isGrouped = true;}
         }
-        if (!groupMessage || $("messages").children.length === 0) {
-            groupMessage = document.createElement("div"); groupMessage.classList.add("message-group"); $("messages").appendChild(groupMessage);
+        if (!groupMessage || $("#messages").children.length === 0) {
+            groupMessage = document.createElement("div"); groupMessage.classList.add("message-group"); $("#messages").appendChild(groupMessage);
             isGrouped = false;
         }
         const messageElement = document.createElement("div"); 

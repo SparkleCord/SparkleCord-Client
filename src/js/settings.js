@@ -87,6 +87,14 @@ const settingsData = {
                     <br> - Show Send Message Button (It <strong>has</strong> to be visible to be able to send messages on mobile.)`,
                 },
                 { label: "Show Send Message Button", type: "toggle", id: "send-btn-toggle", onToggle: toggleSendButton, defaultState: "on", hideIf: "CONDITION_Mobile" },
+                {
+                    label: "Show 'Today At' in Timestamps", type: "toggle", id: "today-toggle", onToggle: toggleTodayAt, defaultState: "on",
+                    description: "Turn this off if you want more concise timestamps."
+                },
+                {
+                    label: "Show Title Bar", type: "toggle", id: "title-toggle", onToggle: toggleHeader, defaultState: "off",
+                    description: "Show the title bar/header on top of the screen."
+                }
             ]
         },
         utility: {
@@ -118,7 +126,18 @@ const settingsData = {
                 { label: "You cannot use this to override the *System* AutoMod, only the *User* one.", type: "info", style: "margin-top: -20px;" },
             ],
             sectionOnSave: saveAutomodSettings
-        }
+        },
+
+        // if (EASTER_EGGS_ENABLED_DEVELOPMENT)
+        // party: {
+        //     name: "Birthday Mode",
+        //     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M5.8 11.3 2 22l10.7-3.79M4 3h.01M22 8h.01M15 2h.01M22 20h.01M22 2l-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10m8 3-.82-.33c-.86-.34-1.82.2-1.98 1.11-.11.7-.72 1.22-1.43 1.22H17M11 2l.33.82c.34.86-.2 1.82-1.11 1.98-.7.1-1.22.72-1.22 1.43V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/></svg>`,
+
+        //     options: [
+        //         { text: "All Achievements", type: "label" },
+        //         { type: "custom", html: `<div id="settings-achievements-grid"></div>` }
+        //     ]
+        // }
     },
 
     "__sep__ 2": {},
@@ -316,6 +335,13 @@ const settingsData = {
                 { type: "nameAndDesc", name: "Twemoji (JDecked)", description: `- 99% of the emojis are from the Twemoji fork currently maintained by jdecked (https://github.com/jdecked/twemoji)` },
                 { type: "nameAndDesc", name: "Monaco (Microsoft)", description: `- UserCSS Editor` },
                 { type: "nameAndDesc", name: "Lucide Icons", description: `- The icons you see in Settings` },
+
+                { label: "Emojis", type: "info-title" },
+                { text: "Emojis made by other humans that I found on the internet.", type: "label" },
+                { type: "nameAndDesc", name: "cosmoflare", description: `- axolotl emoji (https://x.com/cosmoflare/status/1103086243452256256)` },
+                { type: "nameAndDesc", name: "nido-emojis (tumblr)", description: `- dandelion emoji (https://tumblr.com/nido-emojis/648262778096893952/discord-flowers)` },
+                { type: "nameAndDesc", name: "clar (emoji.gg)", description: `- chocolate box emoji (https://emoji.gg/user/clar1nettist)` },
+                
             ],
         }
     },
@@ -345,7 +371,8 @@ trackChanges();
 /* Settings Handling */
 
 function createSettingsPanel() {
-    const settingsPanel = document.createElement("div"); settingsPanel.id = "settings-panel"; settingsPanel.className = "hidden"; settingsPanel.style.display = "flex";
+    const settingsPanel = el("div", { id: "settings-panel", className: "hidden", style: { display: "flex" } });
+
     settingsPanel.innerHTML = `
         <div id="settings-container">
 
@@ -403,7 +430,7 @@ function createSettingsPanel() {
             </div>
         </div>
     `;
-    $("settings-panel-container").appendChild(settingsPanel);
+    $("#settings-panel-container").appendChild(settingsPanel);
     settingsPanel.querySelectorAll("[id^='close-settings-btn']").forEach(btn => btn.addEventListener("click", closeSettingsPanel));
 
     let sidebarHTML = ``, contentHTML = "";
@@ -439,7 +466,7 @@ function createSettingsPanel() {
             Object.values(settingsData).flatMap(cat => Object.values(cat)).forEach(section => { const option = section.options.find(opt => opt.id === toggle.id); option?.onToggle?.(false); });
         }
     }
-    const sidebar = $("settings-sidebar"), content = $("settings-content"), container = $("settings-container");
+    const sidebar = $("#settings-sidebar"), content = $("#settings-content"), container = $("#settings-container");
 
     sidebar.innerHTML = sidebarHTML; sidebar.classList.add("hide");
     content.innerHTML = contentHTML + `<div class="unsavedContainer" style="display: none;"><div class="unsavedContainerRow"><div class="textContainer"><div class="text">Careful — you have unsaved changes!</div></div><div class="actions"><button type="button" class="reset">Reset</button><button type="button" class="save">Save Changes</button></div></div></div>`;
@@ -480,7 +507,7 @@ function createSettingsPanel() {
         tabs.forEach(t => t.classList.remove("active"));
         sections.forEach(s => s.classList.add("hidden"));
         tab.classList.add("active");
-        $(tab.dataset.tab).classList.remove("hidden");
+        $(`#${tab.dataset.tab}`).classList.remove("hidden");
 
         eventBus.emit("settingsTabSwitch", { timestamp: Date.now(), from: previousTab.dataset.tab, to: tab.dataset.tab });
     }));
@@ -500,7 +527,7 @@ function createSettingsPanel() {
     document.querySelectorAll(".switch input").forEach(toggle => {
         if (toggle.hasAttribute("data-force-disabled")) return;
         if (toggle.hasAttribute("data-depends-on")) {
-            const parent = $(toggle.getAttribute("data-depends-on"));
+            const parent = $(`#${toggle.getAttribute("data-depends-on")}`);
             updateDependentToggleState(toggle, parent.checked);
             parent.addEventListener("change", (e) => updateDependentToggleState(toggle, e.target.checked));
         }
@@ -656,7 +683,7 @@ function createSettingsPanel() {
                 if (originalSettings[opt.id]) {
                     originalValue = originalSettings[opt.id].original;
                 }
-                const input = $(opt.id);
+                const input = $(`#${opt.id}`);
                 if (input && originalValue) {
                     switch (opt.type) {
                         case "toggle":
@@ -731,6 +758,8 @@ function createSettingsPanel() {
         const event = new KeyboardEvent("keydown", { key: KEYBIND_CLOSE });
         document.dispatchEvent(event);
     });
+
+    eventBus.emit("settingsLoaded", { timestamp: Date.now() });
 }
 trackChanges();
 
@@ -820,19 +849,23 @@ function emitSettingsChange(option, section, newValue) {
 
 // Open / close
 function openSettingsPanel() {
-    $("settings-panel").style.display = "flex";
+    $("#settings-panel").style.display = "flex";
 
-    $("global-name-input").value = humans.self.name;
-    $("username-input").value = humans.self.username;
-    $("status-input").value = humans.self.status;
+    $("#global-name-input").value = humans.self.name;
+    $("#username-input").value = humans.self.username;
+    $("#status-input").value = humans.self.status;
 
     updateAvatarButtons();
+
+    if (EASTER_EGGS_ENABLED_DEVELOPMENT) {
+        document.querySelector(`.settings-tab[data-tab="party-settings"]`).style.display = (localStorage.getItem("sparkleCake") === "true" ? "flex" : "none");
+    }
 
     eventBus.emit("settingsOpened", { timestamp: Date.now() });
 }
 function closeSettingsPanel() {
     if (hasUnsavedChanges) { flashRed(); return; }
-    $("settings-panel").style.display = "none";
+    $("#settings-panel").style.display = "none";
 
     eventBus.emit("settingsClosed", { timestamp: Date.now() });
 }
@@ -851,12 +884,12 @@ function applySettings() {
 }
 // Settings > Profile
 function updateAvatarButtons() {
-    const avatarInput = $("avatar-input");
-    const avatarBtnsContainer = $("avatar-btns-container");
+    const avatarInput = $("#avatar-input");
+    const avatarBtnsContainer = $("#avatar-btns-container");
     avatarInput.replaceWith(avatarInput.cloneNode(true));
     avatarBtnsContainer.replaceWith(avatarBtnsContainer.cloneNode(true));
-    const newAvatarInput = $("avatar-input");
-    const newAvatarBtnsContainer = $("avatar-btns-container");
+    const newAvatarInput = $("#avatar-input");
+    const newAvatarBtnsContainer = $("#avatar-btns-container");
     newAvatarBtnsContainer.addEventListener("click", (e) => {
         if (e.target.classList.contains("normal")) newAvatarInput.click();
         else if (e.target.classList.contains("remove")) {
@@ -887,15 +920,15 @@ function updateAvatarButtons() {
     newAvatarBtnsContainer.querySelector(".remove").style.display = humans.self.avatar !== humans.self.defaultAvatar ? "inline-block" : "none";
 }
 function loadProfile() {
-    $("profile-picture").src = humans.self.avatar;
-    $("global-name").textContent = humans.self.name;
-    $("username").textContent = humans.self.status;
+    $("#profile-picture").src = humans.self.avatar;
+    $("#global-name").textContent = humans.self.name;
+    $("#username").textContent = humans.self.status;
 }
 function saveProfile() {
-    const name = $("global-name-input").value || humans.self.name;
-    const username = $("username-input").value || humans.self.username;
-    const status = $("status-input").value || "Online";
-    const avatarInput = $("avatar-input");
+    const name = $("#global-name-input").value || humans.self.name;
+    const username = $("#username-input").value || humans.self.username;
+    const status = $("#status-input").value || "Online";
+    const avatarInput = $("#avatar-input");
     let avatar = humans.self.avatar;
     if (avatarInput.files.length > 0) {
         const reader = new FileReader();
@@ -912,7 +945,7 @@ function saveProfile() {
     }
 }
 // Settings > Appearance
-function toggleSendButton(isChecked) { $("send-btn").classList.toggle("hidden", !isChecked); }
+function toggleSendButton(isChecked) { $("#send-btn").classList.toggle("hidden", !isChecked); }
 // Srttings > Utility
 function toggleEmoticonConversion(isChecked) {
     localStorage.setItem("auto-convert-emoticons", isChecked);
@@ -931,11 +964,11 @@ function toggleAutoselectAutocomplete(isChecked) {
 // Settings > AutoMod
 function saveAutomodSettings() {
     function escapeCommas(arr) { return arr.map(item => item.replace(/,/g, "\\,")); }
-    userBlockedStrings = $("automod-text-input").value.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
-    userBlockedMatches = $("automod-regex-input").value.split(/\r?\n|,/).map(s => {
+    userBlockedStrings = $("#automod-text-input").value.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
+    userBlockedMatches = $("#automod-regex-input").value.split(/\r?\n|,/).map(s => {
         try { return s.trim() ? new RegExp(s.trim(), "i") : null; } catch (e) { return null; }
     }).filter(Boolean);
-    userExceptions = $("automod-exceptions-input").value.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
+    userExceptions = $("#automod-exceptions-input").value.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
     localStorage.setItem("userBlockedStrings", JSON.stringify(escapeCommas(userBlockedStrings)));
     localStorage.setItem("userBlockedMatches", JSON.stringify(escapeCommas(userBlockedMatches.map(r => r.source))));
     localStorage.setItem("userExceptions", JSON.stringify(escapeCommas(userExceptions)));
@@ -945,7 +978,7 @@ function toggleLoadingLine(isChecked) {
     localStorage.setItem("custom-line-enabled", isChecked);
 }
 function saveLoadingSettings() {
-    localStorage.setItem("custom-loading-line", $("line-input").value);
+    localStorage.setItem("custom-loading-line", $("#line-input").value);
 }
 
 // Theme Setter
@@ -986,12 +1019,13 @@ function setTheme(theme) {
 
     document.documentElement.className = classes.join(" ");
     localStorage.setItem("user-theme", theme);
-    console.log(`Successfully set theme${labels.length ? " (" + labels.join(" and ") + ")" : ""} to ${theme}!`);
+    console.log(`Successfully set theme${labels.length ? " (" + labels.join(", ") + ")" : ""} to ${theme}!`);
 }
 
 // UserCSS
-let UserCSS = $("UserCSS");
-if (!UserCSS) { UserCSS = document.createElement("style"); UserCSS.id = "UserCSS"; document.head.appendChild(UserCSS); }
+let UserCSS = $("#UserCSS");
+if (!UserCSS) document.head.appendChild(el("style", { id: "UserCSS" }));
+
 if (localStorage.getItem("UserCSS_Enabled") === "true") UserCSS.textContent = localStorage.getItem("UserCSS_Backup") || "";
 window.addEventListener("message", e => {
     if (e.data?.type === "cssUpdate" && localStorage.getItem("UserCSS_Enabled") === "true") { UserCSS.textContent = e.data.css; }
@@ -1025,7 +1059,7 @@ function hexToHSL(c) {
 }
 
 
-let clientThemeVars = $("clientThemeVars");
+let clientThemeVars = $("#clientThemeVars");
 if (!clientThemeVars) { clientThemeVars = document.createElement("style"); clientThemeVars.id = "clientThemeVars"; document.head.appendChild(clientThemeVars); }
 function updateColorVars(color) {
     if (color) {
@@ -1059,6 +1093,17 @@ function toggleContrastMode(isChecked) {
     document.documentElement.classList.toggle("high-contrast-mode", isChecked.toString());
     setTheme(localStorage.getItem("user-theme") || "dark");
 }
+
+// Chat
+function toggleTodayAt(isChecked) {
+    localStorage.setItem("show-today-at", isChecked);
+}
+
+function toggleHeader(isChecked) {
+    localStorage.setItem("show-header", isChecked);
+    updateTitleHeader();
+}
+
 // Custom Role
 function toggleUserRoleColor(isChecked) {
     localStorage.setItem("user-role-enabled", isChecked);
@@ -1076,4 +1121,238 @@ function updateRoleColor(color) {
     let isValid = CSS.supports("color", color);
     allNames.forEach(name => name.style.color = isValid ? color : DEFAULT_COLOR);
     localStorage.setItem("user-role-color", isValid ? color : DEFAULT_COLOR);
+}
+
+if (EASTER_EGGS_ENABLED_DEVELOPMENT) {
+    // const achievementManager = new Achievements("SparkleCord");
+    eventBus.on("settingsLoaded", () => {
+        const achievements = {
+            // emoji achievements
+            "golden_dandelion": { // use the :golden_dandelion: emoji
+                displayName: "The Golden Dandelion",
+                description: "You got the golden dandelion, which is a golden dandelion.",
+                icon: "./assets/achievements/golden_dandelion.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "golden_dandelion"
+            },
+            "matrix": { // use the :red_blue_pill: emoji
+                displayName: "The Pill",
+                description: "You take the blue pill, or you take the red pill.",
+                icon: "./assets/achievements/redpill.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "matrix"
+            },
+            "zelda": { // use the :ze_sword: emoji
+                displayName: "It's dangerous to go alone! Take this.",
+                description: "Sword Acquired.",
+                icon: "./assets/achievements/sword.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "zelda"
+            },
+            "captamerica": { // use the :capt_america_shield: emoji
+                displayName: "I understood that reference",
+                description: "I can do this all day.",
+                icon: "./assets/achievements/reference.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "captamerica"
+            },
+
+            // command achievements (PC EXCLUSIVE)
+            "blindness": { // "lightmode" in the console
+                displayName: "Blindness IV",
+                description: "I warned you...",
+                icon: "./assets/achievements/blindness.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "blindness"
+            },
+            "2048game": { // "2048" in the console
+                displayName: "The coolest block game",
+                description: "I love 2048 too.",
+                icon: "./assets/achievements/2048.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "2048game"
+            },
+            "myself": { // "doctoon" in the console
+                displayName: "Hello Everybody, it's me.",
+                description: `It's me, doctoon. And today we have a guest, it is... ${humans.self.name}! `,
+                icon: "./assets/achievements/mypfp.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "myself"
+            },
+            "illegal": { // "noclip" in the console
+                displayName: "Wait, that's illegal.",
+                description: "How'd you even do that?",
+                icon: "./assets/achievements/what.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "illegal"
+            },
+
+            // UI achievements (do specific things)
+            "10th_visit": { // press the birthday mode tab 10 times, counter resets if you refresh
+                displayName: "10th Visitor",
+                description: "Congrats, you won a digital award for being the 10th visitor!",
+                icon: "./assets/achievements/10th.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 10,
+                internalId: "10th_visit"
+            },
+            "stop": { // ping everyone 10 times in less than a minute
+                displayName: "Stop That!",
+                description: "The notifications are driving me insane!",
+                icon: "./assets/achievements/spam.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 10,
+                internalId: "stop"
+            },
+            "keyboard_warrior": { // send 100 messages in 25 seconds, each message the timer decays by 200ms. so you have 5 seconds of slowness possible
+                displayName: "Keyboard Warrior",
+                description: "You probably have a world record WPM if I were to guess.",
+                icon: "./assets/achievements/keyboard_warrior.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 100,
+                internalId: "keyboard_warrior"
+            },
+            "demure": { // wrap at least one of your words like ✨💖this💖✨
+                displayName: "Very Demure, Very Mindful",
+                description: "✨",
+                icon: "./assets/achievements/verydemure.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "demure"
+            },
+            "f": { // react with :regional_indicator_f:
+                displayName: "Press F to pay respects",
+                description: "React with honor.",
+                icon: "./assets/achievements/f.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "f"
+            },
+            "shouldnt_pass": { // send an automodded message
+                displayName: "You shall not pass!",
+                description: "The message has failed to be received, press F to know more.",
+                icon: "./assets/achievements/lotr.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "shouldnt_pass"
+            },
+            "noplacelikehome": { // refresh sparklecord 5 times in 1 minute
+                displayName: "There's no place like home.",
+                description: "It's so nice to be here.",
+                icon: "./assets/achievements/home.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 5,
+                internalId: "noplacelikehome"
+            },
+            "groot": { // say 2 or more words in a message, each word has to be the same word (e.g. the achievement description here)
+                displayName: "I am groot",
+                description: "groot groot groot groot groot",
+                icon: "./assets/achievements/groot.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "groot"
+            },
+            "konami": { // press ArrowUp+ArrowUp+ArrowDown+ArrowDown+ArrowLeft+ArrowRight+ArrowLeft+ArrowRight+B+A, PC only, and in that exact order
+                displayName: "The Konami Code",
+                description: "You might know this from the Gradius port on the NES.",
+                icon: "./assets/achievements/konami.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "konami"
+            },
+
+            // neutral achievements (unlocked in 2 or more ways)
+            "ilyt": { // "love" in the console, or :box_of_chocolates:
+                displayName: "I love you too",
+                description: "<3",
+                icon: "./assets/achievements/love.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "ilyt"
+            },
+            "birthday": { // "birthday" in the console, or :sparkle:
+                displayName: "Happy Birthday!",
+                description: "Did you know SparkleCord is two years old? Development started in February 29th, 2024.",
+                icon: "./assets/achievements/bday.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "birthday"
+            },
+            "cake": { // "cake" in the cnosole, or :sparklecake:
+                displayName: "The Cake was a Lie",
+                description: "Unfortunately Portal 1 was right on this one",
+                icon: "./assets/achievements/sparklecake.png",
+
+                unlocked: false,
+                currentProgress: 0,
+                progresMax: 1,
+                internalId: "cake"
+            }
+        };
+
+        const html = Object.entries(achievements).map(([id, achievement]) => `
+                <div class="settings-achievement">
+                    <div class="settings-achievement-icon"><img src="${achievement.icon}"></div>
+                    <div class="settings-achievement-content">
+                        <div class="settings-achievement-label">${achievement.displayName}</div>
+                        <div class="settings-achievement-description">${achievement.description}</div>
+                        <div class="settings-achievement-progress">
+                            <div class="settings-achievement-progressBar">
+                                <div class="settings-achievement-progressFill" style="width: ${achievement.currentProgress}%;"></div>
+                            </div>
+                            <div class="settings-achievement-progressText">${achievement.currentProgress}%</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        ).join("\n");
+
+        $("#settings-achievements-grid").innerHTML = html;
+    });
 }

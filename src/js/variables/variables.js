@@ -28,51 +28,28 @@ function generateUsername() {
 }
 
 // System users list
-
 let systemUsers = {
     core: {
         name: "Byte",
         username: "byte",
-        avatar: "./assets/avatars/core/bye.png",
+        avatar: "./assets/avatars/core/byte.png",
         id: 1n,
         tag: { name: "Bot", verified: true, bg: "var(--bg-brand)" },
-    },
-    error: {
-        name: "Uh Oh!",
-        username: "clyde_err",
-        avatar: "./assets/avatars/core/Clyde-Old.jpg",
-        id: 2n,
-        tag: { name: "Error", verified: false, bg: "var(--red-500)" },
-        color: 'var(--text-danger)',
-    },
-    ai: {
-        name: "Sparkly",
-        username: `sparkly`,
-        avatar: "./assets/avatars/core/sparkly.png",
-        id: 3n,
-        tag: { name: "AI", verified: false, bg: "var(--green-360)" },
     },
     byte: {
         name: "Byte",
         username: "byte",
-        avatar: "./assets/avatars/core/bye.png",
-        id: 4n,
-        tag: { name: "Bot", verified: false, bg: "var(--bg-brand)" },
-    },
-    clyde: {
-        name: "Clyde",
-        username: "clyde",
-        avatar: "./assets/avatars/core/Clyde.gif",
-        id: 5n,
+        avatar: "./assets/avatars/core/byte.png",
+        id: 2n,
         tag: { name: "Bot", verified: false, bg: "var(--bg-brand)" },
     }
-};
-let sysGroups = { core: null, error: null, ai: null, byte: null };
+}, sysGroups = { core: null, byte: null };
 
 // Human users list
 let humans = {
     self: JSON.parse(localStorage.getItem("profile")) || {},
 };
+
 // Combined
 let profiles = {
     ...humans,
@@ -131,7 +108,7 @@ let messageGroups = [], lastMessageTimestamp = null, currentMessageGroup = null,
 let lastMessage = null, lastMessageAuthor = null, lastMessageAvatar = null, sendButton = null;
 let currentAttachments = [];
 
-const LOADING_TIME = rand(3000, 6500); // Milliseconds
+const LOADING_TIME = rand(1000, 3500); // Milliseconds
 const SETTINGS_TIMEOUT = 10; // Since settings elements are dynamically injected, this is to wait until the elements are FULLY there to prevent errors.
 const arrowLeftHook = "←", arrowUpHook = "↑", arrowRightHook = "→", arrowDownHook = "↓";
 
@@ -142,8 +119,6 @@ const HOLOGRAPHIC_COLOR3 = "#ffc3a0";
 
 // Strings
 const defaultEmojiDesc = "A default emoji. You can use this emoji everywhere on SparkleCord.";
-const blockMessage = `This can't be posted because it contains content blocked by SparkleCord.`;
-const userBlockMessage = `This can't be posted because it contains content you chose to block.`;
 
 // Replies
 let R_TOGGLE, R_INDICATOR, messageInput, sendBtn;
@@ -160,12 +135,12 @@ function toggleReplyPing(forcedState = "") {
     }
 }
 document.addEventListener("DOMContentLoaded", () => {
-    sendBtn = $("send-btn"); R_TOGGLE = $("ping-toggle"); R_INDICATOR = $("reply-indicator"); messageInput = $("input-box");
+    sendBtn = $("#send-btn"); R_TOGGLE = $("#ping-toggle"); R_INDICATOR = $("#reply-indicator"); messageInput = $("#input-box");
     R_TOGGLE.addEventListener("click", function() { toggleReplyPing(); });
 })
 
 // Version Info
-const versionCode = "1.4.0", versionState = "stable", versionType = "Client", versionName = "Sparked Alive";
+const versionCode = "1.4.1", versionState = "stable", versionType = "Client", versionName = "the biggest patch ever";
 const versionHTML = `SparkleCord ${versionType} Version ${versionCode} <br>(${versionState}) ${versionName ? `- ${versionName}` : ``}`;
 
 // Loading and Initialization
@@ -214,26 +189,29 @@ const LOADING_LINES = [
     { text: "Merry Halloween! I hope you got your easter eggs... wait... did I say that right?", holiday: "HALLOWEEN", weight: 3 },
     { text: "All I want for christmas... is meeeeeeee.....", holiday: "CHRISTMAS", weight: 3 },
      // Condition-specific lines
-    { text: "SparkleCord: Night Shift Edition", condition: () => { let h = getUTCDate().getHours(); return h >= 20 || h < 6; }, weight: 10 },
-    { text: localStorage.getItem("custom-loading-line") || "", condition: () => JSON.parse(localStorage.getItem("custom-line-enabled") || "false"), weight: 50000 },
+    { text: "SparkleCord: Nightly Edition", condition: () => { let h = getUTCDate().getHours(); return h >= 20 || h < 6; }, weight: 10 },
     { text: "You're not supposed to see this... OH SH-", condition: () => JSON.parse(localStorage.getItem("secret-setting") || "false"), weight: 10 },
     { text: `Welcome back, ${JSON.parse(localStorage.getItem("profile") || "{}").name || "User"}!`, condition: () => true, weight: 1 },
+    { text: localStorage.getItem("custom-loading-line") || "", condition: () => JSON.parse(localStorage.getItem("custom-line-enabled") || "false"), weight: 50000 }
 ];
-const getUTCDate = (dateString = null) => {
+
+function getUTCDate(dateString = null) {
     if (dateString) return new Date(dateString);
     return new Date(); // For debugging, you may input a test date, such as '2025-10-31 03:00:00' inside the return statement.
 };
-const isHoliday = (date) => {
+
+function getHoliday(date) {
     const month = date.getUTCMonth(), day = date.getUTCDate(), holidays = {
         BIRTHDAY_DISCORD: { month: 5, start: 13, end: 20 }, // May 13th - May 20th
-        BIRTHDAY: { month: 2, start: 29, end: 30 }, // February 29th - February 30th
+        BIRTHDAY: { month: 2, start: 20, end: 30 }, // February 20th - February 30th (aka march 1st)
         HALLOWEEN: { month: 10, start: 1, end: 31 }, // October 1 - October 31st
         CHRISTMAS: { month: 12, start: 1, end: 31 }, // December 1 - December 31st
     };
     for (const [name, period] of Object.entries(holidays)) { if (month === (period.month - 1) && day >= period.start && day <= period.end) { return name; } }
     return null;
 };
-const getSpinnerPath = (holiday) => {
+
+function getSpinnerPath(holiday) {
     let spinners = {
         BIRTHDAY_DISCORD: './assets/loading/Discord.gif',
         BIRTHDAY: './assets/loading/Birthday.gif',
@@ -247,12 +225,15 @@ const getSpinnerPath = (holiday) => {
     }
     return spinners[holiday] || spinners.DEFAULT;
 };
-const updateSpinner = () => { 
-    const spinner = $('spinner'), currentHoliday = isHoliday(getUTCDate()); spinner.src = getSpinnerPath(currentHoliday); 
+
+function updateSpinner() { 
+    const spinner = $('#spinner');
+    spinner.src = getSpinnerPath(getHoliday(getUTCDate())); 
 };
+
 function showLoadingScreen(loadingTime) {
     function getRandomLine() {
-        const currentDate = getUTCDate(), currentHoliday = isHoliday(currentDate);
+        const currentDate = getUTCDate(), currentHoliday = getHoliday(currentDate);
         const validLines = LOADING_LINES.filter(line => {
             if (!line.text) return false;
             if (line.holiday && line.holiday !== currentHoliday) return false;
@@ -274,7 +255,7 @@ function showLoadingScreen(loadingTime) {
         return validLines[0].text;
     }
     function showLoadingLine() {
-        const line = $('loading-line'), header = $('loading-text'), randomLine = getRandomLine();
+        const line = $('#loading-line'), header = $('#loading-text'), randomLine = getRandomLine();
         // const randomLine = LOADING_LINES[0]; // Force one of the existing lines based on array index.
         header.innerHTML = 'Did You Know';
         line.innerHTML = parseMarkdown(randomLine);
@@ -282,7 +263,7 @@ function showLoadingScreen(loadingTime) {
         updateSpinner();
     }
     function hideLoadingScreen() {
-        const loadingScreen = $('loading-screen');
+        const loadingScreen = $('#loading-screen');
         loadingScreen.classList.add('hide');
 
         eventBus.emit("loaded", { timestamp: Date.now() });
@@ -301,11 +282,15 @@ function debugLog(content) {
 }
 
 if (location.protocol.startsWith("http")) {
-    let link = document.createElement("link"); link.rel = "manifest"; link.href = "./assets/PWA/manifest.json"; document.head.appendChild(link);
-    window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); setTimeout(() => e.prompt(), 3000); });
+    document.head.appendChild(createElement("link", { rel: "manifest", href: "./assets/PWA/manifest.json" }));
+    window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        setTimeout(e.prompt(), 3000);
+    });
 } else {
    // console.log("%c[WARNING]", "color: orange; font-weight: bold;", "To use the PWA (Progressive Web App) version of SparkleCord, You need to host it on a http/https server. Then click the install button.");
 }
+
 // console.log('SparkleCord\'s Root/index.html Path: ', rootPath + 'index.html')
 
 function initConsoleMessages() {
@@ -326,11 +311,12 @@ function initConsoleMessages() {
         "font-size: 16px; font-family: 'Consolas';");
     // Other insta-logs go here.
 }
+
 // Update Send Button Color
 function updateSendButtonColor({ attachments = [] } = {}) {
-    const sendButton = $("send-btn")
+    const sendButton = $("#send-btn")
     if (sendButton.querySelector("path")) {
-        const path = sendButton.querySelector("path"), input = $("input-box"), text = Parser.trim(input.value);
+        const path = sendButton.querySelector("path"), input = $("#input-box"), text = Parser.trim(input.value);
         if (path) {
             if (text || attachments.length > 0) {
                 path.setAttribute("fill", "var(--control-brand-foreground-new)");
@@ -345,33 +331,63 @@ function updateSendButtonColor({ attachments = [] } = {}) {
         }
     }
 }
+
 // UI Notice System
-const NOTICE_TYPES = ['positive', 'warning', 'alert', 'info', 'streamer_mode', 'spotify', 'playstation', 'neutral', 'brand', 'danger', 'lurking', 'nitro1', 'nitro2', 'nitro3'];
-function hideNotice(persist, id) { document.querySelector(".notice").style.display = 'none'; localStorage.setItem(`notice-${id}-dismissed`, `${persist}`); }
-function showNotice(data = {type: "positive", text: "", buttonText: "", buttonOnClick: "", id: `default`, persist: "true"}) {
+const NOTICE_TYPES = [
+    "positive", "warning", "alert", "info", "streamer_mode",
+    "spotify", "playstation", "neutral", "brand", "danger",
+    "lurking", "nitro1", "nitro2", "nitro3"
+];
+
+function hideNotice(persist, id) {
+    document.querySelector(`.notice[id='${id}']`).style.display = "none";
+    localStorage.setItem(`notice-${id}-dismissed`, `${persist}`);
+}
+
+function showNotice(data = { type: "positive", text: "", buttonText: "", buttonOnClick: "", showCloseButton: true, id: "default", persist: "false" }) {
+    if (!NOTICE_TYPES.includes(data.type)) data.type = "positive";
+    if (!data.persist) data.persist = "false";
+    if (!data.showCloseButton) data.showCloseButton = true;
+
     const getIndefiniteArticle = (word) => { 
-        word = word.toLowerCase(); if (['honest','honor','hour','heir'].includes(word)) return 'an'; if (/^u(?![aeiou])|^uni|^use|^user|^ut/.test(word)) return 'a'; if (/^[aeiouh]/.test(word)) return 'an'; return 'a'; 
+        word = word.toLowerCase(); if (["honest","honor","hour","heir"].includes(word)) return "an"; if (/^u(?![aeiou])|^uni|^use|^user|^ut/.test(word)) return "a"; if (/^[aeiouh]/.test(word)) return "an"; return "a"; 
     }
 
-    const noticeCloseSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M17.3 18.7a1 1 0 0 0 1.4-1.4L13.42 12l5.3-5.3a1 1 0 0 0-1.42-1.4L12 10.58l-5.3-5.3a1 1 0 0 0-1.4 1.42L10.58 12l-5.3 5.3a1 1 0 1 0 1.42 1.4L12 13.42l5.3 5.3Z"></path></svg>`;
-    const noticeCloseButton = `<div class="notice-close">${noticeCloseSVG}</div>`;
-    if (!NOTICE_TYPES.includes(data.type)) data.type = "positive";
+    const noticeCloseButton = data.showCloseButton ? `<div class="notice-close" onclick="hideNotice('${data.persist || "true"}', '${data.id}')">${noticeCloseSVG}</div>` : "";
 
-    const notice = document.querySelector(".notice")
+    const notice = document.querySelector(".notice");
+    notice.id = data.id;
+    notice.className = `notice ${data.type}`;
+
     if (localStorage.getItem(`notice-${data.id}-dismissed`) === "true") {
         console.log(`Unable to show notice with ID as ${data.id} due to the 'notice-${data.id}-dismissed' localStorage key's value being 'true'.`);
         return notice.style.display = "none";
     } else {
-        console.log(`Showed ${getIndefiniteArticle(data.type)} ${data.type} notice with ID as ${data.id}, and ${data.persist && data.persist === "true"  ? `when closing, a notice with the ID as '${data.id}' is unable to be` : `when closing, a notice with the ID as '${data.id}' is able to be`} shown again.`);
+        console.log(
+            `Showed ${getIndefiniteArticle(data.type)} ${data.type} notice with ID as ${data.id}, and when closing, a notice with the ID as '${data.id}' is ${data.persist && data.persist === "true" ?"un":""}able to be shown again.`
+        );
     }
-    notice.className = `notice ${data.type}`
-    notice.innerHTML = `${noticeCloseButton} ${data.text} ${data.buttonText ? `<button ${data.buttonOnClick ? `onclick="${data.buttonOnClick}"` : ``} >${data.buttonText}</button>` : ""}`;
 
-    document.querySelector(".notice-close").setAttribute("onclick", `hideNotice('${data.persist || "true"}', '${data.id}')`)
+    notice.innerHTML = `${noticeCloseButton} ${data.text} ${data.buttonText ? `<button ${data.buttonOnClick ? `onclick="${data.buttonOnClick}"` : ``} >${data.buttonText}</button>` : ""}`;
     notice.style.display = "block";
 }
+
 /* Some examples
     showNotice({ type: "alert", text: "gfdgfdgfdgfdhfdhs", id: `alerttest` });
     showNotice({ type: "lurking", text: "You are currently in preview mode. Join this server to start chatting!", id: `lurkTest`, buttonText: "Join TEST_SERVER" });
     showNotice({ type: "warning", text: "Your Nitro sub is about to run out, add payment info to keep using Nitro.", id: `nitro_expiration`, buttonText: "Go to settings" });
 */
+
+// Headers
+function updateTitleHeader(data) {
+    if (!data) data = { display: true, text: "Selfchat", icon: sparkleCordLogo };
+
+    const header = $("#title-header");
+    if (localStorage.getItem("show-header") === "false") {
+        header.style.display = "none";
+    } else {
+        header.style.display = data.display ? "block" : "none";
+    }
+
+    header.innerHTML = `${data.icon} SparkleCord  —  ${data.text}`;
+}

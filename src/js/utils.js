@@ -1,9 +1,10 @@
-// Timestamps
+// Timestamps (messages and embeds)
 function formatTimestamp(timestamp, grouped = false) {
+    const showTodayAt = localStorage.getItem("show-today-at") !== "false";
     let date = new Date(timestamp), now = new Date(), timeString = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     if (!grouped) {
         let dateString = date.toLocaleDateString("en-US"); // Change to "en-GB" for DD/MM/YYYY
-        if (date.toDateString() === now.toDateString()) return `Today at ${timeString}`;
+        if (date.toDateString() === now.toDateString()) return `${showTodayAt ? "Today at" : ""} ${timeString}`;
         now.setDate(now.getDate() - 1); if (date.toDateString() === now.toDateString()) return `Yesterday at ${timeString}`;
         now.setDate(now.getDate() + 2); if (date.toDateString() === now.toDateString()) return `Tomorrow at ${timeString}`;
         return `${dateString} ${timeString}`;
@@ -24,8 +25,9 @@ function updateTimestamps() {
     }
     document.querySelectorAll(".timestamp").forEach(element => {
         if (!element.closest(".grouped")) {
-            const timestamp = element.dataset.timestamp;
-            if (timestamp) element.textContent = formatTimestamp(new Date(timestamp).toISOString());
+            if (element.dataset.timestamp) {
+                element.textContent = formatTimestamp(new Date(element.dataset.timestamp).toISOString());
+            }
         }
     });    
     document.querySelectorAll(".embed-footer-text").forEach(element => {
@@ -45,11 +47,16 @@ if (!window._spoilerHandlerAdded) {
 }
 // snmowflakezs
 function generateSnowflake(date) {
-    const timestamp = BigInt(date) - BigInt(1420070400000), random = BigInt(Math.floor(Math.random() * 0x100000000)); 
+    const timestamp = BigInt(date) - BigInt(1420070400000);
+    const random = BigInt(Math.floor(Math.random() * 0x100000000)); 
     return (timestamp << 22n) | random;
 }
 // Scroll to Bottom
-function scrollToBottom() { const messagesContainer = $("messages"); messagesContainer.scrollTop = messagesContainer.scrollHeight; }
+function scrollToBottom() {
+    const messagesContainer = $("#messages");
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
 // highlight syntax
 function applyHighlighting(messageElement) {
     const codeBlocks = messageElement.querySelectorAll("pre code");
@@ -69,17 +76,29 @@ function applyHighlighting(messageElement) {
         }).catch(err => { console.error("Highlight error:", err); codeBlock.textContent = codeBlock.textContent; });
     });
 }
+
 // prevent people from trying to run code using html so people don't try hacking and shit
 function sanitizeInput(input) {
-    // return input;
-    return input.replace(/(```[\s\S]*?```|`[^`\n]*`)|([<>&""`])/g, (match, codeBlock, char) => 
-        codeBlock ? match : (char === ">" && match === char) ? ">" : {"<": "&lt;", "&": "&amp;", "'": "&quot;", "'": "&#39;", "`": "&#96;"}[char]
-    );       
+    return input.replace(/(```[\s\S]*?```|`[^`\n]*`)|([<>&"`])/g, (match, codeBlock, char) => 
+        codeBlock ? match : (char === ">" && match === char) ? ">" : {"<": "&lt;", "&": "&amp;", "\"": "&quot;", "'": "&#39;", "`": "&#96;"}[char]
+    );
 }
+
 // jump to message, used in replies and message links though message links aren't implemented yet
 function jumpToMsg(id) {
-    const msg = $(id); if (!msg) return;
+    const msg = $(`#${id}`); if (!msg) return;
     setTimeout(() => msg.classList.add("replying", "highlight"), 0);
     msg.scrollIntoView({ behavior: "smooth", block: "center" });
     setTimeout(() => msg.classList.remove("replying", "highlight"), 260);
+}
+
+// reactions
+function getReactionHTML(obj) {
+    // structure: { emoji: "🐱", type: "regular", count: 1, reacted: false },
+
+    const emojiText = replaceEmojis(replaceEmojiNames(obj.emoji) + " ", false, true);
+    return `<div class="reaction${obj.reacted ? " reacted" : ""}${obj.type === "super" ? " super" : ""}" onclick="this.remove()">
+                <div class="reaction-emoji">${emojiText}</div>
+                <div class="reaction-emoji-amount">${obj.count}</div>
+            </div>`;
 }

@@ -1,12 +1,9 @@
 function showHoverTooltip(event, emojiName) {
-    const clickTooltip = document.getElementById("click-tooltip-emoji");
-    if (clickTooltip && clickTooltip.style.display === "flex") return;
-
     let tooltip = document.getElementById("hover-tooltip-emoji");
     if (!tooltip) {
         tooltip = document.createElement("div");
         tooltip.id = "hover-tooltip-emoji";
-        tooltip.className = "hover-tooltip-emoji";
+        tooltip.className = `tooltip tooltip-bottom`;
         document.body.appendChild(tooltip);
     }
 
@@ -67,7 +64,7 @@ class EmojiUtils {
         this.textChars = new Set(["™", "®", "©", "™️", "®️", "©️", "🐻‍❄"]);
         this.emojiMap = this.buildEmojiMap();
 
-        const EMOJI_RANGE = /(?:[\u{1F3FB}-\u{1F3FF}]\u{E621})|(?:[\u{1F3FB}-\u{1F3FF}])|(?:[\u{E100}-\u{E1FF}])(?:[\u{1F3FB}-\u{1F3FF}])?|(?:\p{Extended_Pictographic}(?:\uFE0F)?(?:[\u{1F3FB}-\u{1F3FF}])?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F)?(?:[\u{1F3FB}-\u{1F3FF}])?)*)|(?:[0-9#*]\uFE0F?\u20E3)|(?:[\u{1F1E6}-\u{1F1FF}]{1,2})|[\u2122\u00AE\u00A9]\uFE0F?/gu;
+        const EMOJI_RANGE = /(?:[\u{1F3FB}-\u{1F3FF}]\u{E621})|(?:[\u{1F3FB}-\u{1F3FF}])|(?:[\u{E100}-\u{E9FF}])(?:[\u{1F3FB}-\u{1F3FF}])?|(?:\p{Extended_Pictographic}(?:\uFE0F)?(?:[\u{1F3FB}-\u{1F3FF}])?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F)?(?:[\u{1F3FB}-\u{1F3FF}])?)*)|(?:[0-9#*]\uFE0F?\u20E3)|(?:[\u{1F1E6}-\u{1F1FF}]{1,2})|[\u2122\u00AE\u00A9]\uFE0F?/gu;
         
         const DISCORD_EMOJI_RANGE = /<(a)?:(\w+):(\d+)>/g;
 
@@ -219,5 +216,4 @@ function replaceEmojiNames(text, inCodeBlock = false) {
 
 function replaceEmojis(text, inCodeBlock = false) {
     return emojiUtils.replaceEmojis(text, inCodeBlock);
-    // return twemoji.parse(text, { callback: (icon, options) => { return `./emoji/${icon}.svg` }, className: "emoji-tiny" });
 }

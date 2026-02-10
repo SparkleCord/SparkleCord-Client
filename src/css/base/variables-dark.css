@@ -629,6 +629,7 @@
     --mention-background: color-mix(in oklab,hsl(var(--brand-500-hsl)/0.3) 100%,hsl(var(--theme-base-color-hsl,0 0% 0%)/0.3) var(--theme-base-color-amount,0%));
     --mention-foreground: color-mix(in oklab,var(--brand-260) 100%,var(--theme-text-color,#000) var(--theme-text-color-amount,0%));
     --message-reacted-text: color-mix(in oklab,var(--brand-200) 100%,var(--theme-text-color,#000) var(--theme-text-color-amount,0%));
+    --message-reacted-text-default: color-mix(in oklab, var(--blurple-3) 100%, var(--custom-theme-text-color, #000) var(--custom-theme-text-color-amount, 0%));
     --modal-background: color-mix(in oklab,var(--primary-600) 100%,var(--theme-base-color,#000) var(--theme-base-color-amount,0%));
     --modal-footer-background: color-mix(in oklab,var(--primary-630) 100%,var(--theme-base-color,#000) var(--theme-base-color-amount,0%));
     --navigator-header-tint: color-mix(in oklab,var(--white) 100%,var(--theme-base-color,#000) var(--theme-base-color-amount,0%));

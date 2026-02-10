@@ -1,0 +1,27 @@
+.achievement-container {
+    position: fixed;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    padding: 20px;
+}
+
+.achievement-container.top.left { top: 0; left: 0; align-items: flex-start; }
+.achievement-container.top.middle { top: 0; left: 50%; transform: translateX(-50%); align-items: center; }
+.achievement-container.top.right { top: 0; right: 0; align-items: flex-end; }
+.achievement-container.bottom.left { bottom: 0; left: 0; flex-direction: column-reverse; align-items: flex-start; }
+.achievement-container.bottom.middle { bottom: 0; left: 50%; transform: translateX(-50%); flex-direction: column-reverse; align-items: center; }
+.achievement-container.bottom.right { bottom: 0; right: 0; flex-direction: column-reverse; align-items: flex-end; }
+
+.achievement-notif {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+}
+
+.achievement-notif.active {
+    opacity: 1;
+    transform: translateY(0);
+}

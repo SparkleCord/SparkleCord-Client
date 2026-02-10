@@ -19,14 +19,14 @@
 
     <script src="./js/modules/compatibility/css-vars-ponyfill.min.js"></script> <!-- Add support for css variables on older devices -->
 
-    <script src="./js/variables/variables.js"></script> <!-- Global variables -->
     <script src="./js/variables/svgs.js"></script>
+    <script src="./js/variables/variables.js"></script> <!-- Global variables -->
 
     <script src="./js/data/emojis/emojiData.js"></script> <!-- Emoji data -->
     <script src="./js/data/emojis/emoticonData.js"></script> <!-- Emoji data 2 -->
     <script src="./js/data/emojis/emojiAliases.js"></script> <!-- Emoji data 3 -->
 
-    <!--<script src="./js/modules/simple-markdown/simple-markdown.min.js"></script>-->  <!-- markdown -->
+    <script src="./js/eggs.js"></script><!-- fun-ctionality -->
     <script src="./js/modules/highlight/highlight-loader.js"></script>  <!-- Syntax highlighting -->
     <script src="./js/automod.js"></script> <!-- Finally people can't say bad words!! -->
     <script src="./js/markdown.js"></script> <!-- Markdown functions -->
@@ -43,12 +43,13 @@
 
     <script>
         function rand2(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }
-        const PROBLEMS_TIME = rand2(1000, 2000);
-        function showProblems() { 
-            const problemsDiv = document.getElementById('problems'); problemsDiv.style.display = 'flex';
-            requestAnimationFrame(() => { problemsDiv.classList.add('show'); });
-        }
-        setTimeout(showProblems, PROBLEMS_TIME);
+
+        setTimeout(() => {
+            const problems = document.getElementById("problems");
+            problems.style.display = "flex";
+
+            requestAnimationFrame(() => { problems.classList.add("show"); });
+        }, rand2(1000, 2000));
    </script>
 </head>
 <body>
@@ -66,7 +67,8 @@
     </div>
     <div id="app">
         <div id="chat">
-            <div class="notice"><div class="notice-close"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M17.3 18.7a1 1 0 0 0 1.4-1.4L13.42 12l5.3-5.3a1 1 0 0 0-1.42-1.4L12 10.58l-5.3-5.3a1 1 0 0 0-1.4 1.42L10.58 12l-5.3 5.3a1 1 0 1 0 1.42 1.4L12 13.42l5.3 5.3Z"></path></svg></div></div>
+            <div class="notice"></div>
+            <div id="title-header"></div>
             <div id="profile-section">
                 <img id="profile-picture">
                 <div id="user-details">

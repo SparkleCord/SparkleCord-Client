@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     debugLog("The function ran successfully! Attempting to run createSettingsPanel()");
     createSettingsPanel();
-    settingsPanel = $("settings-panel");
+    settingsPanel = $("#settings-panel");
 
     debugLog("The function ran successfully! Attempting to run closeSettingsPanel()");
     closeSettingsPanel();
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.hoverButtons = new MessageHoverButtons(new MessageActivities());
 
     debugLog("Sucess! Attempting to initialize AutoComplete...");
-    const autoComplete = new AutoComplete($("input-box"), emojiUtils, commands);
+    const autoComplete = new AutoComplete($("#input-box"), emojiUtils, commands);
 
     debugLog("Success! Attempting to initialize console messages...");
 
@@ -40,19 +40,19 @@ document.addEventListener("DOMContentLoaded", () => {
     initConsoleMessages();
     debugLog("The function ran successfully! Attempting to show the loading screen...");
 
+    updateTitleHeader();
     showLoadingScreen(LOADING_TIME);
     // showLoadingScreen(100);
     debugLog("Success! No more pre-load debugging needed.");
 
-    console.log("%c_ And now, here comes the logs coming from everything else! _", "font-size: 12px; font-family: 'Consolas';");
+    console.log("%c_ And now, here comes the logs from everything else! _", "font-size: 12px; font-family: 'Consolas';");
 
     // __________ Event Listeners  ___________ \\
     sendBtn.addEventListener("click", () => { sendMessage(); autoComplete.hide(); updateSendButtonColor(); });
-    $("settings-btn").addEventListener("click", openSettingsPanel);
-    $("attach-btn").addEventListener("click", handleFileAttachment);
+    $("#settings-btn").addEventListener("click", openSettingsPanel);
+    $("#attach-btn").addEventListener("click", AttachmentHandler.handleAttachment);
 
-    let typingTimeout;
-    let isCurrentlyTyping = false;
+    let typingTimeout, isCurrentlyTyping = false;
     
     messageInput.addEventListener("input", () => {
         if (messageInput.value !== history[historyIndex]) {
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
             updateSendButtonColor({ attachments: currentAttachments });
         }
     });
-    $("message-input").addEventListener("keydown", (e) => {
+    $("#message-input").addEventListener("keydown", (e) => {
         const isCurrentlyMobile = window.innerWidth < 768;
         if (isCurrentlyMobile) {
             if (e.key === "Enter" && !e.shiftKey) { e.preventDefault();
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     document.addEventListener("keydown", (e) => {
-        const activeEl = document.activeElement, settingsPanel = $("settings-panel");
+        const activeEl = document.activeElement, settingsPanel = $("#settings-panel");
         if (settingsPanel && settingsPanel.style.display === "flex") return;
         if (activeEl && activeEl.classList.contains("edit-box")) return;
         if (["INPUT", "TEXTAREA"].includes(activeEl.tagName)) return; 
@@ -122,16 +122,21 @@ document.addEventListener("DOMContentLoaded", () => {
         if (settingsPanel && settingsPanel.style.display === "flex") return;
         messageInput.focus();
     });
-    const dropOverlay = document.createElement("div"); dropOverlay.className = "drop-overlay"; dropOverlay.innerHTML = `<div class="drop-content"><img src="./assets/svg/file/Upload a File.svg"><span>Drag files here to upload them into SparkleCord</span></div>`;
-    $("app").appendChild(dropOverlay);
-    $("app").addEventListener("dragenter", (e) => { if (e.dataTransfer.types.includes("Files")) dropOverlay.classList.add("active"); });
-    $("app").addEventListener("dragleave", (e) => { if (!e.relatedTarget || !$("app").contains(e.relatedTarget)) dropOverlay.classList.remove("active"); });
-    $("app").addEventListener("dragover", (e) => { e.preventDefault(); e.stopPropagation(); });
-    $("app").addEventListener("drop", (e) => { e.preventDefault(); e.stopPropagation(); dropOverlay.classList.remove("active");
-        const files = [...e.dataTransfer.files]; if (!files.length) return; files.forEach(createAttachmentPreview);
+
+    const dropOverlay = el("div", { className: "drop-overlay", innerHTML: `<div class="drop-content"><img src="./assets/svg/file/Upload a File.svg"><span>Drag files here to upload them into SparkleCord</span></div>` });
+    $("#app").appendChild(dropOverlay);
+    $("#app").addEventListener("dragenter", (e) => { if (e.dataTransfer.types.includes("Files")) dropOverlay.classList.add("active"); });
+    $("#app").addEventListener("dragleave", (e) => { if (!e.relatedTarget || !$("#app").contains(e.relatedTarget)) dropOverlay.classList.remove("active"); });
+    $("#app").addEventListener("dragover", (e) => { e.preventDefault(); e.stopPropagation(); });
+    $("#app").addEventListener("drop", (e) => { e.preventDefault(); e.stopPropagation(); dropOverlay.classList.remove("active");
+        const files = [...e.dataTransfer.files];
+        if (!files.length) return;
+        files.forEach(AttachmentHandler.createPreview);
     });
-    $("app").addEventListener("paste", (e) => { const files = [...e.clipboardData.files]; if (!files.length) return; files.forEach(createAttachmentPreview); });
+    $("#app").addEventListener("paste", (e) => { const files = [...e.clipboardData.files]; if (!files.length) return; files.forEach(AttachmentHandler.createPreview); });
+
     updateSendButtonColor();
+
     function closeReply() {
         R_INDICATOR.style.display = "none";
         document.querySelectorAll(".message").forEach(function(msg) { 
@@ -142,7 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         messageInput.removeAttribute("data-replying-to");
     }
-    $("close-reply").addEventListener("click", closeReply);
+    $("#close-reply").addEventListener("click", closeReply);
+
     document.addEventListener("keydown", function(event) {
         if (event.key === KEYBIND_CLOSE && R_INDICATOR.style.display === "flex") { closeReply(); }
     });

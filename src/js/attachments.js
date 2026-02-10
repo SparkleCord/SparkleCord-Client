@@ -1,105 +1,235 @@
-function createAttachmentPreview(file) {
-    const attachmentId = `attach-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const attachmentDiv = document.createElement("div");
-    attachmentDiv.className = "attachment-wrapper";
-    attachmentDiv.dataset.attachId = attachmentId;
-    const attachmentData = { id: attachmentId, file: file, name: file.name, type: file.type, size: file.size };
-    currentAttachments.push(attachmentData);
-    const isImage = file.type.startsWith("image/"), isVideo = file.type.startsWith("video/"); 
-    const nameInput = document.createElement("input"); nameInput.type = "text"; nameInput.value = file.name; nameInput.className = "attachment-name";
-    const removeBtn = document.createElement("button"); removeBtn.className = "remove-attachment"; removeBtn.innerHTML = "<img src='./assets/svg/ctx/Delete.svg'>";
-    attachmentDiv.appendChild(removeBtn);
-    if (isImage) {
-        attachmentDiv.classList.add("media");
-        const preview = document.createElement("img"); preview.src = URL.createObjectURL(file);
-        attachmentDiv.appendChild(preview);
-    } else if (isVideo) {
-        attachmentDiv.classList.add("media-video");
-        const preview = document.createElement("video"); preview.src = URL.createObjectURL(file);
-        attachmentDiv.appendChild(preview);
-    } else {
-        attachmentDiv.classList.add("file-other");
-        const icon = document.createElement("img"); icon.src = getFileIcon(file.type); icon.className = "file-icon"; attachmentDiv.appendChild(icon);
+const fileTypes = {
+    // adobe
+    acrobat: {
+        extensions: [".pdf"],
+        mimeTypes: [],
+        icon: "acrobat",
+        renderMode: "generic"
+    },
+    aftereffects: {
+        extensions: [".aep", ".aepx", ".aet"],
+        mimeTypes: [],
+        icon: "ae",
+        renderMode: "generic"
+    },
+    illustrator: {
+        extensions: [".ai", ".ait"],
+        mimeTypes: [],
+        icon: "ai",
+        renderMode: "generic"
+    },
+    photoshop: {
+        extensions: [".psd", ".psb"],
+        mimeTypes: ["image/vnd.adobe.photoshop"],
+        icon: "ps",
+        renderMode: "generic"
+    },
+
+    // text files
+    code: { 
+        extensions: [".c++", ".cpp", ".cc", ".c", ".h", ".hpp", ".mm", ".m", ".json", ".js", ".ts", ".rb", ".rake", ".py", ".asm", ".fs", ".pyc", ".dtd", ".cgi", ".bat", ".rss", ".java", ".graphml", ".idb", ".lua", ".o", ".gml", ".prl", ".sls", ".conf", ".cmake", ".make", ".sln", ".vbe", ".cxx", ".wbf", ".vbs", ".r", ".wml", ".php", ".bash", ".applescript", ".fcgi", ".yaml", ".ex", ".exs", ".sh", ".ml", ".actionscript"],
+        mimeTypes: [],
+        icon: "code",
+        renderMode: "text"
+    },
+    document: { 
+        extensions: [".txt", ".rtf", ".doc", ".docx", ".md", ".pages", ".ppt", ".pptx", ".pptm", ".key", ".log"],
+        mimeTypes: [],
+        icon: "document",
+        renderMode: "text"
+    },
+    webcode: { 
+        extensions: [".html", ".xhtml", ".htm", ".xml", ".xsd", ".css", ".styl", ".svg"],
+        mimeTypes: ["image/svg+xml"],
+        icon: "webcode",
+        renderMode: "text"
+    },
+
+    // binary files
+    archive: { 
+        extensions: [".rar", ".zip", ".7z", ".tar", ".tar.gz"],
+        mimeTypes: [],
+        icon: "archive",
+        renderMode: "generic"
+    },
+    audio: { 
+        extensions: [".mp3", ".ogg", ".opus", ".wav", ".aiff", ".flac"],
+        mimeTypes: [],
+        icon: "audio",
+        renderMode: "audio"
+    },
+    image: { 
+        extensions: [],
+        mimeTypes: ["image/*"],
+        icon: "image",
+        renderMode: "image"
+    },
+    spreadsheet: {
+        extensions: [".xls", ".xlsx", ".numbers"],
+        mimeTypes: [],
+        icon: "spreadsheet",
+        renderMode: "generic"
+    },
+    csv: {
+        extensions: [".csv"],
+        mimeTypes: [],
+        icon: "spreadsheet",
+        renderMode: "text"
+    },
+    video: {
+        extensions: [],
+        mimeTypes: ["video/*"],
+        icon: "video",
+        renderMode: "video"
+    },
+
+    // others
+    sketch: {
+        extensions: [".sketch"],
+        mimeTypes: [],
+        icon: "sketch",
+        renderMode: "generic"
+    },
+    unknown: { 
+        extensions: [],
+        mimeTypes: [],
+        icon: "unknown",
+        renderMode: "generic"
     }
-    removeBtn.addEventListener("click", () => { 
-        currentAttachments = currentAttachments.filter(a => a.id !== attachmentId); attachmentDiv.remove();
-        updateSendButtonColor({ attachments: currentAttachments });
-    });
-    nameInput.addEventListener("change", () => { const attachment = currentAttachments.find(a =>a.id === attachmentId); if (attachment) attachment.name = nameInput.value; });
-    attachmentDiv.appendChild(nameInput);
-    $("message-input").appendChild(attachmentDiv);
-    updateSendButtonColor({ attachments: currentAttachments });
 }
-function handleFileAttachment() {
-    const fileInput = document.createElement("input"); fileInput.type = "file"; fileInput.multiple = true; fileInput.style.display = "none", lastDir = localStorage.getItem("lastAttachmentDirectory");
-    if (lastDir) { try { fileInput.webkitdirectory = lastDir; } catch (e) { console.warn("Could not set initial directory"); } }
-    fileInput.addEventListener("change", (e) => {
-        const files = Array.from(e.target.files);
-        if (!files.length) return;
-        try { const dirPath = files[0].path.substring(0, files[0].path.lastIndexOf("\\")); localStorage.setItem("lastAttachmentDirectory", dirPath);}catch(e){};
-        let filteredFiles = [];
-        files.forEach(file => {
-            const fileSizeMB = file.size / (1024 * 1024);
-            let warning = "";
-            if (fileSizeMB > 50) warning = `Your ${file.name} (${formatFileSize(file.size)}) is over 50MB! This could freeze or crash your browser.`;
-            else if (fileSizeMB > 25) warning = `Your ${file.name} (${formatFileSize(file.size)}) is over 25MB. Expect significant performance drops.`;
-            else if (fileSizeMB > 10) warning = `Your ${file.name} (${formatFileSize(file.size)}) is over 10MB. Some lag may occur.`;
-            if (warning) { if (!confirm(`${warning}\n\nDo you want to continue?`)) return; }
-            filteredFiles.push(file);
+
+class AttachmentHandler {
+    static createPreview(file) {
+        const attachment = {
+            data: { id: `attach-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, file: file, name: file.name, type: file.type, size: file.size }
+        }
+
+        attachment.id = attachment.data.id;
+
+        const attachmentDiv = el("div", { className: "attachment-wrapper", dataset: { attachId: attachment.id } });
+        currentAttachments.push(attachment.data);
+
+        const nameInput = el("input", { type: "text", value: file.name, className: "attachment-name" });
+        const removeBtn = el("button", { className: "remove-attachment", innerHTML: `<img src='./assets/svg/ctx/Delete.svg'>` });
+        attachmentDiv.appendChild(removeBtn);
+
+        if (file.type.startsWith("image/")) {
+            attachmentDiv.classList.add("media");
+            attachmentDiv.appendChild(el("img", { src: URL.createObjectURL(file) }));
+        } else if (file.type.startsWith("video/")) {
+            attachmentDiv.classList.add("media-video");
+            attachmentDiv.appendChild(el("video", { src: URL.createObjectURL(file) }));
+        } else {
+            attachmentDiv.classList.add("file-other");
+            attachmentDiv.appendChild(el("img", { src: AttachmentHandler.getFileIcon(file.type, file.name), className: "file-icon" }));
+        }
+
+        removeBtn.addEventListener("click", () => { 
+            currentAttachments = currentAttachments.filter(a => a.id !== attachment.id); attachmentDiv.remove();
+            updateSendButtonColor({ attachments: currentAttachments });
         });
-        filteredFiles.forEach(file => createAttachmentPreview(file));
-    });
-    fileInput.click();
-}
-function formatFileSize(bytes) {
-    const units = ["B", "KB", "MB", "GB", "TB"];
-    let size = bytes, unitIndex = 0;
-    while (size >= 1024 && unitIndex < units.length - 1) { size /= 1024; unitIndex++; }
-    return `${Math.round(size * 100) / 100} ${units[unitIndex]}`;
-}
-function canBrowserRender(mimeType) {
-    const safeTypes = [
-        "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
-        "video/mp4", "video/webm",
-        "audio/mpeg", "audio/wav", "audio/ogg",
-        "application/pdf"
-    ];
-    if (safeTypes.includes(mimeType)) return true;
-    if (mimeType.startsWith("text/")) {
-        const safeTextTypes = ["plain", "markdown", "csv"], subtype = mimeType.split("/")[1];
-        return safeTextTypes.includes(subtype);
+
+        nameInput.addEventListener("change", () => {
+            const attachment = currentAttachments.find(a =>a.id === attachment.id);
+            
+            if (attachment) {
+                attachment.name = nameInput.value;
+            }
+        });
+
+        attachmentDiv.appendChild(nameInput);
+        $("#message-input").appendChild(attachmentDiv);
+        updateSendButtonColor({ attachments: currentAttachments });
     }
-    return false;
-}
-function getFileIcon(mimeType) {
-    const iconMap = {
-        // Text files
-        "text/": "./assets/svg/file/Text.svg",
-        "text/html": "./assets/svg/file/HTML.svg",
-        "text/csv": "./assets/svg/file/Spreadsheet.svg",
-        // Code files
-        "application/json": "./assets/svg/file/JSON.svg",
-        "text/ruby": "./assets/svg/file/RubyCode.svg",
-        // Media files
-        "image/": "./assets/svg/file/Image.svg",
-        "video/": "./assets/svg/file/Video.svg",
-        "audio/": "./assets/svg/file/Audio.svg",
-        // Adobe files
-        "application/pdf": "./assets/svg/file/ADOBE_Acrobat.svg",
-        "application/x-photoshop": "./assets/svg/file/ADOBE_Photoshop.svg",
-        "application/illustrator": "./assets/svg/file/ADOBE_Illustrator.svg",
-        "application/x-aftereffects": "./assets/svg/file/ADOBE_AfterEffects.svg",
-        // Archive files
-        "application/zip": "./assets/svg/file/Archive.svg",
-        "application/x-zip-compressed": "./assets/svg/file/Archive.svg",
-        "application/x-rar-compressed": "./assets/svg/file/Archive.svg",
-        "application/x-7z-compressed": "./assets/svg/file/Archive.svg",
-        "application/x-tar": "./assets/svg/file/Archive.svg",
-        // Spreadsheets
-        "application/vnd.ms-excel": "./assets/svg/file/Spreadsheet.svg",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "./assets/svg/file/Spreadsheet.svg"
-    };
-    if (iconMap[mimeType]) return iconMap[mimeType];
-    const matchingType = Object.keys(iconMap).find(type =>  type.endsWith("/") && mimeType.startsWith(type) );
-    return matchingType ? iconMap[matchingType] : "./assets/svg/file/Unknown.svg";
+
+    static handleAttachment() {
+        const fileInput = el("input", { type: "file", multiple: true, style: "display: none;" });
+
+        fileInput.addEventListener("change", (e) => {
+            const files = Array.from(e.target.files);
+            if (!files.length) return;
+
+            let filteredFiles = [];
+            files.forEach(file => {
+                let warning = "";
+                const megabytes = file.size / (1024 * 1024);
+
+                if (megabytes > 50) {
+                    warning = `${file.name} (${AttachmentHandler.formatSize(file.size)}) is bigger than 50MB! Your browser may crash.`;
+                } else if (megabytes > 25) {
+                    warning = `${file.name} (${AttachmentHandler.formatSize(file.size)}) is bigger than 25MB! There may be significant amounts of lag.`;
+                } else if (megabytes > 10) {
+                    warning = `${file.name} (${AttachmentHandler.formatSize(file.size)}) is bigger than 10MB! Some lag might happen.`;
+                }
+
+                if (warning) {
+                    if (!confirm(`${warning}\n\nDo you want to continue?`)) return;
+                }
+
+                filteredFiles.push(file);
+            });
+
+            filteredFiles.forEach(file => AttachmentHandler.createPreview(file));
+        });
+
+        fileInput.click();
+    }
+
+    static formatSize(bytes) {
+        if (bytes === 0) return "0 bytes";
+        if (bytes === 1) return "1 byte";
+
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return `${Math.round(bytes / Math.pow(1024, i) * 100) / 100} ${["bytes", "KB", "MB", "GB", "TB", "PB"][i]}`;
+    }
+
+    static isRenderable(type) {
+        const safeTypes = [
+            "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
+            "video/mp4", "video/webm",
+            "audio/mpeg", "audio/wav", "audio/ogg",
+            "application/pdf"
+        ];
+
+        if (safeTypes.includes(type)) {
+            return true;
+        }
+
+        if (type.startsWith("text/")) {
+            return ["plain", "markdown", "csv"].includes(type.split("/")[1]);
+        }
+
+        return false;
+    }
+
+    static getFileIcon(mimeType, name) {
+        for (const [_, type] of Object.entries(fileTypes)) {
+            // extensions has higher priority
+            if (type.extensions.length > 0) {
+                if (type.extensions.some(ext => name.toLowerCase().endsWith(ext))) {
+                    console.log(`got type: ${type.icon}.svg`);
+                    return `./assets/svg/file/icon-file-${type.icon}.svg`;
+                }
+            }
+
+            // if no extensions, check mimetypes
+            if (type.mimeTypes.length > 0) {
+                for (const mime of type.mimeTypes) {
+                    if (mime.endsWith("/*")) {
+                        if (mimeType.startsWith(mime.slice(0, -2))) {
+                            console.log(`got type: ${type.icon}.svg`);
+                            return `./assets/svg/file/icon-file-${type.icon}.svg`;
+                        }
+                    } else {
+                        if (mimeType === mime) {
+                            console.log(`got type: ${type.icon}.svg`);
+                            return `./assets/svg/file/icon-file-${type.icon}.svg`;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return `./assets/svg/file/icon-file-unknown.svg`;
+    }
 }

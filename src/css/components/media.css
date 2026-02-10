@@ -36,16 +36,8 @@
     transition: color 0.2s;
     scale: 0.75;
 }
+
 /* ATTACHMENTS IN MESSAGES */
-.file-icon {
-    width: 36px;
-    height: 36px;
-}
-.file-size {
-    color: var(--text-muted);
-    font-size: 0.85em;
-    margin-left: auto;
-}
 .attachment-name {
     background: transparent;
     border: none;
@@ -79,15 +71,39 @@
     padding: 4px 8px;
     background: var(--background-secondary);
 }
+
+.visual-refresh-ui .attachment.file-other {
+    padding: 13px;
+}
+
 .attachment.file-other {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px;
+    padding: 10px;
     background: var(--background-secondary);
+    width: 120%;
+}
+.file-icon {
+    width: 36px;
+    height: 36px;
+}
+.file-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.attachment.file-other a {
+    font-weight: 400;
+}
+.file-size {
+    color: var(--text-muted);
+    font-size: 0.75em;
+    transform: translateY(-3px);
+    font-weight: 400;
 }
 
-
+/* DRAG AND DROP */
 .drop-overlay {
     position: fixed;
     top: 0;

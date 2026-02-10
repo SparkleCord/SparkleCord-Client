@@ -1,0 +1,303 @@
+#settings-container .buttons {
+    line-height: 1;
+    user-select: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-family: inherit;
+    font-size: 100%;
+    vertical-align: baseline;
+    outline: 0;
+    display: flex;
+    box-sizing: border-box;
+}
+#settings-container button.normal {
+    font-family: var(--font-primary);
+    outline: 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--white-500);
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    padding: 2px 16px;
+    user-select: none;
+    transition: background-color var(--custom-button-transition-duration) ease, color var(--custom-button-transition-duration) ease;
+    height: var(--custom-button-button-sm-height);
+    min-width: var(--custom-button-button-sm-width);
+    min-height: var(--custom-button-button-sm-height);
+    width: auto;
+    box-sizing: border-box;
+    cursor: pointer;
+    background-color: var(--button-filled-brand-background);
+}
+#settings-container button.normal:hover {
+    background-color: var(--button-filled-brand-background-hover);
+}
+#settings-container button.remove {
+    font-family: var(--font-primary);
+    outline: 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    padding: 2px 16px;
+    user-select: none;
+    height: var(--custom-button-button-sm-height);
+    min-width: var(--custom-button-button-sm-width);
+    min-height: var(--custom-button-button-sm-height);
+    width: auto;
+    margin-left: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+    color: var(--text-normal);
+}
+
+.visual-refresh button.remove, .visual-refresh .reset {
+    color: var(--brand-360) !important;
+}
+
+#settings-container button.remove:hover {
+    text-decoration: underline;
+}
+
+/* Base Button Styles */
+.button {
+    font-family: var(--font-primary);
+    outline: 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--white-500);
+    border: 2px solid var(--button-filled-brand-background);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    padding: 2px 16px;
+    user-select: none;
+    transition: all var(--custom-button-transition-duration) ease;
+    height: var(--custom-button-button-sm-height);
+    min-width: var(--custom-button-button-sm-width);
+    min-height: var(--custom-button-button-sm-height);
+    width: fit-content;
+    box-sizing: border-box;
+    cursor: pointer;
+    background-color: var(--button-filled-brand-background);
+}
+
+.theme-light .button:not(.filled) {
+    color: var(--text-normal);
+}
+
+/* Button Type Modifiers */
+.button.filled {
+    border: none;
+}
+.button:not(.filled) {
+    background-color: transparent;
+}
+.button.inverted {
+    background-color: transparent;
+    border-color: transparent !important;
+}
+
+/* Color Variants - Filled Buttons */
+.button.filled.positive {
+    background-color: var(--button-positive-background);
+    color: var(--status-positive-text);
+}
+.button.filled.danger {
+    background-color: var(--button-danger-background);
+    color: var(--status-danger-text);
+}
+.button.filled.secondary {
+    background-color: var(--button-secondary-background);
+    color: var(--button-secondary-text);
+}
+.button.filled.warning {
+    background-color: var(--status-warning-background);
+    color: var(--status-warning-text);
+}
+
+.theme-light .button.filled.positive,
+.theme-light .button.filled.danger,
+.theme-light .button.filled.warning,
+.theme-light .button.filled.alert {
+    color: var(--white-500);
+}
+
+.button.filled.alert {
+    background-color: #ff9900;
+    color: var(--status-warning-text);
+}
+.button.filled.info {
+    background-color: #4a90e2;
+}
+.button.filled.lurking {
+    background-color: var(--brand-600);
+}
+.button.filled.brand {
+    background-color: var(--button-filled-brand-background);
+}
+.button.filled.nitro {
+    background: var(--custom-premium-colors-premium-gradient-tier-0);
+}
+.button.filled.nitro2 {
+    background: var(--custom-premium-colors-premium-gradient-tier-1);
+}
+.button.filled.nitro3 {
+    background: var(--custom-premium-colors-premium-gradient-tier-2);
+}
+
+/* Color Variants - Outline Buttons */
+.button:not(.filled).positive {
+    border-color: var(--button-positive-background);
+}
+.button:not(.filled).danger {
+    border-color: var(--button-danger-background);
+}
+.button:not(.filled).secondary {
+    border-color: var(--button-secondary-background);
+}
+.button:not(.filled).warning {
+    border-color: var(--status-warning-background);
+}
+.button:not(.filled).alert {
+    border-color: #ff9900;
+}
+.button:not(.filled).info {
+    border-color: #4a90e2;
+}
+.button:not(.filled).lurking {
+    border-color: var(--brand-600);
+}
+.button:not(.filled).brand {
+    border-color: var(--button-filled-brand-background);
+}
+
+/* Inverted Button Color Variants */
+.button.inverted.positive {
+    color: var(--button-positive-background);
+}
+.button.inverted.danger {
+    color: var(--button-danger-background);
+}
+.button.inverted.secondary {
+    color: var(--white-500);
+}
+.theme-light .button.inverted.secondary {
+    color: var(--text-normal);
+}
+.button.inverted.warning {
+    color: var(--status-warning-background);
+}
+.button.inverted.alert {
+    color: #ff9900;
+}
+.button.inverted.info {
+    color: #4a90e2;
+}
+.button.inverted.lurking {
+    color: var(--brand-600);
+}
+.button.inverted.brand {
+    color: var(--button-filled-brand-background);
+}
+
+/* Hover States - Filled Buttons */
+.button.filled.positive:hover {
+    background-color: var(--button-positive-background-hover);
+}
+.button.filled.danger:hover {
+    background-color: var(--button-danger-background-hover);
+}
+.button.filled.secondary:hover {
+    background-color: var(--button-secondary-background-hover);
+}
+.button.filled.warning:hover {
+    background-color: var(--yellow-360);
+}
+.button.filled.alert:hover {
+    background-color: #cc7a00;
+}
+.button.filled.info:hover {
+    background-color: #3a78c2;
+}
+.button.filled.lurking:hover {
+    background-color: var(--brand-560);
+}
+.button.filled.brand:hover {
+    background-color: var(--button-filled-brand-background-hover);
+}
+.button.filled.nitro:hover {
+    background: linear-gradient(90deg, hsl(234.935, calc(var(--saturation-factor, 1) * 85.556%), 54.706%), hsl(234.935, calc(var(--saturation-factor, 1) * 85.556%), 54.706%));
+}
+.button.filled.nitro2:hover {
+    background: linear-gradient(90deg, hsl(234.935, calc(var(--saturation-factor, 1) * 85.556%), 54.706%), hsl(234.909, calc(var(--saturation-factor, 1) * 68.465%), 42.745%));
+}
+.button.filled.nitro3:hover {
+    background: linear-gradient(90deg, hsl(269.291, calc(var(--saturation-factor, 1) * 52.697%), 42.745%), hsl(325.385, calc(var(--saturation-factor, 1) * 31.707%), 41.765%));
+}
+
+/* Hover States - Outline Buttons */
+.button:not(.filled).positive:hover {
+    border-color: var(--button-positive-background-hover);
+}
+.button:not(.filled).danger:hover {
+    border-color: var(--button-danger-background-hover);
+}
+.button:not(.filled).secondary:hover {
+    border-color: var(--button-secondary-background-hover);
+}
+.button:not(.filled).warning:hover {
+    border-color: var(--yellow-360);
+}
+.button:not(.filled).alert:hover {
+    border-color: #cc7a00;
+}
+.button:not(.filled).info:hover {
+    border-color: #3a78c2;
+}
+.button:not(.filled).lurking:hover {
+    border-color: var(--brand-560);
+}
+.button:not(.filled).brand:hover {
+    border-color: var(--button-filled-brand-background-hover);
+}
+
+/* Hover States - Inverted Buttons */
+.button.inverted.positive:hover {
+    color: var(--button-positive-background-hover);
+}
+.button.inverted.danger:hover {
+    color: var(--button-danger-background-hover);
+}
+.button.inverted.secondary:hover {
+    color: var(--button-secondary-background-hover);
+}
+.button.inverted.warning:hover {
+    color: var(--yellow-360);
+}
+.button.inverted.alert:hover {
+    color: #cc7a00;
+}
+.button.inverted.info:hover {
+    color: #3a78c2;
+}
+.button.inverted.lurking:hover {
+    color: var(--brand-560);
+}
+.button.inverted.brand:hover {
+    color: var(--button-filled-brand-background-hover);
+}

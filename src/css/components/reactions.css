@@ -1,0 +1,71 @@
+.reaction-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.reaction {
+    border-radius: 8px;
+
+    background: var(--background-base-lower);
+    background-color: var(--background-mod-subtle);
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-inline-end: 4px;
+    margin-bottom: 4px;
+    
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+
+    min-height: 24px;
+    min-width: 48px;
+    width: auto;
+
+    display: flex;
+    align-items: center;
+    padding: 2px 6px;
+}
+
+.reaction.reacted {
+    background-color: var(--message-reacted-background-default);
+    border-color: var(--blurple-50);
+}
+
+.reaction .reaction-emoji {
+    display: flex;
+    align-items: center;
+    line-height: 0;
+    margin-right: auto;
+}
+
+.reaction .emoji {
+    --reaction-emoji-size: 18px;
+
+    margin: 2px 0 !important;
+    width: var(--reaction-emoji-size) !important;
+    height: var(--reaction-emoji-size) !important;
+    min-width: var(--reaction-emoji-size) !important;
+    min-height: var(--reaction-emoji-size) !important;
+    max-width: var(--reaction-emoji-size) !important;
+    max-height: var(--reaction-emoji-size) !important;
+
+    padding-left: 3px !important;
+    vertical-align: center;
+}
+
+.reaction .reaction-emoji-amount {
+    align-self: flex-end;
+    flex: 1;
+    text-align: center;
+    color: var(--text-subtle);
+    font-weight: var(--font-weight-semibold);
+    margin-inline-start: 6px;
+    text-align: center;
+}
+
+.reaction.reacted .reaction-emoji-amount {
+    color: var(--message-reacted-text-default);
+}

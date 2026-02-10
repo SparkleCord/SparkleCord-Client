@@ -1,6 +1,54 @@
-const $ = id => document.getElementById(id);
 const rand = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 const snflk = d => ((BigInt(d) - 1420070400000n) << 22n) | BigInt(rand(0, 0xFFFFFFFF));
+
+// create an element with an optional namespace
+function el(type, attrs, ns) {
+    const u = "http://www.w3.org", nss = { svg: `${u}/2000/svg`, xhtml: `${u}/1999/xhtml`, mathml: `${u}/1998/Math/MathML` }, nsu = ns ? nss[ns] : nss["xhtml"];
+    const e = document.createElementNS(nsu, type);
+
+    for (const k in attrs) {
+        if (k === "dataset") {
+            Object.assign(e.dataset, attrs[k]);
+        } else {
+            if (nsu === nss.xhtml || ["innerHTML", "id", "className", "textContent"].includes(k)) {
+                e[k] = attrs[k];
+            } else {
+                e.setAttribute(k, attrs[k]);
+            }
+        }
+    }
+    return e;
+}
+
+// get an element
+function $(q, mult = false, scope = document) {
+    if (mult) return scope.querySelectorAll(q);
+    else return scope.querySelector(q);
+}
+
+// modify an element
+function $$(e, attrs) {
+    for (const k in attrs) {
+        if (k === "dataset") {
+            Object.assign(e.dataset, attrs[k]);
+        } else {
+            if (e.namespaceURI === "http://www.w3.org/1999/xhtml" || ["innerHTML", "id", "className", "textContent"].includes(k)) {
+                e[k] = attrs[k];
+            } else {
+                e.setAttribute(k, attrs[k]);
+            }
+        }
+    }
+    return e;
+}
+
+// remove an element
+function r(e, parent) {
+    if (parent) return parent.removeChild(e);
+    return e.remove();
+}
+
+let sparkleCake = false;
 
 class SettingsManager {
     static types = {
@@ -51,9 +99,8 @@ class SettingsManager {
         // Slider
         "slider": (opt) => {
             const defaultValue = opt.defaultValue || "0";
-            const min = opt.min || "0";
-            const max = opt.max || "100";
-            const ratio = ((defaultValue - min) / (max - min)) * 100;
+            const [min, max] = [opt.min || "0", opt.max || "100"], ratio = ((defaultValue - min) / (max - min)) * 100;
+
             return `<input type="range" value="${defaultValue}" min="${min}" max="${max}" id="${opt.id}" class="rangeSlider" 
             style="background: linear-gradient(90deg, var(--control-brand-foreground-new) ${ratio}%, var(--interactive-muted) ${ratio}%)" />`;
         },
@@ -114,7 +161,7 @@ class SettingsManager {
             opt.buttons.forEach(btn => {
                 if (btn.onClick) {
                     setTimeout(() => {
-                        $(btn.id).addEventListener("click", (e) => {
+                        $(`#${btn.id}`).addEventListener("click", (e) => {
                             const radio = e.target.closest("div.radio-btn").querySelector("input[type='radio']");
                             opt.buttons.forEach(b => localStorage.setItem(`${b.id}-input`, "false"));
                             radio.checked = true;
@@ -127,14 +174,12 @@ class SettingsManager {
         },
         "btn": (opt) => {
             if (opt.onClick) {
-                setTimeout(() => {
-                    $(opt.id).addEventListener("click", () => opt.onClick());
-                }, SETTINGS_TIMEOUT);
+                setTimeout(() => { $(`#${opt.id}`).addEventListener("click", () => opt.onClick()); }, SETTINGS_TIMEOUT);
             }
         },
         "color": (opt) => {
             setTimeout(() => {
-                const input = $(`${opt.id}-input`);
+                const input = $(`#${opt.id}-input`);
                 input.addEventListener("input", e => {
                     const bright = "var(--white-500)", dark = "black";
                     const svg = input.parentElement.querySelector("path");

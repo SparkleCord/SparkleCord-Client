@@ -4,57 +4,42 @@
     <meta charset="UTF-8">
     <title>SparkleCord UserCSS Editor</title>
     <link rel="icon" href="./assets/icons/icon.png">
-    <link rel="stylesheet" href="./js/modules/codemirror/codemirror.min.css">
-    <style> html, body, #editor { margin: 0; padding: 0; height: 100%; width: 100% } </style>
+    <style>
+        html, body, #editor {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%
+        }
+    </style>
 </head>
 <body>
     <div id="editor"></div>
+    <script src="./js/engine.js"></script>
     <script>
-        let isOnline = true;
-        async () => {
-            try { await fetch("https://example.com", { mode: "no-cors" }); }
-            catch { isOnline = false; }
-        }
         (async () => {
-            const cssBackup = localStorage.getItem('UserCSS_Backup') || '';
-            if (isOnline) {
-                const script = document.createElement("script");
-                script.src = "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js";
-                script.onload = () => {
-                    require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs" } });
-                    require(["vs/editor/editor.main"], () => {
-                        const e = monaco.editor.create(document.getElementById('editor'), { 
-                            value: cssBackup, language: "css", theme: "vs-dark", automaticLayout: true 
-                        });
-                        const sync = () => {
-                            const css = e.getValue();
-                            localStorage.setItem("UserCSS_Backup", css);
-                            window.opener?.postMessage({ type: "cssUpdate", css }, "*");
-                        };
-                        sync();
-                        e.onDidChangeModelContent(sync);
-                    });
-                };
-                document.body.appendChild(script);
-            } else {
-                for (const src of ["./js/modules/codemirror/codemirror.js","./js/modules/codemirror/css.js","./js/modules/codemirror/matchbrackets.js"]) {
-                    const script = document.createElement("script"); script.src = src; document.body.appendChild(script);
-                    await new Promise(resolve => script.onload = resolve);
-                }
-                const cssBackup = localStorage.getItem('UserCSS_CodeMirror-Backup') || '', { EditorState, EditorView, basicSetup } = cm, { css } = cmLangCss, view = new EditorView({
-                    state: EditorState.create({
-                        doc: cssBackup,
-                        extensions: [basicSetup, css(), EditorView.updateListener.of(u => {
-                            if (u.docChanged) {
-                                const v = u.state.doc.toString();
-                                localStorage.setItem("UserCSS_CodeMirror-Backup", v);
-                                window.opener?.postMessage({ type: "cssUpdate", css: v }, "*");
-                            }
-                        })]
-                    }),
-                    parent: document.getElementById('editor')
+            const script = el("script", { src: "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js", onload: loadEditor })
+
+            const ed = {
+                editor: document.getElementById("editor"),
+                config: { value: localStorage.getItem("UserCSS_Backup") || "", language: "css", theme: "vs-dark", automaticLayout: true }
+            }
+
+            function loadEditor() {
+                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs" } });
+                require(["vs/editor/editor.main"], () => {
+                    const editor = monaco.editor.create(ed.editor, ed.config);
+                    const sync = () => {
+                        const css = editor.getValue();
+                        localStorage.setItem("UserCSS_Backup", css);
+                        window.opener?.postMessage({ type: "cssUpdate", css }, "*");
+                    };
+                    sync();
+                    editor.onDidChangeModelContent(sync);
                 });
             }
+
+            document.body.appendChild(script);
         })();
     </script>
 </body>

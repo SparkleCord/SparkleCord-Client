@@ -24818,7 +24818,7 @@ const emojiData = {
     ],
     "emoji_18.0": [
         {
-            "names": ["apple_core"], // officially removed as of october 20, but still here because i still spent an hour making sure its perfect
+            "names": ["apple_core"], // officially removed as of october 20, 2025, but still here because i still spent an hour making sure its perfect
             "surrogates": "\uD83E\uDEDE", // 1fadd is now the codepoint for pickle, this has been replaced with DEDE instead of DEDD
             "unicodeVersion": 18
         },
@@ -24830,9 +24830,16 @@ const emojiData = {
             "hasDiversity": false
         },
         {
-            "names": ["face_with_squinting_eyes"],
-            "surrogates": "\uD83E\uDEEB",
+            "names": ["face_with_squinting_eyes"], // officially removed as of january 15, 2026
+            "surrogates": "\uD83E\uDEEC", // replaced with DEEC instead of DEEB for compatibility purposes (1faeb is now cracking face)
             "path": "18.0/face_with_squinting_eyes.png",
+            "unicodeVersion": 18,
+            "hasDiversity": false
+        },
+        {
+            "names": ["cracking_face"],
+            "surrogates": "\uD83E\uDEEB",
+            "path": "18.0/cracking_face.png",
             "unicodeVersion": 18,
             "hasDiversity": false
         },
@@ -25000,6 +25007,52 @@ const emojiData = {
             "path": "custom/missing_picture.png",
             "unicodeVersion": 0,
             "hasDiversity": false
+        },
+        {
+            "names": ["golden_dandelion"],
+            "surrogates": "\uE104",
+            "path": "custom/golden_dandelion.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false
+        },
+        {
+            "names": ["box_of_chocolates", "chocolate_box", "valentines_box", "valentines_chocolate"],
+            "surrogates": "\uE105",
+            "path": "custom/box_of_chocolates.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false
+        },
+    ],
+
+    // SUGGESTED EMOJIS! (emojis that a lot of people want to be real emojis) (e200-e2ff)
+    "suggested": [
+        {
+            "names": ["axolotl"],
+            "surrogates": "\uE201",
+            "path": "custom/suggested/axolotl.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false
+        },
+        {
+            "names": ["bitcoin"],
+            "surrogates": "\uE202",
+            "path": "custom/suggested/bitcoin.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false
+        },
+        {
+            "names": ["thief"],
+            "surrogates": "\uE203",
+            "path": "custom/suggested/thief.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false
+        },
+        {
+            "names": ["seahorse"],
+            "surrogates": "\uE204",
+            "path": "custom/suggested/jack_dorseahorse.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false
         }
     ],
 
@@ -25041,5 +25094,63 @@ const emojiData = {
             "unicodeVersion": 0,
             "hasDiversity": false
         },
+    ],
+
+    // keep this section a secret
+    "secret": [
+        // {
+        //     "names": ["301"],
+        //     "surrogates": "\uE301",
+        //     "path": "custom/secret/301views.png",
+        //     "unicodeVersion": 0,
+        //     "hasDiversity": false,
+
+        //     "hidden": true
+        // },
+        {
+            "names": ["sparklecake"],
+            "surrogates": "\uE302",
+            "path": "custom/secret/sparklecake.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false,
+
+            "hidden": false
+        },
+        // {
+        //     "names": ["captain_america_shield", "capt_america_shield"],
+        //     "surrogates": "\uE303",
+        //     "path": "custom/secret/capt_america_shield.png",
+        //     "unicodeVersion": 0,
+        //     "hasDiversity": false,
+
+        //     "hidden": true
+        // },
+        // {
+        //     "names": ["ze_sword"],
+        //     "surrogates": "\uE304",
+        //     "path": "custom/secret/ze_sword.png",
+        //     "unicodeVersion": 0,
+        //     "hasDiversity": false,
+
+        //     "hidden": true
+        // },
+        {
+            "names": ["red_blue_pill"],
+            "surrogates": "\uE305",
+            "path": "custom/secret/red_blue_pill.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false,
+
+            "hidden": false
+        },
+        // {
+        //     "names": ["pi"],
+        //     "surrogates": "\uE314",
+        //     "path": "custom/secret/pi.png",
+        //     "unicodeVersion": 0,
+        //     "hasDiversity": false,
+
+        //     "hidden": true
+        // },
     ]
 };
