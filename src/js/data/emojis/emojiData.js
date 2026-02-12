@@ -25098,15 +25098,15 @@ const emojiData = {
 
     // keep this section a secret
     "secret": [
-        // {
-        //     "names": ["301"],
-        //     "surrogates": "\uE301",
-        //     "path": "custom/secret/301views.png",
-        //     "unicodeVersion": 0,
-        //     "hasDiversity": false,
+        {
+            "names": ["301"],
+            "surrogates": "\uE301",
+            "path": "custom/secret/301.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false,
 
-        //     "hidden": true
-        // },
+            "hidden": true
+        },
         {
             "names": ["sparklecake"],
             "surrogates": "\uE302",
@@ -25114,26 +25114,26 @@ const emojiData = {
             "unicodeVersion": 0,
             "hasDiversity": false,
 
-            "hidden": false
+            "hidden": true
         },
-        // {
-        //     "names": ["captain_america_shield", "capt_america_shield"],
-        //     "surrogates": "\uE303",
-        //     "path": "custom/secret/capt_america_shield.png",
-        //     "unicodeVersion": 0,
-        //     "hasDiversity": false,
+        {
+            "names": ["captain_america_shield", "capt_america_shield"],
+            "surrogates": "\uE303",
+            "path": "custom/secret/capt_america_shield.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false,
 
-        //     "hidden": true
-        // },
-        // {
-        //     "names": ["ze_sword"],
-        //     "surrogates": "\uE304",
-        //     "path": "custom/secret/ze_sword.png",
-        //     "unicodeVersion": 0,
-        //     "hasDiversity": false,
+            "hidden": true
+        },
+        {
+            "names": ["ze_sword"],
+            "surrogates": "\uE304",
+            "path": "custom/secret/ze_sword.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false,
 
-        //     "hidden": true
-        // },
+            "hidden": true
+        },
         {
             "names": ["red_blue_pill"],
             "surrogates": "\uE305",
@@ -25141,16 +25141,16 @@ const emojiData = {
             "unicodeVersion": 0,
             "hasDiversity": false,
 
-            "hidden": false
+            "hidden": true
         },
-        // {
-        //     "names": ["pi"],
-        //     "surrogates": "\uE314",
-        //     "path": "custom/secret/pi.png",
-        //     "unicodeVersion": 0,
-        //     "hasDiversity": false,
+        {
+            "names": ["pi"],
+            "surrogates": "\uE314",
+            "path": "custom/secret/pi.png",
+            "unicodeVersion": 0,
+            "hasDiversity": false,
 
-        //     "hidden": true
-        // },
+            "hidden": true
+        },
     ]
 };

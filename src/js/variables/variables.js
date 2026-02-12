@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 // Version Info
-const versionCode = "1.4.1", versionState = "stable", versionType = "Client", versionName = "the biggest patch ever";
+const versionCode = "1.4.2", versionState = "stable", versionType = "Client", versionName = "";
 const versionHTML = `SparkleCord ${versionType} Version ${versionCode} <br>(${versionState}) ${versionName ? `- ${versionName}` : ``}`;
 
 // Loading and Initialization
@@ -282,7 +282,7 @@ function debugLog(content) {
 }
 
 if (location.protocol.startsWith("http")) {
-    document.head.appendChild(createElement("link", { rel: "manifest", href: "./assets/PWA/manifest.json" }));
+    document.head.appendChild(el("link", { rel: "manifest", href: "./assets/PWA/manifest.json" }));
     window.addEventListener("beforeinstallprompt", (e) => {
         e.preventDefault();
         setTimeout(e.prompt(), 3000);

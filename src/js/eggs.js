@@ -1,4 +1,4 @@
-const EASTER_EGGS_ENABLED_DEVELOPMENT = false;
+const EASTER_EGGS_ENABLED_DEVELOPMENT = true;
 if (EASTER_EGGS_ENABLED_DEVELOPMENT) {
     const SPARKLECORD_CONSOLE_COMMANDS = [
         {
@@ -30,6 +30,7 @@ if (EASTER_EGGS_ENABLED_DEVELOPMENT) {
             help: "just like the good old days",
             get() {
                 // make all text editable
+                // document.designMode = "on";
             }
         },
         {
@@ -37,12 +38,14 @@ if (EASTER_EGGS_ENABLED_DEVELOPMENT) {
             help: "i don't recommend this command...",
             get() {
                 // unlock: Blindness IV
+                // flash the user's screen white
             }
         },
         {
             name: "darkmode",
             help: "the lights have shut off",
             get() {
+                // make everything black
             }
         },
         {
@@ -53,10 +56,11 @@ if (EASTER_EGGS_ENABLED_DEVELOPMENT) {
             }
         },
         {
-            name: "2048",
+            name: "the2048",
             help: "you hopefully know this game",
             get() {
                 // unlock: The Coolest Block Game
+                // starts a mini 2048
             }
         },
         {
