@@ -110,7 +110,7 @@ class PluginManager {
         if (plugin.settings) {
             plugin.settings.forEach(setting => {
                 if (!setting.id) return;
-                const element = $(`#${setting.id}`);
+                const element = $(`[id='${setting.id}']`);
                 if (!element) return;
                 let value;
                 switch (setting.type) {
@@ -156,7 +156,7 @@ class PluginManager {
             if (plugin.settings) {
                 plugin.settings.forEach(setting => {
                     if (!setting.id || settings[setting.id] === undefined) return;
-                    const element = $(`#${setting.id}`);
+                    const element = $(`[id='${setting.id}']`);
                     if (!element) return;
                     const value = settings[setting.id];
                     switch (setting.type) {
@@ -222,7 +222,7 @@ class PluginManager {
         PluginManager.plugins.forEach(plugin => {
             PluginManager.create(plugin);
 
-            const toggle = $(`#plugin_${plugin.name}-toggle`);
+            const toggle = $(`[id='plugin_${plugin.name}-toggle']`);
             toggle.addEventListener("change", (e) => {
                  if (e.target.checked) {
                      plugin.onEnable();

@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 // Version Info
-const versionCode = "1.4.2", versionState = "stable", versionType = "Client", versionName = "";
+const versionCode = "1.4.2.1", versionState = "stable", versionType = "Client", versionName = "";
 const versionHTML = `SparkleCord ${versionType} Version ${versionCode} <br>(${versionState}) ${versionName ? `- ${versionName}` : ``}`;
 
 // Loading and Initialization

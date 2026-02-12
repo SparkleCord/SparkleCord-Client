@@ -129,15 +129,15 @@ const settingsData = {
         },
 
         // if (EASTER_EGGS_ENABLED_DEVELOPMENT)
-        party: {
-            name: "Birthday Mode",
-            icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M5.8 11.3 2 22l10.7-3.79M4 3h.01M22 8h.01M15 2h.01M22 20h.01M22 2l-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10m8 3-.82-.33c-.86-.34-1.82.2-1.98 1.11-.11.7-.72 1.22-1.43 1.22H17M11 2l.33.82c.34.86-.2 1.82-1.11 1.98-.7.1-1.22.72-1.22 1.43V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/></svg>`,
+        // party: {
+        //     name: "Birthday Mode",
+        //     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M5.8 11.3 2 22l10.7-3.79M4 3h.01M22 8h.01M15 2h.01M22 20h.01M22 2l-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10m8 3-.82-.33c-.86-.34-1.82.2-1.98 1.11-.11.7-.72 1.22-1.43 1.22H17M11 2l.33.82c.34.86-.2 1.82-1.11 1.98-.7.1-1.22.72-1.22 1.43V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/></svg>`,
 
-            options: [
-                { text: "All Achievements", type: "label" },
-                { type: "custom", html: `<div id="settings-achievements-grid"></div>` }
-            ]
-        }
+        //     options: [
+        //         { text: "All Achievements", type: "label" },
+        //         { type: "custom", html: `<div id="settings-achievements-grid"></div>` }
+        //     ]
+        // }
     },
 
     "__sep__ 2": {},
@@ -511,7 +511,7 @@ function createSettingsPanel() {
         tabs.forEach(t => t.classList.remove("active"));
         sections.forEach(s => s.classList.add("hidden"));
         tab.classList.add("active");
-        $(`#${tab.dataset.tab}`).classList.remove("hidden");
+        $(`[id='${tab.dataset.tab}']`).classList.remove("hidden");
 
         eventBus.emit("settingsTabSwitch", { timestamp: Date.now(), from: previousTab.dataset.tab, to: tab.dataset.tab });
     }));
@@ -531,7 +531,7 @@ function createSettingsPanel() {
     document.querySelectorAll(".switch input").forEach(toggle => {
         if (toggle.hasAttribute("data-force-disabled")) return;
         if (toggle.hasAttribute("data-depends-on")) {
-            const parent = $(`#${toggle.getAttribute("data-depends-on")}`);
+            const parent = $(`#${toggle.getAttribute('data-depends-on')}`);
             updateDependentToggleState(toggle, parent.checked);
             parent.addEventListener("change", (e) => updateDependentToggleState(toggle, e.target.checked));
         }
@@ -687,7 +687,7 @@ function createSettingsPanel() {
                 if (originalSettings[opt.id]) {
                     originalValue = originalSettings[opt.id].original;
                 }
-                const input = $(`#${opt.id}`);
+                const input = $(`[id='${opt.id}']`);
                 if (input && originalValue) {
                     switch (opt.type) {
                         case "toggle":

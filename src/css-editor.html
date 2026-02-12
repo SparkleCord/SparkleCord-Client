@@ -5,42 +5,143 @@
     <title>SparkleCord UserCSS Editor</title>
     <link rel="icon" href="./assets/icons/icon.png">
     <style>
-        html, body, #editor {
+        /* monaco */
+        .monaco html, .monaco body, .monaco #editor {
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 100%
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* ace */
+        .ace :root {
+            font-feature-settings: "liga" 1, "clig" 1 !important;
+            font-variant-ligatures: contextual common-ligatures discretionary-ligatures !important;
+        }
+
+        .ace body {
+            overflow: hidden;
+            background: #0D1117;
+        }
+
+        .ace  #ace-editor {
+            position: absolute;
+            width: 99%;
+            height: 97%;
+            border: none;
+            transform: translate(-10px, -3px); /* 10 pixels to left, 3 pixels up */
         }
     </style>
 </head>
 <body>
     <div id="editor"></div>
+    <div id="ace-editor"></div>
     <script src="./js/engine.js"></script>
+
+    <script src="./js/modules/ace-min/ace.js"></script>
+    <script src="./js/modules/ace-min/theme-dracula.js"></script>
+    <script src="./js/modules/ace-min/theme-github.js"></script>
+
+    <script src="./js/modules/ace-min/ext-beautify.js"></script>
+    <script src="./js/modules/ace-min/ext-error_marker.js"></script>
+    <script src="./js/modules/ace-min/ext-inline_autocomplete.js"></script>
+    <script src="./js/modules/ace-min/ext-language_tools.js"></script>
+    <script src="./js/modules/ace-min/ext-modelist.js"></script>
+    <script src="./js/modules/ace-min/ext-searchbox.js"></script>
+    <script src="./js/modules/ace-min/ext-simple_tokenizer.js"></script>
+    <script src="./js/modules/ace-min/ext-static_highlight.js"></script>
+    <script src="./js/modules/ace-min/ext-spellcheck.js"></script>
+    <script src="./js/modules/ace-min/ext-statusbar.js"></script>
+    <script src="./js/modules/ace-min/ext-textarea.js"></script>
+    <script src="./js/modules/ace-min/ext-whitespace.js"></script>
+
+    <script src="./js/modules/ace-min/mode-css.js"></script>
+    <script src="./js/modules/ace-min/mode-html.js"></script>
+    <script src="./js/modules/ace-min/mode-javascript.js"></script>
+    <script src="./js/modules/ace-min/mode-json.js"></script>
+    <script src="./js/modules/ace-min/mode-plain_text.js"></script>
+
+    <script src="./js/modules/ace-min/worker-base.js"></script>
+    <script src="./js/modules/ace-min/worker-css.js"></script>
+    <script src="./js/modules/ace-min/worker-html.js"></script>
+    <script src="./js/modules/ace-min/worker-javascript.js"></script>
+    <script src="./js/modules/ace-min/worker-json.js"></script>
     <script>
-        (async () => {
-            const script = el("script", { src: "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js", onload: loadEditor })
+        if (localStorage.getItem("UserCSS_Mode") === "monaco") {
+            document.documentElement.className = "monaco";
 
-            const ed = {
-                editor: document.getElementById("editor"),
-                config: { value: localStorage.getItem("UserCSS_Backup") || "", language: "css", theme: "vs-dark", automaticLayout: true }
-            }
+            (async () => {
+                const script = el("script", { src: "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js", onload: loadEditor });
 
-            function loadEditor() {
-                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs" } });
-                require(["vs/editor/editor.main"], () => {
-                    const editor = monaco.editor.create(ed.editor, ed.config);
-                    const sync = () => {
-                        const css = editor.getValue();
-                        localStorage.setItem("UserCSS_Backup", css);
-                        window.opener?.postMessage({ type: "cssUpdate", css }, "*");
-                    };
-                    sync();
-                    editor.onDidChangeModelContent(sync);
-                });
-            }
+                const ed = {
+                    editor: document.getElementById("editor"),
+                    config: { value: localStorage.getItem("UserCSS_Backup") || "", language: "css", theme: "vs-dark", automaticLayout: true }
+                }
 
-            document.body.appendChild(script);
-        })();
+                function loadEditor() {
+                    require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs" } });
+                    require(["vs/editor/editor.main"], () => {
+                        const editor = monaco.editor.create(ed.editor, ed.config);
+                        const sync = () => {
+                            const css = editor.getValue();
+                            localStorage.setItem("UserCSS_Backup", css);
+                            window.opener?.postMessage({ type: "cssUpdate", css }, "*");
+                        };
+                        sync();
+                        editor.onDidChangeModelContent(sync);
+                    });
+                }
+
+                document.body.appendChild(script);
+            })();
+        } else if (localStorage.getItem("UserCSS_Mode") === "ace") {
+            document.documentElement.className = "ace";
+
+            ace.config.set("basePath", "./js/modules/ace-min/");
+
+            var editor = ace.edit("ace-editor");
+            var mode = ace.require("ace/mode/css").Mode;
+            const initialcontent = localStorage.getItem("UserCSS_Backup");
+
+            editor.session.setMode(new mode());
+            editor.setValue(initialcontent);
+
+            editor.setOptions({
+                theme: "ace/theme/github",
+                keyboardHandler: "ace/keyboard/vscode",
+                wrap: "view",
+                cursorStyle: "smooth",
+                foldStyle: "markbegin",
+                useSoftTabs: true,
+                tabSize: 4,
+                behavioursEnabled: true,
+                enableAutoIndent: true,
+                selectionStyle: "text",
+                highlightActiveLine: true,
+                displayIndentGuides: true,
+                highlightIndentGuides: true,
+                vScrollBarAlwaysVisible: true,
+                hScrollBarAlwaysVisible: false,
+                showGutter: true,
+                showInvisibles: true,
+                fixedWidthGutter: true,
+                printMargin: false,
+                printMarginColumn: 0,
+                highlightSelectedWord: true,
+                mergeUndoDeltas: "timed",
+                enableBasicAutocompletion: true,
+                customScrollbar: true,
+                useSvgGutterIcons: true,
+                showFoldWidgets: true,
+                tooltipFollowsMouse: true,
+                fontFamily: "Consolas Ligaturized, Consolas, monospace",
+                fontSize: "14px",
+            });
+
+            editor.on("input", () => {
+                localStorage.setItem("UserCSS_Backup", editor.getValue());
+            });
+        }
     </script>
 </body>
 </html>

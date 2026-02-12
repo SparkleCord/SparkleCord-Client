@@ -202,7 +202,7 @@ async function sendMessage() {
     const replyToID = $("#input-box").getAttribute("data-replying-to");
 
     if (replyToID) {
-        const repliedMsg = $(`#${replyToID}`);
+        const repliedMsg = $(`[id='${replyToID}']`);
 
         repliedMsg.classList.remove("replying");
         if (repliedMsg.parentElement?.matches(".reply-thread")) repliedMsg.parentElement.classList.remove("replying");
@@ -366,7 +366,7 @@ async function sendMessage() {
         groupMessage.appendChild(replyWrapper);
         if (hasReplyMentions) replyWrapper.classList.add("mention");
         eventBus.emit("msgReply", {
-            originalMsg: $(`#${replyToID}`),  // Message being replied to
+            originalMsg: $(`[id='${replyToID}']`),  // Message being replied to
             replyMsg: messageElement,   // The message replying to the originalMsg
             timestamp: Date.now()
         });

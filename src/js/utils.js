@@ -86,7 +86,7 @@ function sanitizeInput(input) {
 
 // jump to message, used in replies and message links though message links aren't implemented yet
 function jumpToMsg(id) {
-    const msg = $(`#${id}`); if (!msg) return;
+    const msg = $(`[id='${id}']`); if (!msg) return;
     setTimeout(() => msg.classList.add("replying", "highlight"), 0);
     msg.scrollIntoView({ behavior: "smooth", block: "center" });
     setTimeout(() => msg.classList.remove("replying", "highlight"), 260);

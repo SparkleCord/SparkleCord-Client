@@ -174,12 +174,12 @@ class SettingsManager {
         },
         "btn": (opt) => {
             if (opt.onClick) {
-                setTimeout(() => { $(`#${opt.id}`).addEventListener("click", () => opt.onClick()); }, SETTINGS_TIMEOUT);
+                setTimeout(() => { $(`[id='${opt.id}']`).addEventListener("click", () => opt.onClick()); }, SETTINGS_TIMEOUT);
             }
         },
         "color": (opt) => {
             setTimeout(() => {
-                const input = $(`#${opt.id}-input`);
+                const input = $(`[id='${opt.id}-input']`);
                 input.addEventListener("input", e => {
                     const bright = "var(--white-500)", dark = "black";
                     const svg = input.parentElement.querySelector("path");
