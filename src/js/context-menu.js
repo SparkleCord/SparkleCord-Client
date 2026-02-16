@@ -275,13 +275,8 @@ class MessageActivities {
     }
 
     reactTo(msg) {
-        // Add an emoji variable which includes a unicode emoji in 16x16 size [it converts it to an svg similar to emoji handling.]
-        // console.log(`@${humans.self.name}: \'${msg.getAttribute("data-content")}\,`)
-        // console.log(`${msg.getAttribute("data-content")}`)
-        const emoji = prompt("what emoji to use?");
         const container = msg.querySelector(".reaction-container");
-
-        container.innerHTML = `${container.innerHTML}${getReactionHTML({ emoji, type: "regular", reacted: true, count: 1 })}`;
+        container.innerHTML = `${container.innerHTML}${getReactionHTML({ emoji: prompt("what emoji to use?").slice(0, 100), type: "regular", reacted: true, count: 1 })}`;
     }
 
     markUnread(msg) {

@@ -1,40 +1,80 @@
 /* INPUT BOX WRAPPER FOR ATTACHMENTS */
+#attachment-preview-container {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    padding: 8px;
+    overflow-x: auto;
+    align-items: flex-start;
+    background-color: var(--bg-overlay-3, var(--channeltextarea-background));
+    border-radius: 8px 8px 0 0;
+}
+
 .attachment-wrapper {
     position: relative;
-    margin: 2px 0;
     padding: 10px;
-    background-color: var(--bg-overlay-3, var(--channeltextarea-background));
+    background-color: var(--bg-overlay-3, var(--background-primary));
+    border: 1px solid #ffffff48;
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
     gap: 8px;
-    max-width: 14%;
-    max-height: 15%;
-    overflow: hidden;
+    min-width: 180px;
+    max-width: 180px;
+    flex-shrink: 0;
 }
+
 .attachment-wrapper img:not(.file-icon) {
-    max-width: 128px;
-    max-height: 128px;
-    border-radius: 4px;
-    object-fit: contain;
+    width: 70%;
+    height: 120px;
+    border-radius: 12px;
+    margin: auto;
+    object-fit: cover;
 }
+
 .attachment-wrapper.media-video video {
-    max-width: 300px;
-    height: 40px;
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
 }
+
 .attachment-wrapper .file-icon {
     width: 64px;
     height: 64px;
+    margin: 10px auto;
 }
+
 .attachment-wrapper .remove-attachment {
     position: absolute;
-    top: 0;
-    right: 0;
-    background: none;
+    top: 4px;
+    right: 4px;
+    color: var(--status-danger);
     border: none;
-    font-size: 18px;
+    border-radius: 4px;
+    width: 28px;
+    height: 28px;
     cursor: pointer;
-    padding: 0 4px;
-    transition: color 0.2s;
-    scale: 0.75;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+
+.attachment-wrapper .remove-attachment img {
+    width: 16px;
+    height: 16px;
+}
+
+.attachment-wrapper .attachment-name {
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-normal, #fff);
+    font-weight: 500;
+    margin: auto;
+    text-align: center;
 }
 
 /* ATTACHMENTS IN MESSAGES */

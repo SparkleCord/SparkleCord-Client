@@ -182,14 +182,14 @@ async function sendMessage() {
                                     <img class="file-icon" src="${AttachmentHandler.getFileIcon(attachment.type, attachment.name)}">
                                     <audio controls src="${attachment.content}"></audio>
                                     <a href="${attachment.content}" class="link" target="_blank">${attachment.name}</a>
-                                    <span class="file-size">${attachment.size}</span>
+                                    <span class="file-size">${AttachmentHandler.formatSize(attachment.size)}</span>
                                 </div>`;
             } else {
                 messageHTML += `<div class="attachment file-other">
                                     <img class="file-icon" src="${AttachmentHandler.getFileIcon(attachment.type, attachment.name)}">
                                     <div class="file-info">
                                         <a href="${attachment.content}" class="link" target="_blank">${attachment.name}</a>
-                                        <span class="file-size">${attachment.size}</span>
+                                        <span class="file-size">${AttachmentHandler.formatSize(attachment.size)}</span>
                                     </div>
                                 </div>`;
             }
@@ -213,7 +213,7 @@ async function sendMessage() {
             let replyPFP = repliedMsg.getAttribute("data-avatar") || humans.self.defaultAvatar;
             const replyColor = repliedMsg.getAttribute("data-color");
             const mention = $("#input-box").getAttribute("data-pstate") === "true" ? `@` : "";
-            const hasAttachments = repliedMsg.getAttribute("data-hasAttachments") || false;
+            const hasAttachments = repliedMsg.getAttribute("data-hasAttachments") === "true";
             const botTag = repliedMsg.getAttribute("data-botTag");
             let useEmptyPFPAndNoName = false;
 
@@ -224,8 +224,10 @@ async function sendMessage() {
                 useEmptyPFPAndNoName = false;
             }
 
+            debugLog(repliedMsg);
             debugLog("replyContent:", replyContent);
             debugLog("hasAttachments:", hasAttachments);
+            console.log(hasAttachments);
             debugLog("replyAuthor:", replyAuthor);
             debugLog("Use empty profile picture and no name:", useEmptyPFPAndNoName);
             replyHTML = `<div class="reply-container">

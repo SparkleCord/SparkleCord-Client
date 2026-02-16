@@ -59,7 +59,7 @@ let profiles = {
 // Profile Setup
 if (!humans.self.username) humans.self.username = generateUsername(true);
 if (!humans.self.name) humans.self.name = humans.self.username;
-if (!humans.self.avatar) humans.self.avatar = `./assets/avatars/${rand(0, 18)}.png`;
+if (!humans.self.avatar) humans.self.avatar = `./assets/avatars/${rand(0, 5)}.png`;
 if (!humans.self.defaultAvatar) humans.self.defaultAvatar = humans.self.avatar;
 if (!humans.self.status) humans.self.status = "Online";
 if (!humans.self.id) humans.self.id = snflk(Date.now()).toString();
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 // Version Info
-const versionCode = "1.4.2.1", versionState = "stable", versionType = "Client", versionName = "";
+const versionCode = "1.4.2.2", versionState = "stable", versionType = "Client", versionName = "";
 const versionHTML = `SparkleCord ${versionType} Version ${versionCode} <br>(${versionState}) ${versionName ? `- ${versionName}` : ``}`;
 
 // Loading and Initialization
@@ -291,7 +291,7 @@ if (location.protocol.startsWith("http")) {
    // console.log("%c[WARNING]", "color: orange; font-weight: bold;", "To use the PWA (Progressive Web App) version of SparkleCord, You need to host it on a http/https server. Then click the install button.");
 }
 
-// console.log('SparkleCord\'s Root/index.html Path: ', rootPath + 'index.html')
+debugLog(`SparkleCord is located in: ${rootPath}index.html`);
 
 function initConsoleMessages() {
     // Custom Line 1
