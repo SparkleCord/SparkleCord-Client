@@ -9,7 +9,12 @@
 
     <!-- Scripts that DO include light mode support -->
     <script src="./js/variables/keybinds.js"></script> <!-- Keybinds -->
-    <script src="./js/engine.js"></script> <!-- IMPORTANT LOGIC FOR OTHER STUFF, PLEASE DO NOT REMOVE. -->
+    <script src="./js/ui.js"></script> <!-- IMPORTANT LOGIC FOR USER INTERFACE FEATURES. -->
+    <script src="./js/users.js"></script> <!-- Logic that handles user data. -->
+    <script src="./js/utils.js"></script> <!-- Utility functions -->
+    <script src="./js/variables/variables.js"></script> <!-- Global variables -->
+    <script src="./js/loading.js"></script> <!-- sparklecord literally cant load without this -->
+    <script src="./js/settingsManager.js"></script> <!-- IMPORTANT LOGIC FOR PLUGIN AND APP SETTINGS -->
 
     <!-- Plugin Imports -->
         <script src="./js/plugins/SparkleHook.js"></script>
@@ -20,18 +25,16 @@
     <script src="./js/modules/compatibility/css-vars-ponyfill.min.js"></script> <!-- Add support for css variables on older devices -->
 
     <script src="./js/variables/svgs.js"></script>
-    <script src="./js/variables/variables.js"></script> <!-- Global variables -->
 
     <script src="./js/data/emojis/emojiData.js"></script> <!-- Emoji data -->
     <script src="./js/data/emojis/emoticonData.js"></script> <!-- Emoji data 2 -->
     <script src="./js/data/emojis/emojiAliases.js"></script> <!-- Emoji data 3 -->
 
-    <script src="./js/eggs.js"></script><!-- fun-ctionality -->
+    <script src="./js/easterEggs.js"></script><!-- fun-ctionality -->
     <script src="./js/modules/highlight/highlight-loader.js"></script>  <!-- Syntax highlighting -->
     <script src="./js/automod.js"></script> <!-- Finally people can't say bad words!! -->
     <script src="./js/markdown.js"></script> <!-- Markdown functions -->
     <script src="./js/handleEmojis.js"></script> <!-- Emoji functions -->
-    <script src="./js/utils.js"></script> <!-- Utility functions -->
     <script src="./js/commands.js"></script><!-- Slahs Commabs -->
     <script src="./js/autocomplete.js"></script> <!-- Autocomplete suggestions, experimental -->
     <script src="./js/attachments.js"></script> <!-- Attachment handling -->
@@ -39,7 +42,7 @@
     <script src="./js/context-menu.js"></script> <!-- Context menu -->
     <script src="./js/messages.js"></script><!-- Message handling -->
     <script src="./js/settings.js"></script><!-- Settings -->
-    <script src="./js/script.js"></script>  <!-- Main script -->
+    <script src="./js/init.js"></script>  <!-- Main script -->
 
     <script>
         function rand2(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }

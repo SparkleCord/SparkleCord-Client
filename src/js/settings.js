@@ -968,15 +968,16 @@ function toggleAutoselectAutocomplete(isChecked) {
 // Settings > AutoMod
 function saveAutomodSettings() {
     function escapeCommas(arr) { return arr.map(item => item.replace(/,/g, "\\,")); }
-    userBlockedStrings = $("#automod-text-input").value.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
-    userBlockedMatches = $("#automod-regex-input").value.split(/\r?\n|,/).map(s => {
+    AutoMod.user.strings = $("#automod-text-input").value.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
+    AutoMod.user.matches = $("#automod-regex-input").value.split(/\r?\n|,/).map(s => {
         try { return s.trim() ? new RegExp(s.trim(), "i") : null; } catch (e) { return null; }
     }).filter(Boolean);
-    userExceptions = $("#automod-exceptions-input").value.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
-    localStorage.setItem("userBlockedStrings", JSON.stringify(escapeCommas(userBlockedStrings)));
-    localStorage.setItem("userBlockedMatches", JSON.stringify(escapeCommas(userBlockedMatches.map(r => r.source))));
-    localStorage.setItem("userExceptions", JSON.stringify(escapeCommas(userExceptions)));
+    AutoMod.user.exceptions = $("#automod-exceptions-input").value.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
+    localStorage.setItem("userBlockedStrings", JSON.stringify(escapeCommas(AutoMod.user.strings)));
+    localStorage.setItem("userBlockedMatches", JSON.stringify(escapeCommas(AutoMod.user.matches.map(r => r.source))));
+    localStorage.setItem("userExceptions", JSON.stringify(escapeCommas(AutoMod.user.exceptions)));
 }
+
 // Settings > Loading
 function toggleLoadingLine(isChecked) {
     localStorage.setItem("custom-line-enabled", isChecked);

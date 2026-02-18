@@ -1,3 +1,57 @@
+// small functions that are used for most of the app
+const speak = t => speechSynthesis.speaking || speechSynthesis.speak(new SpeechSynthesisUtterance(t));
+const rand = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+const snflk = d => ((BigInt(d) - 1420070400000n) << 22n) | BigInt(rand(0, 0xFFFFFFFF));
+
+// create an element with an optional namespace
+function el(type, attrs, ns) {
+    const u = "http://www.w3.org", nss = { svg: `${u}/2000/svg`, xhtml: `${u}/1999/xhtml`, mathml: `${u}/1998/Math/MathML` }, nsu = ns ? nss[ns] : nss["xhtml"];
+    const e = document.createElementNS(nsu, type);
+
+    for (const k in attrs) {
+        if (k === "dataset") {
+            Object.assign(e.dataset, attrs[k]);
+        } else {
+            if (nsu === nss.xhtml || ["innerHTML", "id", "className", "textContent"].includes(k)) {
+                e[k] = attrs[k];
+            } else {
+                e.setAttribute(k, attrs[k]);
+            }
+        }
+    }
+    return e;
+}
+
+// get an element
+function $(q, mult = false, scope = document) {
+    if (mult) return scope.querySelectorAll(q);
+    else return scope.querySelector(q);
+}
+
+// modify an element
+function $$(e, attrs) {
+    for (const k in attrs) {
+        if (k === "dataset") {
+            Object.assign(e.dataset, attrs[k]);
+        } else {
+            if (e.namespaceURI === "http://www.w3.org/1999/xhtml" || ["innerHTML", "id", "className", "textContent"].includes(k)) {
+                e[k] = attrs[k];
+            } else {
+                e.setAttribute(k, attrs[k]);
+            }
+        }
+    }
+    return e;
+}
+
+// remove an element
+function r(e, parent) {
+    if (parent) return parent.removeChild(e);
+    return e.remove();
+}
+
+
+/* =========== */
 // Timestamps (messages and embeds)
 function formatTimestamp(timestamp, grouped = false) {
     const showTodayAt = localStorage.getItem("show-today-at") !== "false";

@@ -264,38 +264,10 @@ async function sendMessage() {
     // GROUPING - END
 
     // AUTOMOD
-    function checkBlocked(msg, list, exceptions) {
-        return list.some(p => {
-            let match; if (p instanceof RegExp) {
-                match = p.test(msg);
-            } else {
-                if (p.startsWith("*") && p.endsWith("*")) {
-                    match = new RegExp(p.replace(/^\*|\*$/g, ""), "i").test(msg);
-                } else if (p.startsWith("*")) {
-                    match = new RegExp(p.replace(/^\*|\*$/g, "") + "\\b", "i").test(msg);
-                } else if (p.endsWith("*")) {
-                    match = new RegExp("\\b" + p.replace(/^\*|\*$/g, ""), "i").test(msg);
-                } else { match = new RegExp(`\\b${p}\\b`, "i").test(msg); }
-            }
-            if (match) {
-                return !exceptions.some(ex => {
-                    let exceptionMatch;
-                    if (ex.startsWith("*") && ex.endsWith("*")) {
-                        exceptionMatch = new RegExp(ex.replace(/^\*|\*$/g, ""), "i").test(msg);
-                    } else if (ex.startsWith("*")) {
-                        exceptionMatch = new RegExp(ex.replace(/^\*|\*$/g, "") + "\\b", "i").test(msg);
-                    } else if (ex.endsWith("*")) {
-                        exceptionMatch = new RegExp("\\b" + ex.replace(/^\*|\*$/g, ""), "i").test(msg);
-                    } else { exceptionMatch = new RegExp(`\\b${ex}\\b`, "i").test(msg); }
-                    return exceptionMatch;
-                });
-            }
-            return false;
-        });
-    }
-    let userBlocked = checkBlocked(content, [...userBlockedStrings, ...userBlockedMatches], userExceptions);
-    let systemBlocked = !userBlocked && checkBlocked(content, [...blockedStrings, ...blockedMatches], systemExceptions);
-    let containsBlockedContent = userBlocked ? "user" : systemBlocked ? "system" : null;
+    const userBlocked = AutoMod.checkMessage(content, [...AutoMod.user.strings, ...AutoMod.user.matches], AutoMod.user.exceptions);
+    const systemBlocked = !userBlocked && AutoMod.checkMessage(content, [...AutoMod.system.strings, ...AutoMod.system.matches], AutoMod.system.exceptions);
+    const containsBlockedContent = userBlocked ? "user" : systemBlocked ? "system" : null;
+
     if (containsBlockedContent) {
         messageHTML += containsBlockedContent === "user" ? `${selfAutomodFooter}${eph}` : `${automodFooter}${eph}`;
         messageElement.setAttribute("data-blocked", true); messageElement.classList.add("error");
