@@ -112,7 +112,7 @@
     background: var(--background-secondary);
 }
 
-.visual-refresh-ui .attachment.file-other {
+.visual-refresh-ui .attachment.file-other, .visual-refresh-ui .attachment.media-audio {
     padding: 13px;
 }
 
@@ -122,7 +122,18 @@
     gap: 8px;
     padding: 10px;
     background: var(--background-secondary);
-    width: 120%;
+    width: 25rem;
+}
+.attachment.media-audio {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    background: var(--background-secondary);
+    width: 25rem;
+
+    overflow: visible !important;
 }
 .file-icon {
     width: 36px;
@@ -132,6 +143,12 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+}
+.file-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
 }
 .attachment.file-other a {
     font-weight: 400;

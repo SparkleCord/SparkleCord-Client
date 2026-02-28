@@ -1,28 +1,11 @@
-const EASTER_EGGS_ENABLED_DEVELOPMENT = false;
+const EASTER_EGGS_ENABLED_DEVELOPMENT = true;
 if (EASTER_EGGS_ENABLED_DEVELOPMENT) {
     const SPARKLECORD_CONSOLE_COMMANDS = [
         {
             name: "birthday",
-            help: "none",
+            help: "shows when sparklecord was born",
             get() {
-                // unlock: Happy Birthday!
-
-                console.log("Happy Birthday, SparkleCord!");
-                localStorage.setItem("sparkleCake", "true"); // unlock the birthday menu
-            }
-        },
-        {
-            name: "love",
-            help: "none",
-            get() {
-                // unlock: I love you too
-            }
-        },
-        {
-            name: "cake",
-            help: "none",
-            get() {
-                // unlock: The Cake was a Lie
+                console.log("SparkleCord was born on February 29th, 2024.");
             }
         },
         {
@@ -30,22 +13,37 @@ if (EASTER_EGGS_ENABLED_DEVELOPMENT) {
             help: "just like the good old days",
             get() {
                 // make all text editable
-                // document.designMode = "on";
+                document.designMode = "on";
             }
         },
         {
             name: "lightmode",
             help: "i don't recommend this command...",
             get() {
-                // unlock: Blindness IV
                 // flash the user's screen white
+                const f = $("#fullscreendisplay");
+                f.style.backgroundColor = "white";
+                f.classList.add("active");
+
+                // hide after 3 secs
+                setTimeout(() => {
+                    f.classList.remove("active");
+                }, 3000);
             }
         },
         {
             name: "darkmode",
             help: "the lights have shut off",
             get() {
-                // make everything black
+                // flash the user's screen black (yes this is just a copy of the other one but black)
+                const f = $("#fullscreendisplay");
+                f.style.backgroundColor = "black";
+                f.classList.add("active");
+
+                // hide after 3 secs
+                setTimeout(() => {
+                    f.classList.remove("active");
+                }, 3000);
             }
         },
         {
@@ -53,21 +51,6 @@ if (EASTER_EGGS_ENABLED_DEVELOPMENT) {
             help: "shows this message",
             get() {
                 console.log(SPARKLECORD_CONSOLE_COMMANDS.map(command => `${command.name} - ${command.help}\n`));
-            }
-        },
-        {
-            name: "the2048",
-            help: "you hopefully know this game",
-            get() {
-                // unlock: The Coolest Block Game
-                // starts a mini 2048
-            }
-        },
-        {
-            name: "doctoon",
-            help: "i made sparklecord",
-            get() {
-                // unlock: Hello Everybody, it's me.
             }
         }
     ];

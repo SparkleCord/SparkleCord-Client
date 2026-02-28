@@ -110,3 +110,36 @@ html:not(.visual-refresh-ui) .eyebrow, #loading-text {
     font-weight: 600;
     text-transform: uppercase;
 }
+
+#fullscreendisplay {
+    display: block;
+    opacity: 0;
+    background: white;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+#fullscreendisplay.active {
+    opacity: 1;
+    animation: lightModeFlash 5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes lightModeFlash {
+    0% { 
+        opacity: 0; 
+        visibility: visible;
+    }
+    5% { 
+        opacity: 1; 
+    }
+    100% { 
+        opacity: 0; 
+        visibility: hidden;
+    }
+}

@@ -14,7 +14,7 @@ const HOLOGRAPHIC_COLOR3 = "#ffc3a0";
 const defaultEmojiDesc = "A default emoji. You can use this emoji everywhere on SparkleCord.";
 
 // Version Info
-const versionCode = "1.4.3", versionState = "stable", versionType = "Client", versionName = "";
+const versionCode = "1.4.4", versionState = "stable", versionType = "Client", versionName = "";
 const versionHTML = `SparkleCord ${versionType} Version ${versionCode} <br>(${versionState}) ${versionName ? `- ${versionName}` : ``}`;
 
 // Functoins

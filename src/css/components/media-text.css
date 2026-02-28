@@ -1,0 +1,90 @@
+.attachment.text {
+    display: block;
+    width: 60vw;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--background-secondary);
+}
+
+.text-attachment-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.textfile {
+    font-family: var(--font-code, monospace);
+    font-size: 0.875rem;
+    color: var(--text-normal);
+    padding: 8px 12px;
+    white-space: pre;
+    overflow-x: auto;
+    overflow-y: hidden;
+    line-height: 1.5;
+
+    transition: max-height 0.35s ease-in-out;
+}
+
+.tx-collapsed .textfile {
+    max-height: calc(6 * (0.875rem * 1.5));
+}
+
+.tx-expanded .textfile {
+    max-height: calc(var(--total-lines) * (0.875rem * 1.5));
+}
+
+.tx-expanded .tx-collapse, .tx-collapsed .tx-expand {
+    display: flex;
+}
+
+.tx-collapsed button.tx-collapse, .tx-expanded button.tx-expand {
+    display: none;
+}
+
+.text-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    background: var(--background-secondary-alt);
+    border-top: 1px solid var(--background-tertiary);
+    gap: 8px;
+}
+
+.tx-left, .tx-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tx-collapse, .tx-expand, .tx-download, .tx-highlight {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--interactive-normal);
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: color 0.1s, background 0.1s;
+}
+
+.tx-expand:hover, .tx-download:hover, .tx-highlight:hover {
+    color: var(--interactive-hover);
+    background: var(--background-tertiary);
+}
+
+.tx-fname {
+    font-size: 0.75rem;
+    font-family: var(--font-primary);
+    color: var(--text-normal);
+    font-weight: 600;
+}
+
+.tx-fsize {
+    font-size: 0.75rem;
+    font-family: var(--font-primary);
+    color: var(--text-muted);
+}

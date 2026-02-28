@@ -88,6 +88,7 @@ function sendSystemMessage({ content = "", embeds = [], type = "core", ephemeral
             if (replacedContent !== content) { hasMentions = true; formattedContent = parseMarkdown(replacedContent); } else { formattedContent = parseMarkdown(content); }
         }
         let messageHTML = `<div class="content">${formattedContent}</div>`;
+
         embeds.forEach(embed => {
             let embedColor = embed.color !== undefined ? `border-left: 4px solid #${embed.color.toString(16).padStart(6, "0")};` : "";
             let embedContent = `

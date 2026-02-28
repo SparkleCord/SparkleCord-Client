@@ -14,6 +14,8 @@
 @import "layout/loading.css";
 
 @import "components/media.css";
+@import "components/media-vid-aud.css";
+@import "components/media-text.css";
 @import "components/autocomplete.css";
 @import "components/embeds.css";
 @import "components/markdown.css";
@@ -30,7 +32,6 @@
 @import "components/tooltips.css";
 @import "components/settings.css";
 @import "components/buttons.css";
-@import "components/achievements.css";
 @import "components/input.css";
 
 @import "12633.4b47d0f658ccba94.css"; /* DISCORD"S ACTUAL STYLES FOR MAXIMUM COMPATIBILITY */

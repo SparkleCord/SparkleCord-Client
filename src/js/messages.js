@@ -1,48 +1,3 @@
-class SparkleCord {
-    static messages = {
-        "example": {
-            name: "User",
-            username: "firstuser",
-            
-            userid: "1470229359087321294",
-            avatar: null,
-
-            content: "none",
-            id: "1470231147788386726",
-            timestamp: "1770600821",
-            attachments: [],
-
-            automodStatus: {
-                isMessageBlockedByUser: null,
-                isMessageBlockedBySystem: null,
-                containsBlockedContent: null
-            },
-
-            reactions: [
-                { emoji: "🐱", type: "regular", count: 1 },
-                { emoji: "🎉", type: "super", count: 5 }
-            ],
-
-            tag: {
-                name: "Sparkler",
-                image: `${rootPath}/assets/icons/icon.png`
-            },
-
-            role: {
-                name: "Sparkler", 
-                color: DEFAULT_COLOR,
-                color1: "#fcdd2dff", color2: "#ffffffff", color3: HOLOGRAPHIC_COLOR3,
-                gradient: true, holographic: false,
-                icon: `${rootPath}/assets/icons/icon.png`
-            },
-        }
-    };
-
-    static Messages = class {
-        // tba
-    }
-}
-
 class Parser {
     static trim(text) {
         // start and end, but not middle
@@ -82,6 +37,7 @@ function flagAsEdited(msg, newText) {
 };
 
 const messageActivities = new MessageActivities();
+
 async function sendMessage() {
     const messageInput = $("#input-box"), content = Parser.trim(messageInput.value), hasAttachments = currentAttachments.length > 0;
     if (!content && !hasAttachments) return;
@@ -100,7 +56,7 @@ async function sendMessage() {
     // Flags
     let FLAG_startNewGroup = false;
     if (content.startsWith("@g")) {
-        convertedContent = content.replace("@g", "")
+        convertedContent = convertedContent.replace("@g", "")
         FLAG_startNewGroup = true;
     }
     // End of flags
@@ -154,7 +110,7 @@ async function sendMessage() {
     if (hasAttachments) {
         for (const attachment of currentAttachments) {
             const fileContent = await processFileForMessage(attachment);
-            data.attachments.push({ id: attachment.id, name: attachment.name, type: attachment.type, size:  (attachment.size), content: fileContent });
+            data.attachments.push({ id: attachment.id, name: attachment.name, type: attachment.type, size: (attachment.size), content: fileContent, internalType: attachment.internalType });
         }
     }
 
@@ -169,20 +125,47 @@ async function sendMessage() {
     if (hasAttachments) {
         messageHTML += `<div class="attachments">`;
         for (const attachment of data.attachments) {
-            if (attachment.type.startsWith("image/")) {
+            if (attachment.internalType === "image") {
                 messageHTML += `<div class="attachment media">
                                     <img src="${attachment.content}" alt="Image">
+                                    <a href="${attachment.content}" download="${attachment.name}" style="display: none;"></a>
                                 </div>`;
-            } else if (attachment.type.startsWith("video/")) {
-                messageHTML += `<div class="attachment media-video">
-                                    <video controls src="${attachment.content}"></video>
-                                </div>`;
-            } else if (attachment.type.startsWith("audio/")) {
-                messageHTML += `<div class="attachment media-audio">
-                                    <img class="file-icon" src="${AttachmentHandler.getFileIcon(attachment.type, attachment.name)}">
-                                    <audio controls src="${attachment.content}"></audio>
-                                    <a href="${attachment.content}" class="link" target="_blank">${attachment.name}</a>
-                                    <span class="file-size">${AttachmentHandler.formatSize(attachment.size)}</span>
+            } else if (attachment.internalType === "video") {
+                messageHTML += generatePlayerHTML(attachment, "video");
+            } else if (attachment.internalType === "audio") {
+                messageHTML += generatePlayerHTML(attachment, "audio");
+            } else if (attachment.internalType === "text") {
+                const textContent = new TextDecoder().decode(Uint8Array.from(atob(attachment.content.split(",").pop()), c => c.charCodeAt(0)));
+                const lines = escapeHtml(textContent).split("\n");
+                const chopped = lines.length - 100;
+                const linesLeft = chopped > 0 ? `... (${chopped} line${(chopped === 1) ? "" : "s"} left)` : "";
+
+                messageHTML += `<div class="attachment text">
+                                    <div class="text-attachment-container tx-collapsed" style="--total-lines: ${Math.min(lines.length, 101)};">
+                                        <div class="textfile">${[...lines.slice(0, 100), linesLeft].join("\n")}</div>
+                                        <div class="text-controls">
+                                            <div class="tx-left">
+                                                <button class="tx-expand" onclick="this.closest('.text-attachment-container').classList.replace('tx-collapsed', 'tx-expanded')">
+                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                                    Expand
+                                                </button>
+                                                <button class="tx-collapse" onclick="this.closest('.text-attachment-container').classList.replace('tx-expanded', 'tx-collapsed')">
+                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                                    Collapse
+                                                </button>
+                                            </div>
+
+                                            <div class="tx-right">
+                                                <span class="tx-fname">${attachment.name}</span>
+                                                <span class="tx-fsize">${AttachmentHandler.formatSize(attachment.size)}</span>
+                                                <button class="tx-download" onclick="this.closest('.attachment').querySelector('a[download]').click();">
+                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a href="${attachment.content}" download="${attachment.name}" style="display: none;"></a>
                                 </div>`;
             } else {
                 messageHTML += `<div class="attachment file-other">
@@ -191,6 +174,8 @@ async function sendMessage() {
                                         <a href="${attachment.content}" class="link" target="_blank">${attachment.name}</a>
                                         <span class="file-size">${AttachmentHandler.formatSize(attachment.size)}</span>
                                     </div>
+
+                                    <a href="${attachment.content}" download="${attachment.name}" style="display: none;"></a>
                                 </div>`;
             }
         }
@@ -227,7 +212,6 @@ async function sendMessage() {
             debugLog(repliedMsg);
             debugLog("replyContent:", replyContent);
             debugLog("hasAttachments:", hasAttachments);
-            console.log(hasAttachments);
             debugLog("replyAuthor:", replyAuthor);
             debugLog("Use empty profile picture and no name:", useEmptyPFPAndNoName);
             replyHTML = `<div class="reply-container">
@@ -349,15 +333,30 @@ async function sendMessage() {
     }
 
     applyHighlighting(messageElement);
-    lastMessageTimestamp = timestamp; lastMessageAuthor = data.name; lastMessageAvatar = data.avatar;
-    currentMessageGroup = groupMessage; lastMessage = messageElement;
-    if (containsBlockedContent) { messageElement.querySelector(".dismiss").addEventListener("click", () => messageActivities.deleteMessage(messageElement)); }
-    messageInput.value = ""; history.push(""); historyIndex = history.length - 1;
-    currentAttachments = []; document.querySelectorAll(".attachment-wrapper").forEach(wrapper => wrapper.remove());
+    lastMessageTimestamp = timestamp;
+    lastMessageAuthor = data.name;
+    lastMessageAvatar = data.avatar;
+    currentMessageGroup = groupMessage;
+    lastMessage = messageElement;
+
+    if (containsBlockedContent) {
+        messageElement.querySelector(".dismiss").addEventListener("click", () => messageActivities.deleteMessage(messageElement));
+    }
+
+    messageInput.value = "";
+    history.push("");
+    historyIndex = history.length - 1;
+
+    currentAttachments = [];
+    document.querySelectorAll(".attachment-wrapper").forEach(wrapper => wrapper.remove());
+
     scrollToBottom();
     updateSendButtonColor();
 
+    // SparkleCord.messages[data.id] = data;
     eventBus.emit("msgSend", { message: messageElement, messageData: data });
+
+    setTimeout(setupMediaPlayers, 1500);
 }
 
 // Helper function to process file for message
