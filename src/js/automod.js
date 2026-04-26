@@ -63,7 +63,7 @@ class AutoMod {
             "heil hitler"
         ],
         matches: [
-            /\b(n+i+g+g+|f+a+g+|r+e+t+a+r+d+|t+r+a+n+n+y+|k+i+k+|s+l+a+n+t+|g+y+p+s+y+|w+e+t+b+a+c+k+)\w*\b/i, // slurs
+            /\b(n+[il\|√*\-#1]+g+g+|f+[a@*#\-]+g+|r+[eéëêēè€3*#\-]+t+[a@*#\-]+r+d+|t+r+[a@*#\-]+n+n+y+|k+[il\|√*\-#1]+k+|s+l+[a@*#\-]+n+t+|g+y+p+s+y+|w+[eéëêēè€3*#\-]+t+b+[a@*#\-]+c+k+)\w*\b/i, // slurs
             /\b(neo\s*nazi|kkk|klan\s*member)\b/i // hate groups
         ],
         exceptions: []
